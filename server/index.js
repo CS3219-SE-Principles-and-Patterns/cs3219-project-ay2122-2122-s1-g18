@@ -3,6 +3,8 @@ const dotenv = require('dotenv')
 const express = require('express')
 const mongoose = require('mongoose')
 
+const routes = require('./src/routes')
+
 const app = express()
 const port = process.env.PORT || 8000
 
@@ -17,6 +19,8 @@ app.get('/', (req, res) => {
     status: 'healthy'
   })
 })
+
+app.use('/api', routes)
 
 app.listen(port, () => {
   console.log('Running on port', port)
