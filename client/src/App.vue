@@ -1,32 +1,27 @@
 <template>
-  <div id="app">
-    <div id="nav">
-      <router-link to="/">Home</router-link> |
-      <router-link to="/about">About</router-link>
+  <div>
+    <!-- Nav bar -->
+    <nav class="navbar justify-content-between flex-nowrap flex-row">
+      <div class="container d-flex justify-content-center">
+        <h3 class="fw-bold mt-4 mb-4">PeerPrep</h3>
+      </div>
+    </nav>
+
+    <!-- Router view -->
+    <div class="container mt-5">
+      <router-view></router-view>
     </div>
-    <router-view />
   </div>
 </template>
 
-<style lang="scss">
-#app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
+<script>
+export default {
+  name: 'App'
 }
+</script>
 
-#nav {
-  padding: 30px;
-
-  a {
-    font-weight: bold;
-    color: #2c3e50;
-
-    &.router-link-exact-active {
-      color: #42b983;
-    }
-  }
+<style>
+.navbar {
+  background-color: #ffa8a1;
 }
 </style>
