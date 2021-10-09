@@ -30,6 +30,8 @@
 
 <script>
 import axios from 'axios'
+import { SERVER_URI } from '../constants'
+
 export default {
   name: 'Signup',
   data () {
@@ -51,7 +53,7 @@ export default {
       this.invalidEmail = false
       this.emailUsernameExists = false
       this.fail = false
-      const apiURL = 'http://localhost:8000/api/user/signup'
+      const apiURL = `${SERVER_URI}/api/user/signup`
       axios.post(apiURL, this.user)
         .then(() => {
           this.$router.push({

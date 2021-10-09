@@ -25,6 +25,8 @@
 
 <script>
 import axios from 'axios'
+import { SERVER_URI } from '../constants'
+
 export default {
   name: 'Login',
   data () {
@@ -44,13 +46,13 @@ export default {
       this.missingField = false
       this.wrongCredentials = false
       this.invalidEmail = false
-      const apiURL = 'http://localhost:8000/api/user/login'
+      const apiURL = `${SERVER_URI}/api/user/login`
       axios.post(apiURL, this.user)
         .then((data) => {
           if (data && data.data) {
             this.token = data.data.token
             this.$router.push({
-              name: 'main',
+              name: 'home',
               params: {
                 token: this.token
               }
