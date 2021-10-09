@@ -13,7 +13,7 @@ const Chat = require('../models/chat.js')
 // socket IO
 server.listen(4000)
 
-io.on('connection', function (socket) {
+io.on('connection', socket => {
   console.log('User connected')
   socket.on('save-message', function (data) {
     io.emit('new-message', { message: data })
@@ -24,42 +24,93 @@ io.on('connection', function (socket) {
 })
 
 // gets all the chats
-router.get('/', function(req, res, next) {
-  Chat.find(function (err, products) {
-    if (err) return next(err)
-    res.json(products)
+router.get('/', (req, res, next) => {
+  Chat.find((err, chats) => {
+    if (err) {
+      res.status(500).json({ 
+        status: 'error',
+        message: err.message 
+      })
+    } else {
+      res.json({
+        status: 'success',
+        message: 'chats retrieved successfully',
+        data: chats
+      })
+    }
   })
 })
 
 // gets a chat by its id
-router.get('/:id', function(req, res, next) {
-  Chat.findById(req.params.id, function (err, post) {
-    if (err) return next(err)
-    res.json(post)
+router.get('/:id', (req, res, next) => {
+  Chat.findById(req.params.id, (err, chat) => {
+    if (err) {
+      res.status(500).json({ 
+        status: 'error',
+        message: err.message 
+      })
+    } else {
+      res.json({
+        status: 'success',
+        message: 'chat retrieved successfully',
+        data: chat
+      })
+    }
   })
 })
 
 // saves a chat
-router.post('/', function(req, res, next) {
-  Chat.create(req.body, function (err, post) {
-    if (err) return next(err)
-    res.json(post)
+router.post('/', (req, res, next) => {
+  console.log(req.body)
+  Chat.create(req.body, (err, chat) => {
+    if (err) {
+      res.status(400).json({
+          status: 'error',
+          message: err.message 
+      })
+    } else {
+      res.status(201).json({
+          status: 'success',
+          message: 'chat saved',
+          data: chat
+      })
+    }
   })
 })
 
 // updates a chat
-router.put('/:id', function(req, res, next) {
-  Chat.findByIdAndUpdate(req.params.id, req.body, function (err, post) {
-    if (err) return next(err)
-    res.json(post)
+router.put('/:id', (req, res, next) => {
+  Chat.findByIdAndUpdate(req.params.id, req.body, (err, chat) => {
+    if (err) {
+      res.status(400).json({
+        status: 'error',
+        message: err.message 
+      })
+    } else {
+      res.json({
+        status: 'success',
+        message: 'chat updated',
+        data: chat
+      })
+    }
   })
 })
 
 // deletes a chat
-router.delete('/:id', function(req, res, next) {
-  Chat.findByIdAndRemove(req.params.id, req.body, function (err, post) {
-    if (err) return next(err)
-    res.json(post)
+router.delete('/:id', (req, res, next) => {
+  Chat.findByIdAndRemove(req.params.id, req.body, (err, chat) => {
+    if (err) {
+      res.status(400).json({
+        status: 'error',
+        message: err.message 
+      })
+    } else {
+      res.json({
+        status: 'success',
+        message: 'chat deleted',
+        data: chat
+      })
+    }
   })
 })
 
@@ -70,12 +121,13 @@ router.delete('/', (req, res) => {
     .then()
     .catch(err => {
       return res.status(500).json({
-        message: 'Failure: Failed to Delete All Chats!',
-        error: err
+        status: 'error',
+        message: err.message
       })
     })
   return res.status(200).json({
-    message: 'Success: All Chats Deleted'
+    status: 'success',
+    message: 'all chats deleted'
   })
 })
 

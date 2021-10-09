@@ -49,7 +49,7 @@ export default {
             name: 'ChatRoom',
             params: {
               id: this.$route.params.id,
-              nickname: response.data.nickname
+              nickname: response.data.data.nickname
             }
           })
         })

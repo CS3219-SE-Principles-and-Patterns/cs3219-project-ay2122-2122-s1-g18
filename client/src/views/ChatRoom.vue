@@ -65,7 +65,7 @@ export default {
   created () {
     axios.get('http://localhost:8000/api/chat/' + this.$route.params.id)
       .then(response => {
-        this.chats = response.data || []
+        this.chats = response.data.data || []
       })
       .catch(e => {
         this.errors.push(e)
@@ -94,7 +94,7 @@ export default {
       this.chat.nickname = this.$route.params.nickname
       axios.post('http://localhost:8000/api/chat', this.chat)
         .then(response => {
-          this.socket.emit('save-message', response.data)
+          this.socket.emit('save-message', response.data.data)
           this.chat.message = ''
         })
         .catch(e => {

@@ -41,7 +41,7 @@ export default {
   created () {
     axios.get('http://localhost:8000/api/room')
       .then(response => {
-        this.rooms = response.data
+        this.rooms = response.data.data
       })
       .catch(e => {
         this.errors.push(e)
