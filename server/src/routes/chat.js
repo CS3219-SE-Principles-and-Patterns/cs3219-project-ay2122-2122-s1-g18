@@ -61,7 +61,6 @@ router.get('/:id', (req, res, next) => {
 
 // saves a chat
 router.post('/', (req, res, next) => {
-  console.log(req.body)
   Chat.create(req.body, (err, chat) => {
     if (err) {
       res.status(400).json({

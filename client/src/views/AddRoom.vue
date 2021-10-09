@@ -22,11 +22,11 @@
 </template>
 
 <script>
-
 import axios from 'axios'
+import { SERVER_URI } from '../constants'
 
 export default {
-  name: 'AddRoom',
+  name: 'addroom',
   data () {
     return {
       room: {}
@@ -35,10 +35,10 @@ export default {
   methods: {
     onSubmit (evt) {
       evt.preventDefault()
-      axios.post('http://localhost:8000/api/room', this.room)
+      axios.post(`${SERVER_URI}/api/room`, this.room)
         .then(response => {
           this.$router.push({
-            name: 'RoomList'
+            name: 'roomlist'
           })
         })
         .catch(e => {

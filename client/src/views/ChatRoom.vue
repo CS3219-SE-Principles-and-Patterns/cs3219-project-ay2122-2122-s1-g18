@@ -44,15 +44,15 @@
 </template>
 
 <script>
-
 import axios from 'axios'
 import Vue from 'vue'
 import * as io from 'socket.io-client'
+import { SERVER_URI } from '../constants'
 import VueChatScroll from 'vue-chat-scroll'
 Vue.use(VueChatScroll)
 
 export default {
-  name: 'ChatRoom',
+  name: 'chatroom',
   data () {
     return {
       chats: [],
@@ -63,7 +63,7 @@ export default {
     }
   },
   created () {
-    axios.get('http://localhost:8000/api/chat/' + this.$route.params.id)
+    axios.get(`${SERVER_URI}/api/chat/` + this.$route.params.id)
       .then(response => {
         this.chats = response.data.data || []
       })
@@ -85,14 +85,14 @@ export default {
         created_date: new Date()
       })
       this.$router.push({
-        name: 'RoomList'
+        name: 'roomlist'
       })
     },
     onSubmit (evt) {
       evt.preventDefault()
       this.chat.room = this.$route.params.id
       this.chat.nickname = this.$route.params.nickname
-      axios.post('http://localhost:8000/api/chat', this.chat)
+      axios.post(`${SERVER_URI}/api/chat`, this.chat)
         .then(response => {
           this.socket.emit('save-message', response.data.data)
           this.chat.message = ''

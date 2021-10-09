@@ -20,12 +20,12 @@
 </template>
 
 <script>
-
 import axios from 'axios'
 import * as io from 'socket.io-client'
+import { SERVER_URI } from '../constants'
 
 export default {
-  name: 'JoinRoom',
+  name: 'joinroom',
   data () {
     return {
       chat: {},
@@ -37,7 +37,7 @@ export default {
       evt.preventDefault()
       this.chat.room = this.$route.params.id
       this.chat.message = this.chat.nickname + ' joined the room'
-      axios.post('http://localhost:8000/api/chat', this.chat)
+      axios.post(`${SERVER_URI}/api/chat`, this.chat)
         .then(response => {
           this.socket.emit('save-message', {
             room: this.chat.room,
@@ -46,7 +46,7 @@ export default {
             created_date: new Date()
           })
           this.$router.push({
-            name: 'ChatRoom',
+            name: 'chatroom',
             params: {
               id: this.$route.params.id,
               nickname: response.data.data.nickname

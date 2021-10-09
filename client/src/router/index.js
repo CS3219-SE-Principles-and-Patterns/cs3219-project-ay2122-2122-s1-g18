@@ -17,22 +17,19 @@ const routes = [{
   component: () => import('../views/Login')
 }, {
   path: '/room-list',
-  name: 'RoomList',
+  name: 'roomlist',
   component: () => import('../views/RoomList')
-},
-{
+}, {
   path: '/add-room',
-  name: 'AddRoom',
+  name: 'addroom',
   component: () => import('../views/AddRoom')
-},
-{
+}, {
   path: '/join-room/:id',
-  name: 'JoinRoom',
+  name: 'joinroom',
   component: () => import('../views/JoinRoom')
-},
-{
+}, {
   path: '/chat-room/:id/:nickname',
-  name: 'ChatRoom',
+  name: 'chatroom',
   component: () => import('../views/ChatRoom')
 }]
 

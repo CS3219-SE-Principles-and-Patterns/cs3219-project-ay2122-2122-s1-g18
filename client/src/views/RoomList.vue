@@ -28,18 +28,18 @@
 </template>
 
 <script>
-
 import axios from 'axios'
+import { SERVER_URI } from '../constants'
 
 export default {
-  name: 'RoomList',
+  name: 'roomlist',
   data () {
     return {
       rooms: []
     }
   },
   created () {
-    axios.get('http://localhost:8000/api/room')
+    axios.get(`${SERVER_URI}/api/room`)
       .then(response => {
         this.rooms = response.data.data
       })
@@ -50,7 +50,7 @@ export default {
   methods: {
     join (id) {
       this.$router.push({
-        name: 'JoinRoom',
+        name: 'joinroom',
         params: { id: id }
       })
     }
