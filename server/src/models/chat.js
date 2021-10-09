@@ -1,6 +1,7 @@
-var mongoose = require('mongoose'), Schema = mongoose.Schema
+const mongoose = require('mongoose')
+const Schema = mongoose.Schema
 
-var ChatSchema = new mongoose.Schema({
+const ChatSchema = new mongoose.Schema({
   room: {
     type: Schema.Types.ObjectId,
     ref: 'Room'
@@ -10,7 +11,7 @@ var ChatSchema = new mongoose.Schema({
   created_date: {
     type: Date,
     default: Date.now
-  },
+  }
 })
 
 module.exports = mongoose.model('Chat', ChatSchema)
