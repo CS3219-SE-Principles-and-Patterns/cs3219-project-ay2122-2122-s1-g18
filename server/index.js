@@ -3,6 +3,11 @@ const dotenv = require('dotenv')
 const express = require('express')
 const mongoose = require('mongoose')
 
+// realtime chat stuff
+var path = require('path');
+var room = require('./src/routes/room');
+var chat = require('./src/routes/chat');
+
 const routes = require('./src/routes')
 const userRoutes = require('./src/routes/users')
 
@@ -14,6 +19,11 @@ app.use(express.urlencoded({
 }))
 app.use(express.json())
 app.use(cors())
+
+app.use(express.static(path.join(__dirname, 'dist')));
+app.use('/rooms', express.static(path.join(__dirname, 'dist')));
+app.use('/api/room', room);
+app.use('/api/chat', chat);
 
 app.get('/', (req, res) => {
   res.json({
