@@ -1,48 +1,48 @@
-var express = require('express');
-var router = express.Router();
-var Room = require('../models/room.js');
+var express = require('express')
+var router = express.Router()
+var Room = require('../models/room.js')
 
-/* GET ALL ROOMS */
+// gets all the rooms
 router.get('/', function(req, res, next) {
   Room.find(function (err, products) {
-    if (err) return next(err);
-    res.json(products);
-  });
-});
+    if (err) return next(err)
+    res.json(products)
+  })
+})
 
-/* GET SINGLE ROOM BY ID */
+// gets a room by its id
 router.get('/:id', function(req, res, next) {
   Room.findById(req.params.id, function (err, post) {
-    if (err) return next(err);
-    res.json(post);
-  });
-});
+    if (err) return next(err)
+    res.json(post)
+  })
+})
 
-/* SAVE ROOM */
+// saves a room
 router.post('/', function(req, res, next) {
   Room.create(req.body, function (err, post) {
-    if (err) return next(err);
-    res.json(post);
-  });
-});
+    if (err) return next(err)
+    res.json(post)
+  })
+})
 
-/* UPDATE ROOM */
+// updates a room
 router.put('/:id', function(req, res, next) {
   Room.findByIdAndUpdate(req.params.id, req.body, function (err, post) {
-    if (err) return next(err);
-    res.json(post);
-  });
-});
+    if (err) return next(err)
+    res.json(post)
+  })
+})
 
-/* DELETE ROOM */
+// deletes a room
 router.delete('/:id', function(req, res, next) {
   Room.findByIdAndRemove(req.params.id, req.body, function (err, post) {
-    if (err) return next(err);
-    res.json(post);
-  });
-});
+    if (err) return next(err)
+    res.json(post)
+  })
+})
 
-/* DELETE ALL ROOMS */
+// deletes all the rooms
 router.delete('/', (req, res) => {
   Room.deleteMany({})
     .exec()
@@ -58,4 +58,4 @@ router.delete('/', (req, res) => {
   })
 })
 
-module.exports = router;
+module.exports = router

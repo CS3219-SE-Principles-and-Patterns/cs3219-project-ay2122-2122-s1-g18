@@ -1,69 +1,69 @@
-var express = require('express');
-var router = express.Router();
-var app = express();
-var server = require('http').createServer(app);
+const express = require('express')
+const router = express.Router()
+const app = express()
+const server = require('http').createServer(app)
 const io = require('socket.io')(server, {
   cors: {
     origin: "http://localhost:8081",
     credentials: true
   }
-});
-var Chat = require('../models/chat.js');
+})
+const Chat = require('../models/chat.js')
 
 // socket IO
-server.listen(4000);
+server.listen(4000)
 
 io.on('connection', function (socket) {
-  console.log('User connected');
+  console.log('User connected')
   socket.on('save-message', function (data) {
-    io.emit('new-message', { message: data });
-  });
+    io.emit('new-message', { message: data })
+  })
   socket.on('disconnect', function() {
-    console.log('User disconnected');
-  });
-});
+    console.log('User disconnected')
+  })
+})
 
-/* GET ALL CHATS */
+// gets all the chats
 router.get('/', function(req, res, next) {
   Chat.find(function (err, products) {
-    if (err) return next(err);
-    res.json(products);
-  });
-});
+    if (err) return next(err)
+    res.json(products)
+  })
+})
 
-/* GET SINGLE CHAT BY ID */
+// gets a chat by its id
 router.get('/:id', function(req, res, next) {
   Chat.findById(req.params.id, function (err, post) {
-    if (err) return next(err);
-    res.json(post);
-  });
-});
+    if (err) return next(err)
+    res.json(post)
+  })
+})
 
-/* SAVE CHAT */
+// saves a chat
 router.post('/', function(req, res, next) {
   Chat.create(req.body, function (err, post) {
-    if (err) return next(err);
-    res.json(post);
-  });
-});
+    if (err) return next(err)
+    res.json(post)
+  })
+})
 
-/* UPDATE CHAT */
+// updates a chat
 router.put('/:id', function(req, res, next) {
   Chat.findByIdAndUpdate(req.params.id, req.body, function (err, post) {
-    if (err) return next(err);
-    res.json(post);
-  });
-});
+    if (err) return next(err)
+    res.json(post)
+  })
+})
 
-/* DELETE CHAT */
+// deletes a chat
 router.delete('/:id', function(req, res, next) {
   Chat.findByIdAndRemove(req.params.id, req.body, function (err, post) {
-    if (err) return next(err);
-    res.json(post);
-  });
-});
+    if (err) return next(err)
+    res.json(post)
+  })
+})
 
-/* DELETE ALL CHATS */
+// deletes all the chats
 router.delete('/', (req, res) => {
   Chat.deleteMany({})
     .exec()
@@ -79,4 +79,4 @@ router.delete('/', (req, res) => {
   })
 })
 
-module.exports = router;
+module.exports = router
