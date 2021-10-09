@@ -1,10 +1,6 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
 import Home from '../views/Home.vue'
-import RoomList from '../views/RoomList'
-import AddRoom from '../views/AddRoom'
-import JoinRoom from '../views/JoinRoom'
-import ChatRoom from '../views/ChatRoom'
 
 Vue.use(VueRouter)
 
@@ -40,22 +36,22 @@ const routes = [
   {
     path: '/room-list',
     name: 'RoomList',
-    component: RoomList
+    component: () => import('../views/RoomList')
   },
   {
     path: '/add-room',
     name: 'AddRoom',
-    component: AddRoom
+    component: () => import('../views/AddRoom')
   },
   {
     path: '/join-room/:id',
     name: 'JoinRoom',
-    component: JoinRoom
+    component: () => import('../views/JoinRoom')
   },
   {
     path: '/chat-room/:id/:nickname',
     name: 'ChatRoom',
-    component: ChatRoom
+    component: () => import('../views/ChatRoom')
   }
 ]
 

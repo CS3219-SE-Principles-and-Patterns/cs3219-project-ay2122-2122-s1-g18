@@ -2,12 +2,11 @@
   <b-row>
     <b-col cols="12">
       <h2>
-        Chat Room
+        Chat Room - <b-btn size="sm" @click.stop="logout()">Leave</b-btn>
       </h2>
       <b-list-group class="panel-body" v-chat-scroll>
-        <b-list-group-item v-for="item in chats" class="chat" :key="item" :value="item">
-          <div class="left clearfix" v-if="item.nickname === nickname">
-            <b-img left src="http://placehold.it/50/55C1E7/fff&text=ME" rounded="circle" width="75" height="75" alt="img" class="m-1" />
+        <b-list-group-item v-for="item in chats" class="chat" :key="item.id">
+          <div class="right clearfix" v-if="item.nickname === nickname">
             <div class="chat-body clearfix">
               <div class="header">
                 <strong class="primary-font">{{ item.nickname }}</strong> <small class="pull-right text-muted">
@@ -16,8 +15,7 @@
               <p>{{ item.message }}</p>
             </div>
           </div>
-          <div class="right clearfix" v-else>
-            <b-img right src="http://placehold.it/50/55C1E7/fff&text=U" rounded="circle" width="75" height="75" alt="img" class="m-1" />
+          <div class="left clearfix" v-else>
             <div class="chat-body clearfix">
               <div class="header">
                 <strong class="primary-font">{{ item.nickname }}</strong> <small class="pull-right text-muted">
@@ -67,24 +65,25 @@ export default {
   created () {
     axios.get('http://localhost:8000/api/chat/' + this.$route.params.id)
       .then(response => {
-        console.log(response.data)
-        console.log(this.$route.params.id)
-        this.chats = response.data
+        this.chats = response.data || []
       })
       .catch(e => {
         this.errors.push(e)
       })
-
     this.socket.on('new-message', function (data) {
       if (data.message.room === this.$route.params.id) {
-        console.log(data.message)
         this.chats.push(data.message)
       }
     }.bind(this))
   },
   methods: {
     logout () {
-      this.socket.emit('save-message', { room: this.chat.room, nickname: this.chat.nickname, message: this.chat.nickname + ' left this room', created_date: new Date() })
+      this.socket.emit('save-message', {
+        room: this.chat.room,
+        nickname: 'PeerPrep Bot',
+        message: this.chat.nickname + ' left this room',
+        created_date: new Date()
+      })
       this.$router.push({
         name: 'RoomList'
       })

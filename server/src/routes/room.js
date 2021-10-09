@@ -42,4 +42,20 @@ router.delete('/:id', function(req, res, next) {
   });
 });
 
+/* DELETE ALL ROOMS */
+router.delete('/', (req, res) => {
+  Room.deleteMany({})
+    .exec()
+    .then()
+    .catch(err => {
+      return res.status(500).json({
+        message: 'Failure: Failed to Delete All Rooms!',
+        error: err
+      })
+    })
+  return res.status(200).json({
+    message: 'Success: All Rooms Deleted'
+  })
+})
+
 module.exports = router;
