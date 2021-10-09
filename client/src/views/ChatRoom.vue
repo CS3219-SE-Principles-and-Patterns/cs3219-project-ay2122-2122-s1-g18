@@ -6,10 +6,10 @@
       </h2>
       <b-list-group class="panel-body" v-chat-scroll>
         <b-list-group-item v-for="item in chats" class="chat" :key="item.id">
-          <div class="right clearfix" v-if="item.nickname === nickname">
+          <div class="right clearfix" v-if="item.name === name">
             <div class="chat-body clearfix">
               <div class="header">
-                <strong class="primary-font">{{ item.nickname }}</strong> <small class="pull-right text-muted">
+                <strong class="primary-font">{{ item.name }}</strong> <small class="pull-right text-muted">
                 <span class="glyphicon glyphicon-time"></span>{{ item.created_date }}</small>
               </div>
               <p>{{ item.message }}</p>
@@ -18,7 +18,7 @@
           <div class="left clearfix" v-else>
             <div class="chat-body clearfix">
               <div class="header">
-                <strong class="primary-font">{{ item.nickname }}</strong> <small class="pull-right text-muted">
+                <strong class="primary-font">{{ item.name }}</strong> <small class="pull-right text-muted">
                 <span class="glyphicon glyphicon-time"></span>{{ item.created_date }}</small>
               </div>
               <p>{{ item.message }}</p>
@@ -57,7 +57,7 @@ export default {
     return {
       chats: [],
       errors: [],
-      nickname: this.$route.params.nickname,
+      name: this.$route.params.name,
       chat: {},
       socket: io('http://localhost:4000')
     }
@@ -80,8 +80,8 @@ export default {
     logout () {
       this.socket.emit('save-message', {
         room: this.chat.room,
-        nickname: 'PeerPrep Bot',
-        message: this.chat.nickname + ' left this room',
+        name: 'PeerPrep Bot',
+        message: this.chat.name + ' left this room',
         created_date: new Date()
       })
       this.$router.push({
@@ -91,7 +91,7 @@ export default {
     onSubmit (evt) {
       evt.preventDefault()
       this.chat.room = this.$route.params.id
-      this.chat.nickname = this.$route.params.nickname
+      this.chat.name = this.$route.params.name
       axios.post(`${SERVER_URI}/api/chat`, this.chat)
         .then(response => {
           this.socket.emit('save-message', response.data.data)

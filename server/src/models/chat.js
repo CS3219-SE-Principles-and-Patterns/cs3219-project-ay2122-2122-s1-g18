@@ -5,7 +5,7 @@ var ChatSchema = new mongoose.Schema({
     type: Schema.Types.ObjectId,
     ref: 'Room'
   },
-  nickname: String,
+  name: String,
   message: String,
   created_date: {
     type: Date,

@@ -11,7 +11,7 @@
                   :label-cols="4"
                   breakpoint="md"
                   label="Enter Name">
-          <b-form-input id="nickname" v-model.trim="chat.nickname" required></b-form-input>
+          <b-form-input id="name" v-model.trim="chat.name" required></b-form-input>
         </b-form-group>
         <b-button type="submit" class="btn btn-success w-100">Join</b-button>
       </b-form>
@@ -36,20 +36,20 @@ export default {
     onSubmit (evt) {
       evt.preventDefault()
       this.chat.room = this.$route.params.id
-      this.chat.message = this.chat.nickname + ' joined the room'
+      this.chat.message = this.chat.name + ' joined the room'
       axios.post(`${SERVER_URI}/api/chat`, this.chat)
         .then(response => {
           this.socket.emit('save-message', {
             room: this.chat.room,
-            nickname: 'PeerPrep Bot',
-            message: this.chat.nickname + ' joined this room',
+            name: 'PeerPrep Bot',
+            message: this.chat.name + ' joined this room',
             created_date: new Date()
           })
           this.$router.push({
             name: 'chatroom',
             params: {
               id: this.$route.params.id,
-              nickname: response.data.data.nickname
+              name: response.data.data.name
             }
           })
         })
