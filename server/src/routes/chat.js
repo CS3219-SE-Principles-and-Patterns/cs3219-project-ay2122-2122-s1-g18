@@ -4,7 +4,7 @@ const app = express()
 const server = require('http').createServer(app)
 const io = require('socket.io')(server, {
   cors: {
-    origin: "http://localhost:8081",
+    origin: 'http://localhost:8081',
     credentials: true
   }
 })
@@ -18,36 +18,37 @@ io.on('connection', socket => {
   socket.on('save-message', function (data) {
     io.emit('new-message', { message: data })
   })
-  socket.on('disconnect', function() {
+  socket.on('disconnect', function () {
     console.log('User disconnected')
   })
 })
 
 // gets all the chats
 router.get('/', (req, res, next) => {
-  Chat.find((err, chats) => {
-    if (err) {
-      res.status(500).json({ 
-        status: 'error',
-        message: err.message 
-      })
-    } else {
-      res.json({
+  Chat.find()
+    .exec()
+    .then(chats => {
+      res.status(200).json({
         status: 'success',
         message: 'chats retrieved successfully',
         data: chats
       })
-    }
-  })
+    })
+    .catch(err => {
+      res.status(500).json({
+        status: 'error',
+        message: err.message
+      })
+    })
 })
 
 // gets a chat by its id
 router.get('/:id', (req, res, next) => {
   Chat.findById(req.params.id, (err, chat) => {
     if (err) {
-      res.status(500).json({ 
+      res.status(500).json({
         status: 'error',
-        message: err.message 
+        message: err.message
       })
     } else {
       res.json({
@@ -64,14 +65,14 @@ router.post('/', (req, res, next) => {
   Chat.create(req.body, (err, chat) => {
     if (err) {
       res.status(400).json({
-          status: 'error',
-          message: err.message 
+        status: 'error',
+        message: err.message
       })
     } else {
       res.status(201).json({
-          status: 'success',
-          message: 'chat saved',
-          data: chat
+        status: 'success',
+        message: 'chat saved',
+        data: chat
       })
     }
   })
@@ -83,7 +84,7 @@ router.put('/:id', (req, res, next) => {
     if (err) {
       res.status(400).json({
         status: 'error',
-        message: err.message 
+        message: err.message
       })
     } else {
       res.json({
@@ -101,7 +102,7 @@ router.delete('/:id', (req, res, next) => {
     if (err) {
       res.status(400).json({
         status: 'error',
-        message: err.message 
+        message: err.message
       })
     } else {
       res.json({

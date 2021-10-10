@@ -1,32 +1,33 @@
-var express = require('express')
-var router = express.Router()
-var Room = require('../models/room.js')
+const express = require('express')
+const router = express.Router()
+const Room = require('../models/room.js')
 
 // gets all the rooms
 router.get('/', (req, res, next) => {
-  Room.find((err, rooms) => {
-    if (err) {
-      res.status(500).json({ 
-        status: 'error',
-        message: err.message 
-      })
-    } else {
-      res.json({
+  Room.find()
+    .exec()
+    .then(rooms => {
+      res.status(200).json({
         status: 'success',
         message: 'rooms retrieved successfully',
         data: rooms
       })
-    }
-  })
+    })
+    .catch(err => {
+      res.status(500).json({
+        status: 'error',
+        message: err.message
+      })
+    })
 })
 
 // gets a room by its id
 router.get('/:id', (req, res, next) => {
   Room.findById(req.params.id, (err, room) => {
     if (err) {
-      res.status(500).json({ 
+      res.status(500).json({
         status: 'error',
-        message: err.message 
+        message: err.message
       })
     } else {
       res.json({
@@ -43,14 +44,14 @@ router.post('/', (req, res, next) => {
   Room.create(req.body, (err, room) => {
     if (err) {
       res.status(400).json({
-          status: 'error',
-          message: err.message 
+        status: 'error',
+        message: err.message
       })
     } else {
       res.status(201).json({
-          status: 'success',
-          message: 'room saved',
-          data: room
+        status: 'success',
+        message: 'room saved',
+        data: room
       })
     }
   })
@@ -62,7 +63,7 @@ router.put('/:id', (req, res, next) => {
     if (err) {
       res.status(400).json({
         status: 'error',
-        message: err.message 
+        message: err.message
       })
     } else {
       res.json({
@@ -80,7 +81,7 @@ router.delete('/:id', (req, res, next) => {
     if (err) {
       res.status(400).json({
         status: 'error',
-        message: err.message 
+        message: err.message
       })
     } else {
       res.json({
