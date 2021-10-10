@@ -1,31 +1,39 @@
 <template>
   <b-row>
-    <b-col cols="12">
-      <h2>
-        Chat Room - <b-btn size="sm" @click.stop="logout()">Leave</b-btn>
-      </h2>
-      <b-list-group class="panel-body" v-chat-scroll>
-        <b-list-group-item v-for="item in chats" class="chat" :key="item.id">
-          <div class="right clearfix" v-if="item.name === name">
-            <div class="chat-body clearfix">
-              <div class="header">
-                <strong class="primary-font">{{ item.name }}</strong> <small class="pull-right text-muted">
-                <span class="glyphicon glyphicon-time"></span>{{ item.created_date }}</small>
+    <b-col cols="6">
+      <h3>Code Editor</h3>
+      <b-form-textarea class="text-area panel-body" @input="updateCode" v-model="code" placeholder="Type your code here..." v-chat-scroll>
+        <p>{{code}}</p>
+      </b-form-textarea>
+    </b-col>
+    <b-col cols="6">
+      <div class="panel panel-primary">
+        <div class="panel-heading">
+          <h3 class="panel-title">Chat Box</h3>
+        </div>
+        <div class="panel-body" v-chat-scroll>
+            <b-list-group-item v-for="item in chats" class="chat" :key="item.id">
+              <div class="right clearfix" v-if="item.name === name">
+                <div class="chat-body clearfix">
+                  <div class="header">
+                    <strong class="primary-font">{{ item.name }}</strong> <small class="pull-right text-muted">
+                    <span class="glyphicon glyphicon-time"></span>{{ item.created_date }}</small>
+                  </div>
+                  <p>{{ item.message }}</p>
+                </div>
               </div>
-              <p>{{ item.message }}</p>
-            </div>
-          </div>
-          <div class="left clearfix" v-else>
-            <div class="chat-body clearfix">
-              <div class="header">
-                <strong class="primary-font">{{ item.name }}</strong> <small class="pull-right text-muted">
-                <span class="glyphicon glyphicon-time"></span>{{ item.created_date }}</small>
+              <div class="left clearfix" v-else>
+                <div class="chat-body clearfix">
+                  <div class="header">
+                    <strong class="primary-font">{{ item.name }}</strong> <small class="pull-right text-muted">
+                    <span class="glyphicon glyphicon-time"></span>{{ item.created_date }}</small>
+                  </div>
+                  <p>{{ item.message }}</p>
+                </div>
               </div>
-              <p>{{ item.message }}</p>
-            </div>
-          </div>
-        </b-list-group-item>
-      </b-list-group>
+            </b-list-group-item>
+        </div>
+      </div>
       <ul v-if="errors && errors.length">
         <li v-for="error of errors" v-bind:key="error">
           {{error.message}}
@@ -33,13 +41,15 @@
       </ul>
       <b-form @submit="onSubmit" class="chat-form">
         <b-input-group prepend="Message">
-          <b-form-input id="message" v-model.trim="chat.message"></b-form-input>
+          <b-form-input id="message" v-model.trim="chat.message" placeholder="Chat here..." required></b-form-input>
           <b-input-group-append>
-            <b-btn type="submit" variant="info">Send</b-btn>
+            <b-btn type="submit" variant="primary">Send</b-btn>
           </b-input-group-append>
         </b-input-group>
       </b-form>
     </b-col>
+    <!-- TODO -->
+    <b-btn variant="danger" @click.stop="logout()" type="button" class="ml-auto">End Session</b-btn>
   </b-row>
 </template>
 
@@ -59,7 +69,8 @@ export default {
       errors: [],
       name: this.$route.params.name,
       chat: {},
-      socket: io('http://localhost:4000')
+      socket: io('http://localhost:4000'),
+      code: ''
     }
   },
   created () {
@@ -73,6 +84,11 @@ export default {
     this.socket.on('new-message', function (data) {
       if (data.message.room === this.$route.params.id) {
         this.chats.push(data.message)
+      }
+    }.bind(this))
+    this.socket.on('update-code', function (data) {
+      if (data.room === this.$route.params.id) {
+        this.code = data.message
       }
     }.bind(this))
   },
@@ -100,6 +116,14 @@ export default {
         .catch(e => {
           this.errors.push(e)
         })
+    },
+    updateCode (evt) {
+      this.code = evt
+      this.chat.room = this.$route.params.id
+      this.socket.emit('new-code', {
+        room: this.chat.room,
+        message: this.code
+      })
     }
   }
 }
@@ -123,11 +147,16 @@ export default {
 
   .panel-body {
     overflow-y: scroll;
-    height: 350px;
+    height: 500px;
   }
 
   .chat-form {
     margin: 20px auto;
-    width: 80%;
+    width: 100%;
+  }
+
+  .text-area {
+    font-size: 17px;
+    font-family: 'Courier New', Courier, monospace;
   }
 </style>

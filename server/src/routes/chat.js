@@ -18,6 +18,9 @@ io.on('connection', socket => {
   socket.on('save-message', function (data) {
     io.emit('new-message', { message: data })
   })
+  socket.on('new-code', function (data) {
+    io.emit('update-code', data)
+  })
   socket.on('disconnect', function () {
     console.log('User disconnected')
   })

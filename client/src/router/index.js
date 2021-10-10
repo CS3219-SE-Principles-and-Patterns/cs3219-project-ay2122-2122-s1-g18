@@ -28,7 +28,7 @@ const routes = [{
   name: 'joinroom',
   component: () => import('../views/JoinRoom')
 }, {
-  path: '/chat-room/:id/:nickname',
+  path: '/chat-room/:id/:name',
   name: 'chatroom',
   component: () => import('../views/ChatRoom')
 }]
