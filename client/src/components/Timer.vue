@@ -1,4 +1,5 @@
-// Adapted from https://medium.com/js-dojo/how-to-create-an-animated-countdown-timer-with-vue-89738903823f
+Adapted from https://medium.com/js-dojo/how-to-create-an-animated-countdown-timer-with-vue-89738903823f
+
 <template>
   <div class='timer'>
     <svg class='timer__svg' viewBox='0 0 100 100'>
