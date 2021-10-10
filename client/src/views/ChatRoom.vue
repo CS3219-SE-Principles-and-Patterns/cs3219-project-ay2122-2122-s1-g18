@@ -1,7 +1,7 @@
 <template>
   <b-row>
     <b-col cols="6">
-      <h3>Code Editor</h3>
+      <h3 class="heading">Code Editor</h3>
       <b-form-textarea class="text-area panel-body" @input="updateCode" v-model="code" placeholder="Type your code here..." v-chat-scroll>
         <p>{{code}}</p>
       </b-form-textarea>
@@ -9,7 +9,7 @@
     <b-col cols="6">
       <div class="panel panel-primary">
         <div class="panel-heading">
-          <h3 class="panel-title">Chat Box</h3>
+          <h3 class="heading">Chat Box</h3>
         </div>
         <div class="panel-body" v-chat-scroll>
             <b-list-group-item v-for="item in chats" class="chat" :key="item.id">
@@ -48,8 +48,9 @@
         </b-input-group>
       </b-form>
     </b-col>
-    <!-- TODO -->
-    <b-btn variant="danger" @click.stop="logout()" type="button" class="ml-auto">End Session</b-btn>
+    <div class="form-group justify-content-center d-flex">
+      <b-button variant="danger" @click.prevent="logout()" type="button" class="endButton ml-auto mt-4 mb-2 px-5">End Session</b-button>
+    </div>
   </b-row>
 </template>
 
@@ -94,15 +95,17 @@ export default {
   },
   methods: {
     logout () {
-      this.socket.emit('save-message', {
-        room: this.chat.room,
-        name: 'PeerPrep Bot',
-        message: this.chat.name + ' left this room',
-        created_date: new Date()
-      })
-      this.$router.push({
-        name: 'roomlist'
-      })
+      if (window.confirm('Do you really want to end the session?')) {
+        this.socket.emit('save-message', {
+          room: this.chat.room,
+          name: 'PeerPrep Bot',
+          message: this.chat.name + ' left this room',
+          created_date: new Date()
+        })
+        this.$router.push({
+          name: 'roomlist'
+        })
+      }
     },
     onSubmit (evt) {
       evt.preventDefault()
@@ -132,17 +135,15 @@ export default {
 <style>
   .chat .left .chat-body {
     text-align: left;
-    margin-left: 100px;
   }
 
   .chat .right .chat-body {
     text-align: right;
-    margin-right: 100px;
   }
 
   .chat .chat-body p {
     margin: 0;
-    color: #777777;
+    font-size: 18px;
   }
 
   .panel-body {
@@ -151,8 +152,12 @@ export default {
   }
 
   .chat-form {
-    margin: 20px auto;
+    margin-bottom: 20px;
     width: 100%;
+  }
+
+  .heading {
+    margin-bottom: 18px;
   }
 
   .text-area {
