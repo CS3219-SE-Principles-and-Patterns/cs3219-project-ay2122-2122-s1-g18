@@ -1,7 +1,7 @@
 const mongoose = require('mongoose')
 const Schema = mongoose.Schema
 
-const ChatSchema = new mongoose.Schema({
+const RealtimeSchema = new mongoose.Schema({
   room: {
     type: Schema.Types.ObjectId,
     ref: 'Room'
@@ -14,4 +14,4 @@ const ChatSchema = new mongoose.Schema({
   }
 })
 
-module.exports = mongoose.model('Chat', ChatSchema)
+module.exports = mongoose.model('Realtime', RealtimeSchema)

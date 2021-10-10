@@ -82,7 +82,7 @@ export default {
       .catch(e => {
         this.errors.push(e)
       })
-    this.socket.on('new-message', function (data) {
+    this.socket.on('new-chat', function (data) {
       if (data.message.room === this.$route.params.id) {
         this.chats.push(data.message)
       }
@@ -96,7 +96,7 @@ export default {
   methods: {
     logout () {
       if (window.confirm('Do you really want to end the session?')) {
-        this.socket.emit('save-message', {
+        this.socket.emit('save-chat', {
           room: this.chat.room,
           name: 'PeerPrep Bot',
           message: this.chat.name + ' left this room',
@@ -113,7 +113,7 @@ export default {
       this.chat.name = this.$route.params.name
       axios.post(`${SERVER_URI}/api/chat`, this.chat)
         .then(response => {
-          this.socket.emit('save-message', response.data.data)
+          this.socket.emit('save-chat', response.data.data)
           this.chat.message = ''
         })
         .catch(e => {

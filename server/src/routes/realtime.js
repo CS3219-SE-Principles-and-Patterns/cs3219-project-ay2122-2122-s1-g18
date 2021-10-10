@@ -8,15 +8,15 @@ const io = require('socket.io')(server, {
     credentials: true
   }
 })
-const Chat = require('../models/chat.js')
+const Realtime = require('../models/realtime.js')
 
 // socket IO
 server.listen(4000)
 
 io.on('connection', socket => {
   console.log('User connected')
-  socket.on('save-message', function (data) {
-    io.emit('new-message', { message: data })
+  socket.on('save-chat', function (data) {
+    io.emit('new-chat', { message: data })
   })
   socket.on('new-code', function (data) {
     io.emit('update-code', data)
@@ -28,7 +28,7 @@ io.on('connection', socket => {
 
 // gets all the chats
 router.get('/', (req, res, next) => {
-  Chat.find()
+  Realtime.find()
     .exec()
     .then(chats => {
       res.status(200).json({
@@ -47,7 +47,7 @@ router.get('/', (req, res, next) => {
 
 // gets a chat by its id
 router.get('/:id', (req, res, next) => {
-  Chat.findById(req.params.id, (err, chat) => {
+  Realtime.findById(req.params.id, (err, chat) => {
     if (err) {
       res.status(500).json({
         status: 'error',
@@ -65,7 +65,7 @@ router.get('/:id', (req, res, next) => {
 
 // saves a chat
 router.post('/', (req, res, next) => {
-  Chat.create(req.body, (err, chat) => {
+  Realtime.create(req.body, (err, chat) => {
     if (err) {
       res.status(400).json({
         status: 'error',
@@ -83,7 +83,7 @@ router.post('/', (req, res, next) => {
 
 // updates a chat
 router.put('/:id', (req, res, next) => {
-  Chat.findByIdAndUpdate(req.params.id, req.body, (err, chat) => {
+  Realtime.findByIdAndUpdate(req.params.id, req.body, (err, chat) => {
     if (err) {
       res.status(400).json({
         status: 'error',
@@ -101,7 +101,7 @@ router.put('/:id', (req, res, next) => {
 
 // deletes a chat
 router.delete('/:id', (req, res, next) => {
-  Chat.findByIdAndRemove(req.params.id, req.body, (err, chat) => {
+  Realtime.findByIdAndRemove(req.params.id, req.body, (err, chat) => {
     if (err) {
       res.status(400).json({
         status: 'error',
@@ -119,7 +119,7 @@ router.delete('/:id', (req, res, next) => {
 
 // deletes all the chats
 router.delete('/', (req, res) => {
-  Chat.deleteMany({})
+  Realtime.deleteMany({})
     .exec()
     .then()
     .catch(err => {

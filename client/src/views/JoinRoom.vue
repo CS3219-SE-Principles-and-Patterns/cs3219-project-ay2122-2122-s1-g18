@@ -43,14 +43,14 @@ export default {
       this.chat.message = this.chat.name + ' joined the room'
       axios.post(`${SERVER_URI}/api/chat`, this.chat)
         .then(response => {
-          this.socket.emit('save-message', {
+          this.socket.emit('save-chat', {
             room: this.chat.room,
             name: 'PeerPrep Bot',
             message: this.chat.name + ' joined this room',
             created_date: new Date()
           })
           this.$router.push({
-            name: 'chatroom',
+            name: 'codingroom',
             params: {
               id: this.$route.params.id,
               name: response.data.data.name
