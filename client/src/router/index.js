@@ -28,9 +28,9 @@ const routes = [{
   name: 'joinroom',
   component: () => import('../views/JoinRoom')
 }, {
-  path: '/chat-room/:id/:nickname',
-  name: 'chatroom',
-  component: () => import('../views/ChatRoom')
+  path: '/coding-room/:id/:name',
+  name: 'codingroom',
+  component: () => import('../views/CodingRoom')
 }]
 
 const router = new VueRouter({
