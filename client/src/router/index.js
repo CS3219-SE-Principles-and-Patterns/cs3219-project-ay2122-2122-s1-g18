@@ -15,6 +15,10 @@ const routes = [{
   path: '/login',
   name: 'login',
   component: () => import('../views/Login')
+}, {
+  path: '/matching',
+  name: 'matching',
+  component: () => import('../views/Matching')
 }]
 
 const router = new VueRouter({
