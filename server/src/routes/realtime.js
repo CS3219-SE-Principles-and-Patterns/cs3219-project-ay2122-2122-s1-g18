@@ -4,7 +4,7 @@ const app = express()
 const server = require('http').createServer(app)
 const io = require('socket.io')(server, {
   cors: {
-    origin: 'http://localhost:8081',
+    origin: 'http://localhost:8080',
     credentials: true
   }
 })
@@ -14,15 +14,32 @@ const Realtime = require('../models/realtime.js')
 server.listen(4000)
 
 io.on('connection', socket => {
-  console.log('User connected')
+  socket.on('find-match', (matchBy, originSocketId) => {
+    socket.to(`waiting-${matchBy}`)
+      .emit('match-request', originSocketId)
+  })
+
+  socket.on('accept-match', (matchBy, partnerSocketId) => {
+    socket.to(partnerSocketId)
+      .emit('match-found')
+    socket.leave(`waiting-${matchBy}`)
+    socket.join(partnerSocketId)
+  })
+
+  socket.on('join-wait', (matchBy) => {
+    socket.join(`waiting-${matchBy}`)
+  })
+
+  socket.on('end-wait', (matchBy) => {
+    socket.leave(`waiting-${matchBy}`)
+  })
+
   socket.on('save-chat', function (data) {
     io.emit('new-chat', { message: data })
   })
+
   socket.on('new-code', function (data) {
     io.emit('update-code', data)
-  })
-  socket.on('disconnect', function () {
-    console.log('User disconnected')
   })
 })
 

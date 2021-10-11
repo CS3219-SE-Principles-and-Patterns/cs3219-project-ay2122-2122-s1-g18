@@ -57,20 +57,19 @@
 <script>
 import axios from 'axios'
 import Vue from 'vue'
-import * as io from 'socket.io-client'
 import { SERVER_URI } from '../constants'
 import VueChatScroll from 'vue-chat-scroll'
 Vue.use(VueChatScroll)
 
 export default {
-  name: 'chatroom',
+  name: 'codingroom',
   data () {
     return {
       chats: [],
       errors: [],
       name: this.$route.params.name,
       chat: {},
-      socket: io('http://localhost:4000'),
+      socket: this.$route.params.socket,
       code: ''
     }
   },
