@@ -2,6 +2,7 @@
   <div class="row justify-content-center">
     <div class="col-md-6">
       <h3 class="text-center">Login</h3>
+      <b-alert v-if="isNewUser" show="30">An email has been sent to your account. Verify before proceeding.</b-alert>
       <b-alert v-if="missingField" show="30">Missing field. Please fill up all fields.</b-alert>
       <b-alert v-if="wrongCredentials" show="30">Wrong username/ password.</b-alert>
       <b-alert v-if="invalidEmail" show="30">Email not verified. Please verify your email before continuing.</b-alert>
@@ -41,12 +42,17 @@ export default {
       invalidEmail: false
     }
   },
+  computed: {
+    isNewUser () {
+      return this.$route.params.newUser
+    }
+  },
   methods: {
     handleSubmitForm () {
       this.missingField = false
       this.wrongCredentials = false
       this.invalidEmail = false
-      const apiURL = `${SERVER_URI}/api/user/login`
+      const apiURL = `${SERVER_URI}/api/users`
       axios.post(apiURL, this.user)
         .then((data) => {
           if (data && data.data) {
