@@ -84,7 +84,7 @@ def main():
         
         question_text = question_html.split('Example')[0]
         result = result + (question_text,)
-        # print(question_text)
+        
         print(result, '\n')
         questions_db.insert_one({
             'frontend_question_id': result[0],
