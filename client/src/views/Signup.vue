@@ -53,7 +53,7 @@ export default {
       this.invalidEmail = false
       this.emailUsernameExists = false
       this.fail = false
-      const apiURL = `${SERVER_URI}/api/user/signup`
+      const apiURL = `${SERVER_URI}/api/users/signup`
       axios.post(apiURL, this.user)
         .then(() => {
           this.$router.push({

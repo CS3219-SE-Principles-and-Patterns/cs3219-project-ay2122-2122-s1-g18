@@ -9,7 +9,6 @@ const room = require('./src/routes/room')
 const realtime = require('./src/routes/realtime')
 
 const routes = require('./src/routes')
-const userRoutes = require('./src/routes/users')
 
 const app = express()
 const port = process.env.PORT || 8000
@@ -33,7 +32,6 @@ app.get('/', (req, res) => {
 })
 
 app.use('/api', routes)
-app.use('/api/user', userRoutes)
 
 app.listen(port, () => {
   console.log('Running on port', port)
