@@ -26,14 +26,14 @@
 <script>
 import axios from 'axios'
 import * as io from 'socket.io-client'
-import { SERVER_URI } from '../constants'
+import { SERVER_URI, SOCKET_URI } from '../constants'
 
 export default {
   name: 'joinroom',
   data () {
     return {
       chat: {},
-      socket: io('http://localhost:4000')
+      socket: io(SOCKET_URI)
     }
   },
   methods: {

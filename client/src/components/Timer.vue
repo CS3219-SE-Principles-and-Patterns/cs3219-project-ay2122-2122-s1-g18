@@ -74,6 +74,10 @@ export default {
     }
   },
 
+  created () {
+    this.TIMER_RADIUS = TIMER_RADIUS
+  },
+
   mounted () {
     this.startTimer()
   },
