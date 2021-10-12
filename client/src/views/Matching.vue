@@ -36,7 +36,9 @@
 </template>
 
 <script>
+import io from 'socket.io-client'
 import Timer from '../components/Timer'
+import { SOCKET_URI } from '../constants'
 
 export default {
   name: 'matching',
@@ -46,17 +48,38 @@ export default {
   data () {
     return {
       TIME_LIMIT: 30,
+      matchBy: this.$route.params.matchBy,
+      socket: io(SOCKET_URI),
       showMatchNotFoundModal: false
     }
   },
+  created () {
+    this.socket.on('connect', () => this.findMatch())
+  },
   methods: {
+    findMatch () {
+      this.socket.emit('find-match', this.matchBy)
+      this.socket.on('match-found', (roomId) => {
+        this.$router.push({
+          name: 'codingroom',
+          params: {
+            socket: this.socket,
+            id: roomId,
+            name: this.socket.id
+          }
+        })
+      })
+    },
+
     handleTimesUp () {
       this.showMatchNotFoundModal = true
+      this.socket.emit('end-wait', this.matchBy)
     },
 
     handleWait () {
       this.showMatchNotFoundModal = false
       this.$refs.timer.restartTimer()
+      this.findMatch()
     },
 
     handleGoBackToHome () {

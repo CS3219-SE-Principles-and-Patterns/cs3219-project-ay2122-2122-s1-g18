@@ -13,7 +13,7 @@
             <b-form-input id="room_name" v-model.trim="room.room_name" placeholder="Java" required></b-form-input>
           </b-form-group>
           <div class="form-group justify-content-center d-flex">
-            <b-button class="addButton btn-success mt-4 mb-2 px-5">Add</b-button>
+            <b-button class="addButton btn-success mt-4 mb-2 px-5" type="submit">Add</b-button>
           </div>
         </b-form>
         <b-button variant="link" :to="{name: 'roomlist'}" class="link justify-content-center d-flex">Back to Room List</b-button>

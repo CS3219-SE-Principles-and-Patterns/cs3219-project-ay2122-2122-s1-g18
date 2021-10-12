@@ -57,25 +57,35 @@
 <script>
 import axios from 'axios'
 import Vue from 'vue'
-import * as io from 'socket.io-client'
 import { SERVER_URI } from '../constants'
 import VueChatScroll from 'vue-chat-scroll'
 Vue.use(VueChatScroll)
 
 export default {
-  name: 'chatroom',
+  name: 'codingroom',
   data () {
     return {
       chats: [],
       errors: [],
+      room: this.$route.params.id,
       name: this.$route.params.name,
-      chat: {},
-      socket: io('http://localhost:4000'),
+      chat: { room: this.room, name: this.name },
+      socket: this.$route.params.socket,
       code: ''
     }
   },
   created () {
-    axios.get(`${SERVER_URI}/api/chat/` + this.$route.params.id)
+    axios.post(`${SERVER_URI}/api/chat`, this.chat)
+      .then(response => {
+        this.socket.emit('save-chat', {
+          room: this.room,
+          name: 'PeerPrep Bot',
+          message: this.name + ' joined this room',
+          created_date: new Date()
+        })
+      })
+      .catch(e => this.errors.push(e))
+    axios.get(`${SERVER_URI}/api/chat/` + this.room)
       .then(response => {
         this.chats = response.data.data || []
       })
@@ -83,12 +93,12 @@ export default {
         this.errors.push(e)
       })
     this.socket.on('new-chat', function (data) {
-      if (data.message.room === this.$route.params.id) {
+      if (data.message.room === this.room) {
         this.chats.push(data.message)
       }
     }.bind(this))
     this.socket.on('update-code', function (data) {
-      if (data.room === this.$route.params.id) {
+      if (data.room === this.room) {
         this.code = data.message
       }
     }.bind(this))
@@ -97,9 +107,9 @@ export default {
     logout () {
       if (window.confirm('Do you really want to end the session?')) {
         this.socket.emit('save-chat', {
-          room: this.chat.room,
+          room: this.room,
           name: 'PeerPrep Bot',
-          message: this.chat.name + ' left this room',
+          message: this.name + ' left this room',
           created_date: new Date()
         })
         this.$router.push({
@@ -109,8 +119,6 @@ export default {
     },
     onSubmit (evt) {
       evt.preventDefault()
-      this.chat.room = this.$route.params.id
-      this.chat.name = this.$route.params.name
       axios.post(`${SERVER_URI}/api/chat`, this.chat)
         .then(response => {
           this.socket.emit('save-chat', response.data.data)
@@ -122,9 +130,8 @@ export default {
     },
     updateCode (evt) {
       this.code = evt
-      this.chat.room = this.$route.params.id
       this.socket.emit('new-code', {
-        room: this.chat.room,
+        room: this.room,
         message: this.code
       })
     }

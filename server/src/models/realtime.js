@@ -1,11 +1,7 @@
 const mongoose = require('mongoose')
-const Schema = mongoose.Schema
 
 const RealtimeSchema = new mongoose.Schema({
-  room: {
-    type: Schema.Types.ObjectId,
-    ref: 'Room'
-  },
+  room: String,
   name: String,
   message: String,
   created_date: {
