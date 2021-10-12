@@ -8,12 +8,12 @@ const sendEmail = (email, subject, text) => {
       port: 587,
       secure: true,
       auth: {
-        user: process.env.USERNAME,
+        user: process.env.GMAIL_USERNAME,
         pass: process.env.PASS
       }
     })
     transporter.sendMail({
-      from: process.env.USER,
+      from: process.env.GMAIL_USERNAME,
       to: email,
       subject: subject,
       text: text
