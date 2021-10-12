@@ -36,10 +36,9 @@
 </template>
 
 <script>
-import axios from 'axios'
 import io from 'socket.io-client'
 import Timer from '../components/Timer'
-import { SERVER_URI, SOCKET_URI } from '../constants'
+import { SOCKET_URI } from '../constants'
 
 export default {
   name: 'matching',
@@ -49,11 +48,9 @@ export default {
   data () {
     return {
       TIME_LIMIT: 30,
-      WAITING_ROOM_RESPONSE_TIMEOUT: 1000,
       matchBy: this.$route.params.matchBy,
       socket: io(SOCKET_URI),
-      showMatchNotFoundModal: false,
-      waitingRoomTimeout: null
+      showMatchNotFoundModal: false
     }
   },
   created () {
@@ -61,35 +58,14 @@ export default {
   },
   methods: {
     findMatch () {
-      this.socket.emit('find-match', this.matchBy, this.socket.id)
-      this.waitingRoomTimeout = setTimeout(() => {
-        this.joinWaitingRoom()
-      }, this.WAITING_ROOM_RESPONSE_TIMEOUT)
-      this.socket.on('match-found', () => {
-        clearTimeout(this.waitingRoomTimeout)
+      this.socket.emit('find-match', this.matchBy)
+      this.socket.on('match-found', (roomId) => {
         this.$router.push({
           name: 'codingroom',
           params: {
             socket: this.socket,
-            id: this.socket.id
-          }
-        })
-      })
-    },
-
-    joinWaitingRoom () {
-      this.socket.emit('join-wait', this.matchBy)
-      this.socket.on('match-request', async (partnerSocketId) => {
-        await axios.post(`${SERVER_URI}/api/chat`, { room: partnerSocketId, name: 'hi' })
-          .catch(e => {
-            console.log(e)
-          })
-        this.socket.emit('accept-match', this.matchBy, partnerSocketId)
-        this.$router.push({
-          name: 'codingroom',
-          params: {
-            socket: this.socket,
-            id: partnerSocketId
+            id: roomId,
+            name: this.socket.id
           }
         })
       })

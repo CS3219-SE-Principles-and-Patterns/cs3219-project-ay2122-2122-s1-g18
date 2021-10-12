@@ -12,26 +12,24 @@ const Realtime = require('../models/realtime.js')
 
 // socket IO
 server.listen(4000)
+const waitingUsers = []
 
 io.on('connection', socket => {
-  socket.on('find-match', (matchBy, originSocketId) => {
-    socket.to(`waiting-${matchBy}`)
-      .emit('match-request', originSocketId)
-  })
-
-  socket.on('accept-match', (matchBy, partnerSocketId) => {
-    socket.to(partnerSocketId)
-      .emit('match-found')
-    socket.leave(`waiting-${matchBy}`)
-    socket.join(partnerSocketId)
-  })
-
-  socket.on('join-wait', (matchBy) => {
-    socket.join(`waiting-${matchBy}`)
+  socket.on('find-match', (matchBy) => {
+    if (!waitingUsers[matchBy]) {
+      waitingUsers[matchBy] = socket.id
+      return
+    }
+    socket.join(waitingUsers[matchBy])
+    socket.emit('match-found', waitingUsers[matchBy])
+    socket.to(waitingUsers[matchBy]).emit('match-found', waitingUsers[matchBy])
+    waitingUsers[matchBy] = null
   })
 
   socket.on('end-wait', (matchBy) => {
-    socket.leave(`waiting-${matchBy}`)
+    if (waitingUsers[matchBy] === socket.id) {
+      waitingUsers[matchBy] = null
+    }
   })
 
   socket.on('save-chat', function (data) {
