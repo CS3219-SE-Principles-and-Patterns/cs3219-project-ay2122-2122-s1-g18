@@ -117,58 +117,66 @@ exports.createUser = function (req, res) {
 }
 
 // GET email verification
-exports.getEmailVerification = function (req, res) {
+exports.getEmailVerification = async function (req, res) {
   const id = req.params.id
   const tokenId = req.params.token
   // find user by the unique ._id field
-  User.findById(id)
+  const user = await User.findById(id)
     .exec()
     .then(user => {
-      if (user) {
-        // find the token associated with this user
-        Token.findOne({ userId: user._id, token: tokenId })
-          .exec()
-          .then(token => {
-            // remove the token from database after verification
-            Token.findByIdAndRemove(token._id)
-              .exec()
-              .then()
-              .catch(err => {
-                return res.status(500).json({
-                  message: 'Failure: Unable to Update',
-                  error: err
-                })
-              })
-            // update user account status to verified
-            User.updateOne({ _id: user._id, verify: true })
-              .exec()
-              .then(() => {
-                return res.status(200).json({
-                  message: 'Email Verified. You can log in to your account now.'
-                })
-              })
-              .catch(err => {
-                return res.status(500).json({
-                  message: 'Failure: Unable to Update',
-                  error: err
-                })
-              })
-          })
-          .catch(err => {
-            return res.status(404).json({
-              message: 'Failure: Invalid Link!',
-              error: err
-            })
-          })
-      } else {
-        return res.status(404).json({
-          message: 'Failure: Invalid Link!'
-        })
-      }
+      return user
     })
     .catch(err => {
       return res.status(500).json({ error: err })
     })
+  if (user) {
+    // find the token associated with this user
+    const token = await Token.findOne({ userId: user._id, token: tokenId })
+      .exec()
+      .then(token => {
+        // remove the token from database after verification
+        return token
+      })
+      .catch(err => {
+        return res.status(404).json({
+          message: 'Failure: Invalid Token!',
+          error: err
+        })
+      })
+    if (token) {
+      Token.findByIdAndRemove(token._id)
+        .exec()
+        .then()
+        .catch(err => {
+          return res.status(500).json({
+            message: 'Failure: Unable to Remove Token',
+            error: err
+          })
+        })
+      // update user account status to verified
+      User.updateOne({ _id: user._id }, { verify: true })
+        .exec()
+        .then(() => {
+          return res.status(200).json({
+            message: 'Email Verified. You can log in to your account now.'
+          })
+        })
+        .catch(err => {
+          return res.status(500).json({
+            message: 'Failure: Unable to Update',
+            error: err
+          })
+        })
+    } else {
+      return res.status(404).json({
+        message: 'Failure: Invalid Link!'
+      })
+    }
+  } else {
+    return res.status(404).json({
+      message: 'Failure: Invalid Link!'
+    })
+  }
 }
 
 exports.userLogin = function (req, res) {
