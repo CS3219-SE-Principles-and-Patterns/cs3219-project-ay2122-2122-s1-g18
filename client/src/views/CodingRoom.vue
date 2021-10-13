@@ -75,7 +75,7 @@ export default {
     }
   },
   created () {
-    axios.post(`${SERVER_URI}/api/chat`, this.chat)
+    axios.post(`${SERVER_URI}/api/chats`, this.chat)
       .then(response => {
         this.socket.emit('save-chat', {
           room: this.room,
@@ -85,7 +85,7 @@ export default {
         })
       })
       .catch(e => this.errors.push(e))
-    axios.get(`${SERVER_URI}/api/chat/` + this.room)
+    axios.get(`${SERVER_URI}/api/chats/` + this.room)
       .then(response => {
         this.chats = response.data.data || []
       })
@@ -119,7 +119,7 @@ export default {
     },
     onSubmit (evt) {
       evt.preventDefault()
-      axios.post(`${SERVER_URI}/api/chat`, this.chat)
+      axios.post(`${SERVER_URI}/api/chats`, this.chat)
         .then(response => {
           this.socket.emit('save-chat', response.data.data)
           this.chat.message = ''

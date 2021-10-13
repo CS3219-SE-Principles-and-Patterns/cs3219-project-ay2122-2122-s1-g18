@@ -1,5 +1,4 @@
 const express = require('express')
-const router = express.Router()
 const app = express()
 const server = require('http').createServer(app)
 const io = require('socket.io')(server, {
@@ -42,7 +41,7 @@ io.on('connection', socket => {
 })
 
 // gets all the chats
-router.get('/', (req, res, next) => {
+exports.getAllChats = function (req, res, next) {
   Realtime.find()
     .exec()
     .then(chats => {
@@ -58,10 +57,10 @@ router.get('/', (req, res, next) => {
         message: err.message
       })
     })
-})
+}
 
 // gets a chat by its id
-router.get('/:id', (req, res, next) => {
+exports.getChat = function (req, res, next) {
   Realtime.findById(req.params.id, (err, chat) => {
     if (err) {
       res.status(500).json({
@@ -76,10 +75,10 @@ router.get('/:id', (req, res, next) => {
       })
     }
   })
-})
+}
 
 // saves a chat
-router.post('/', (req, res, next) => {
+exports.saveChat = function (req, res, next) {
   Realtime.create(req.body, (err, chat) => {
     if (err) {
       res.status(400).json({
@@ -94,10 +93,10 @@ router.post('/', (req, res, next) => {
       })
     }
   })
-})
+}
 
 // updates a chat
-router.put('/:id', (req, res, next) => {
+exports.updateChat = function (req, res, next) {
   Realtime.findByIdAndUpdate(req.params.id, req.body, (err, chat) => {
     if (err) {
       res.status(400).json({
@@ -112,15 +111,15 @@ router.put('/:id', (req, res, next) => {
       })
     }
   })
-})
+}
 
 // deletes a chat
-router.delete('/:id', (req, res, next) => {
+exports.deleteChat = function (req, res, next) {
   Realtime.findByIdAndRemove(req.params.id, req.body, (err, chat) => {
     if (err) {
       res.status(400).json({
         status: 'error',
-        message: err.message
+        message: 'failed to delete chat'
       })
     } else {
       res.json({
@@ -130,10 +129,10 @@ router.delete('/:id', (req, res, next) => {
       })
     }
   })
-})
+}
 
 // deletes all the chats
-router.delete('/', (req, res) => {
+exports.deleteAllChats = function (req, res) {
   Realtime.deleteMany({})
     .exec()
     .then()
@@ -147,6 +146,4 @@ router.delete('/', (req, res) => {
     status: 'success',
     message: 'all chats deleted'
   })
-})
-
-module.exports = router
+}
