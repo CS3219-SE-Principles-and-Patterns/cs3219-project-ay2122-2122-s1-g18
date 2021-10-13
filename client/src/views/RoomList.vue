@@ -39,7 +39,7 @@ export default {
     }
   },
   created () {
-    axios.get(`${SERVER_URI}/api/room`)
+    axios.get(`${SERVER_URI}/api/rooms`)
       .then(response => {
         this.rooms = response.data.data
       })

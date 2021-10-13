@@ -1,9 +1,7 @@
-const express = require('express')
-const router = express.Router()
 const Room = require('../models/room.js')
 
 // gets all the rooms
-router.get('/', (req, res, next) => {
+exports.getAllRooms = function (req, res, next) {
   Room.find()
     .exec()
     .then(rooms => {
@@ -19,10 +17,10 @@ router.get('/', (req, res, next) => {
         message: err.message
       })
     })
-})
+}
 
 // gets a room by its id
-router.get('/:id', (req, res, next) => {
+exports.getRoom = function (req, res, next) {
   Room.findById(req.params.id, (err, room) => {
     if (err) {
       res.status(500).json({
@@ -37,10 +35,10 @@ router.get('/:id', (req, res, next) => {
       })
     }
   })
-})
+}
 
 // saves a room
-router.post('/', (req, res, next) => {
+exports.saveRoom = function (req, res, next) {
   Room.create(req.body, (err, room) => {
     if (err) {
       res.status(400).json({
@@ -55,10 +53,10 @@ router.post('/', (req, res, next) => {
       })
     }
   })
-})
+}
 
 // updates a room
-router.put('/:id', (req, res, next) => {
+exports.updateRoom = function (req, res, next) {
   Room.findByIdAndUpdate(req.params.id, req.body, (err, room) => {
     if (err) {
       res.status(400).json({
@@ -73,15 +71,15 @@ router.put('/:id', (req, res, next) => {
       })
     }
   })
-})
+}
 
 // deletes a room
-router.delete('/:id', (req, res, next) => {
+exports.deleteRoom = function (req, res, next) {
   Room.findByIdAndRemove(req.params.id, req.body, (err, room) => {
     if (err) {
       res.status(400).json({
         status: 'error',
-        message: err.message
+        message: 'failed to delete room'
       })
     } else {
       res.json({
@@ -91,10 +89,10 @@ router.delete('/:id', (req, res, next) => {
       })
     }
   })
-})
+}
 
 // deletes all the rooms
-router.delete('/', (req, res) => {
+exports.deleteAllRooms = function (req, res) {
   Room.deleteMany({})
     .exec()
     .then()
@@ -108,6 +106,4 @@ router.delete('/', (req, res) => {
     status: 'success',
     message: 'all rooms deleted'
   })
-})
-
-module.exports = router
+}

@@ -2,12 +2,6 @@ const cors = require('cors')
 const dotenv = require('dotenv')
 const express = require('express')
 const mongoose = require('mongoose')
-
-// realtime stuff
-const path = require('path')
-const room = require('./src/routes/room')
-const realtime = require('./src/routes/realtime')
-
 const routes = require('./src/routes')
 
 const app = express()
@@ -20,10 +14,9 @@ app.use(express.json())
 app.use(cors())
 
 // realtime stuff
+const path = require('path')
 app.use(express.static(path.join(__dirname, 'dist')))
 app.use('/rooms', express.static(path.join(__dirname, 'dist')))
-app.use('/api/room', room)
-app.use('/api/chat', realtime)
 
 app.get('/', (req, res) => {
   res.json({

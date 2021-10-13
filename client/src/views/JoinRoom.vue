@@ -41,7 +41,7 @@ export default {
       evt.preventDefault()
       this.chat.room = this.$route.params.id
       this.chat.message = this.chat.name + ' joined the room'
-      axios.post(`${SERVER_URI}/api/chat`, this.chat)
+      axios.post(`${SERVER_URI}/api/chats`, this.chat)
         .then(response => {
           this.socket.emit('save-chat', {
             room: this.chat.room,
