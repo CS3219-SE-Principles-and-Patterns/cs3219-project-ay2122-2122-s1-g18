@@ -40,9 +40,7 @@ export default {
   beforeCreate () {
     const apiURL = `${SERVER_URI}/api/users/verify/checkAuth`
     axios.get(apiURL, { headers: authHeader() })
-      .then((result) => {
-        console.log(result)
-      })
+      .then()
       .catch(() => {
         this.$router.push({
           name: 'login'

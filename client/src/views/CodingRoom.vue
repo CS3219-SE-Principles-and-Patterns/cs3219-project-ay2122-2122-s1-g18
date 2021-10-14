@@ -2,7 +2,13 @@
   <b-row>
     <b-col cols="6">
       <h3 class="heading">Code Editor</h3>
-      <b-form-textarea class="text-area panel-body" @input="updateCode" v-model="code" placeholder="Type your code here..." v-chat-scroll>
+      <b-form-textarea
+        class="text-area panel-body-left"
+        @input="updateCode"
+        v-model="code"
+        placeholder="Type your code here..."
+        v-chat-scroll
+      >
         <p>{{code}}</p>
       </b-form-textarea>
     </b-col>
@@ -11,13 +17,16 @@
         <div class="panel-heading">
           <h3 class="heading">Chat Box</h3>
         </div>
-        <div class="panel-body" v-chat-scroll>
+        <div class="panel-body-right" v-chat-scroll>
             <b-list-group-item v-for="item in chats" class="chat" :key="item.id">
               <div class="right clearfix" v-if="item.name === name">
                 <div class="chat-body clearfix">
                   <div class="header">
-                    <strong class="primary-font">{{ item.name }}</strong> <small class="pull-right text-muted">
-                    <span class="glyphicon glyphicon-time"></span>{{ item.created_date }}</small>
+                    <strong class="primary-font">{{ item.name }}</strong>
+                    <small class="pull-right text-muted">
+                      <span class="glyphicon glyphicon-time" />
+                      {{ item.timestamp }}
+                    </small>
                   </div>
                   <p>{{ item.message }}</p>
                 </div>
@@ -25,8 +34,11 @@
               <div class="left clearfix" v-else>
                 <div class="chat-body clearfix">
                   <div class="header">
-                    <strong class="primary-font">{{ item.name }}</strong> <small class="pull-right text-muted">
-                    <span class="glyphicon glyphicon-time"></span>{{ item.created_date }}</small>
+                    <strong class="primary-font">{{ item.name }}</strong>
+                    <small class="pull-right text-muted">
+                      <span class="glyphicon glyphicon-time" />
+                      {{ item.timestamp }}
+                    </small>
                   </div>
                   <p>{{ item.message }}</p>
                 </div>
@@ -34,30 +46,35 @@
             </b-list-group-item>
         </div>
       </div>
-      <ul v-if="errors && errors.length">
-        <li v-for="error of errors" v-bind:key="error">
-          {{error.message}}
-        </li>
-      </ul>
-      <b-form @submit="onSubmit" class="chat-form">
-        <b-input-group prepend="Message">
-          <b-form-input id="message" v-model.trim="chat.message" placeholder="Chat here..." required></b-form-input>
+      <b-form @submit="onSendMessage" class="chat-form">
+        <b-input-group>
+          <b-form-input
+            id="message"
+            class="chat-form-element"
+            v-model.trim="message"
+            placeholder="Chat here..."
+            required
+          />
           <b-input-group-append>
-            <b-btn type="submit" variant="primary">Send</b-btn>
+            <b-btn class="chat-form-element" type="submit" variant="primary">Send</b-btn>
           </b-input-group-append>
         </b-input-group>
       </b-form>
     </b-col>
     <div class="form-group justify-content-center d-flex">
-      <b-button variant="danger" @click.prevent="logout()" type="button" class="endButton ml-auto mt-4 mb-2 px-5">End Session</b-button>
+      <b-button variant="danger"
+        @click.prevent="leaveRoom()"
+        type="button"
+        class="endButton ml-auto mt-4 mb-2 px-5"
+      >
+        End Session
+      </b-button>
     </div>
   </b-row>
 </template>
 
 <script>
-import axios from 'axios'
 import Vue from 'vue'
-import { SERVER_URI } from '../constants'
 import VueChatScroll from 'vue-chat-scroll'
 Vue.use(VueChatScroll)
 
@@ -66,73 +83,73 @@ export default {
   data () {
     return {
       chats: [],
-      errors: [],
       room: this.$route.params.id,
       name: this.$route.params.name,
-      chat: { room: this.room, name: this.name },
       socket: this.$route.params.socket,
+      message: '',
       code: ''
     }
   },
+
   created () {
-    axios.post(`${SERVER_URI}/api/chats`, this.chat)
-      .then(response => {
-        this.socket.emit('save-chat', {
-          room: this.room,
-          name: 'PeerPrep Bot',
-          message: this.name + ' joined this room',
-          created_date: new Date()
-        })
-      })
-      .catch(e => this.errors.push(e))
-    axios.get(`${SERVER_URI}/api/chats/` + this.room)
-      .then(response => {
-        this.chats = response.data.data || []
-      })
-      .catch(e => {
-        this.errors.push(e)
-      })
-    this.socket.on('new-chat', function (data) {
-      if (data.message.room === this.room) {
-        this.chats.push(data.message)
-      }
-    }.bind(this))
-    this.socket.on('update-code', function (data) {
-      if (data.room === this.room) {
-        this.code = data.message
-      }
-    }.bind(this))
+    const joinRoomChat = {
+      room: this.room,
+      name: 'PeerPrep Bot',
+      message: this.name + ' joined this room',
+      timestamp: this.getTimeNow()
+    }
+    this.sendChat(joinRoomChat)
+
+    this.socket.on('new-chat', (chat) => this.chats.push(chat))
+
+    this.socket.on('new-code', (code) => {
+      this.code = code
+    })
   },
   methods: {
-    logout () {
+    getTimeNow () {
+      return new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+    },
+
+    getChat () {
+      return {
+        room: this.room,
+        name: this.name,
+        message: this.message,
+        timestamp: this.getTimeNow()
+      }
+    },
+
+    sendChat (chat) {
+      this.socket.emit('send-chat', chat)
+    },
+
+    leaveRoom () {
       if (window.confirm('Do you really want to end the session?')) {
-        this.socket.emit('save-chat', {
+        const leaveRoomChat = {
           room: this.room,
           name: 'PeerPrep Bot',
           message: this.name + ' left this room',
-          created_date: new Date()
-        })
+          timestamp: this.getTimeNow()
+        }
+        this.sendChat(leaveRoomChat)
         this.$router.push({
-          name: 'roomlist'
+          name: 'home'
         })
       }
     },
-    onSubmit (evt) {
+
+    onSendMessage (evt) {
       evt.preventDefault()
-      axios.post(`${SERVER_URI}/api/chats`, this.chat)
-        .then(response => {
-          this.socket.emit('save-chat', response.data.data)
-          this.chat.message = ''
-        })
-        .catch(e => {
-          this.errors.push(e)
-        })
+      this.sendChat(this.getChat())
+      this.message = ''
     },
+
     updateCode (evt) {
       this.code = evt
-      this.socket.emit('new-code', {
+      this.socket.emit('update-code', {
         room: this.room,
-        message: this.code
+        code: this.code
       })
     }
   }
@@ -153,14 +170,23 @@ export default {
     font-size: 18px;
   }
 
-  .panel-body {
+  .panel-body-left {
     overflow-y: scroll;
     height: 500px;
+  }
+
+  .panel-body-right {
+    overflow-y: scroll;
+    height: 460px;
   }
 
   .chat-form {
     margin-bottom: 20px;
     width: 100%;
+  }
+
+  .chat-form-element {
+    height: 40px;
   }
 
   .heading {

@@ -47,6 +47,7 @@ export default {
   components: {
     Timer
   },
+
   data () {
     return {
       TIME_LIMIT: 30,
@@ -55,11 +56,13 @@ export default {
       showMatchNotFoundModal: false
     }
   },
+
   beforeCreate () {
     const apiURL = `${SERVER_URI}/api/users/verify/checkAuth`
     axios.get(apiURL, { headers: authHeader() })
       .then(() => {
         this.socket.on('connect', () => this.findMatch())
+        window.onpopstate = () => this.socket.disconnect()
       })
       .catch(() => {
         this.$router.push({
@@ -67,9 +70,12 @@ export default {
         })
       })
   },
+
   // created () {
   //   this.socket.on('connect', () => this.findMatch())
+  //   window.onpopstate = () => this.socket.disconnect()
   // },
+
   methods: {
     findMatch () {
       this.socket.emit('find-match', this.matchBy)

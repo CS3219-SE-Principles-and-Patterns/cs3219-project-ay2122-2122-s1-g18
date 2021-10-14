@@ -3,20 +3,17 @@ const dotenv = require('dotenv')
 const express = require('express')
 const mongoose = require('mongoose')
 const routes = require('./src/routes')
+const socketController = require('./src/controllers/socketController')
 
 const app = express()
 const port = process.env.PORT || 8000
+const httpServer = require('http').createServer(app)
 
 app.use(express.urlencoded({
   extended: true
 }))
 app.use(express.json())
 app.use(cors())
-
-// realtime stuff
-const path = require('path')
-app.use(express.static(path.join(__dirname, 'dist')))
-app.use('/rooms', express.static(path.join(__dirname, 'dist')))
 
 app.get('/', (req, res) => {
   res.json({
@@ -28,6 +25,20 @@ app.use('/api', routes)
 
 app.listen(port, () => {
   console.log('Running on port', port)
+})
+
+// socket IO
+httpServer.listen(4000)
+
+const io = require('socket.io')(httpServer, {
+  cors: {
+    origin: 'http://localhost:8080',
+    credentials: true
+  }
+})
+
+io.on('connection', (socket) => {
+  socketController.createEventListeners(socket, io)
 })
 
 dotenv.config()
