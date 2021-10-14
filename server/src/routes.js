@@ -1,5 +1,6 @@
 const router = require('express').Router()
 const authController = require('./controllers/authController')
+const checkAuth = require('./utils/checkAuth')
 const roomController = require('./controllers/roomController')
 const realtimeController = require('./controllers/realtimeController')
 
@@ -17,6 +18,9 @@ router.route('/users/signup')
 
 router.route('/users/verify/:id/:token')
   .get(authController.getEmailVerification)
+
+router.route('/users/verify/checkAuth')
+  .get(checkAuth.allowIfLoggedIn)
 
 // Room Routes
 router.route('/rooms')

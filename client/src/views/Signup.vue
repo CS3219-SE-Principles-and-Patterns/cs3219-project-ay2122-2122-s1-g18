@@ -17,7 +17,7 @@
         </div>
         <div class="form-group">
           <label class="mb-2">Password</label>
-          <input type="text" class="form-control" v-model="user.password" required>
+          <input type="password" class="form-control" v-model="user.password" required>
         </div>
         <div class="form-group justify-content-center d-flex">
           <b-button class="createButton mt-4 mb-2 px-5" variant="success" @click="handleSubmitForm">Create</b-button>
