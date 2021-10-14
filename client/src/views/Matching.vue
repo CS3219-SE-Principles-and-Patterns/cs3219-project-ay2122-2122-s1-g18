@@ -38,7 +38,9 @@
 <script>
 import io from 'socket.io-client'
 import Timer from '../components/Timer'
-import { SOCKET_URI } from '../constants'
+import { SERVER_URI, SOCKET_URI } from '../constants'
+import axios from 'axios'
+import authHeader from '@/utils/authHeader'
 
 export default {
   name: 'matching',
@@ -53,9 +55,21 @@ export default {
       showMatchNotFoundModal: false
     }
   },
-  created () {
-    this.socket.on('connect', () => this.findMatch())
+  beforeCreate () {
+    const apiURL = `${SERVER_URI}/api/users/verify/checkAuth`
+    axios.get(apiURL, { headers: authHeader() })
+      .then(() => {
+        this.socket.on('connect', () => this.findMatch())
+      })
+      .catch(() => {
+        this.$router.push({
+          name: 'login'
+        })
+      })
   },
+  // created () {
+  //   this.socket.on('connect', () => this.findMatch())
+  // },
   methods: {
     findMatch () {
       this.socket.emit('find-match', this.matchBy)

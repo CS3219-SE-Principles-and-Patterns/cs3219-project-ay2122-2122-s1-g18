@@ -52,20 +52,25 @@ exports.getUser = function (req, res) {
 
 // POST a new user
 exports.createUser = function (req, res) {
+  const email = req.body.email.trim()
+  const username = req.body.username.trim()
+  const password = req.body.password.trim()
+
   // checks if all fields are present
-  if (!req.body.email || !req.body.username || !req.body.password) {
+  if (!email || !username || !password) {
     return res.status(400).json({
       message: 'Failure: All Fields are Compulsory!'
     })
   }
   // validates email format
-  if (!validateEmail(req.body.email)) {
+  if (!validateEmail(email)) {
     return res.status(400).json({
       message: 'Failure: Invalid Email Format!'
     })
   }
   // search for duplicate username or email
-  User.find({ $or: [{ email: req.body.email }, { username: req.body.username }] })
+  const regex = (string) => new RegExp(['^', string, '$'].join(''), 'i')
+  User.find({ $or: [{ email: regex(email) }, { username: regex(username) }] })
     .exec()
     .then(user => {
       if (user.length >= 1) {
@@ -73,7 +78,7 @@ exports.createUser = function (req, res) {
           message: 'Failure: Duplicate Username/Email!'
         })
       } else {
-        bcrypt.hash(req.body.password, 10, (err, hash) => {
+        bcrypt.hash(password, 10, (err, hash) => {
           if (err) {
             return res.status(500).json({
               error: err
@@ -81,9 +86,9 @@ exports.createUser = function (req, res) {
           } else {
             // create user object and save in database with relevant information
             const user = new User({
-              email: req.body.email,
+              email: email,
               password: hash,
-              username: req.body.username
+              username: username
             })
             user.save()
               .then()
@@ -180,12 +185,14 @@ exports.getEmailVerification = async function (req, res) {
 }
 
 exports.userLogin = function (req, res) {
-  if (!req.body.username || !req.body.password) {
+  const username = req.body.username.trim()
+  const password = req.body.password.trim()
+  if (!username || !password) {
     return res.status(400).json({
       message: 'Authentication Failed: All Fields are Compulsory!'
     })
   }
-  User.find({ username: req.body.username })
+  User.find({ username: username })
     .exec()
     .then(user => {
       if (user.length < 1) {
@@ -193,7 +200,7 @@ exports.userLogin = function (req, res) {
           message: 'Authentication Failed: Wrong Username or Password!'
         })
       }
-      bcrypt.compare(req.body.password, user[0].password, (err, result) => {
+      bcrypt.compare(password, user[0].password, (err, result) => {
         if (err) {
           return res.status(401).json({
             message: 'Authentication Failed: Wrong Username or Password!'
