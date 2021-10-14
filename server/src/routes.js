@@ -1,7 +1,5 @@
 const router = require('express').Router()
 const authController = require('./controllers/authController')
-const roomController = require('./controllers/roomController')
-const realtimeController = require('./controllers/realtimeController')
 
 // Auth Routes
 router.route('/users')
@@ -17,27 +15,5 @@ router.route('/users/signup')
 
 router.route('/users/verify/:id/:token')
   .get(authController.getEmailVerification)
-
-// Room Routes
-router.route('/rooms')
-  .get(roomController.getAllRooms)
-  .post(roomController.saveRoom)
-  .delete(roomController.deleteAllRooms)
-
-router.route('/rooms/:id')
-  .get(roomController.getRoom)
-  .put(roomController.updateRoom)
-  .delete(roomController.deleteRoom)
-
-// Realtime Routes
-router.route('/chats')
-  .get(realtimeController.getAllChats)
-  .post(realtimeController.saveChat)
-  .delete(realtimeController.deleteAllChats)
-
-router.route('/chats/:id')
-  .get(realtimeController.getChat)
-  .put(realtimeController.updateChat)
-  .delete(realtimeController.deleteChat)
 
 module.exports = router

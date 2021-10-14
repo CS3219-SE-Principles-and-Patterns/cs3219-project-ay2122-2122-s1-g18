@@ -45,6 +45,7 @@ export default {
   components: {
     Timer
   },
+
   data () {
     return {
       TIME_LIMIT: 30,
@@ -53,9 +54,12 @@ export default {
       showMatchNotFoundModal: false
     }
   },
+
   created () {
     this.socket.on('connect', () => this.findMatch())
+    window.onpopstate = () => this.socket.disconnect()
   },
+
   methods: {
     findMatch () {
       this.socket.emit('find-match', this.matchBy)
