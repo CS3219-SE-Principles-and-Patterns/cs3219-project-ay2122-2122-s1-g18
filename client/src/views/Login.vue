@@ -21,7 +21,7 @@
         </div>
         <div class="form-group">
           <label class="mb-2">Password</label>
-          <input type="text" class="form-control" v-model="user.password" required>
+          <input type="password" class="form-control" v-model="user.password" required>
         </div>
         <div class="form-group justify-content-center d-flex">
           <b-button
@@ -46,7 +46,7 @@
 
 <script>
 import axios from 'axios'
-import { SERVER_URI } from '../constants'
+import { SERVER_URI } from '@/constants'
 
 export default {
   name: 'Login',
@@ -56,7 +56,6 @@ export default {
         username: '',
         password: ''
       },
-      token: '',
       missingField: false,
       wrongCredentials: false,
       invalidEmail: false
@@ -77,11 +76,9 @@ export default {
         .then((data) => {
           if (data && data.data) {
             this.token = data.data.token
+            localStorage.setItem('accessToken', JSON.stringify(this.token))
             this.$router.push({
-              name: 'home',
-              params: {
-                token: this.token
-              }
+              name: 'home'
             })
             this.username = ''
             this.password = ''
@@ -91,7 +88,6 @@ export default {
         })
         .catch((err) => {
           const errMessage = err.response.data.message
-          console.log(errMessage)
           if (errMessage === 'Authentication Failed: All Fields are Compulsory!') {
             this.missingField = true
           } else if (errMessage === 'Authentication Failed: Please verify account before continuing.') {

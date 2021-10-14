@@ -1,5 +1,6 @@
 const router = require('express').Router()
 const authController = require('./controllers/authController')
+const checkAuth = require('./utils/checkAuth')
 
 // Auth Routes
 router.route('/users')
@@ -15,5 +16,8 @@ router.route('/users/signup')
 
 router.route('/users/verify/:id/:token')
   .get(authController.getEmailVerification)
+
+router.route('/users/verify/checkAuth')
+  .get(checkAuth.allowIfLoggedIn)
 
 module.exports = router

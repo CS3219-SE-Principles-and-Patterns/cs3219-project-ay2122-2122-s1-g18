@@ -21,6 +21,10 @@
 
 <script>
 // TODO: allow access only if authenticated
+import axios from 'axios'
+import authHeader from '../utils/authHeader'
+import { SERVER_URI } from '../constants'
+
 export default {
   name: 'home',
   data () {
@@ -32,6 +36,16 @@ export default {
         { text: 'Expert', value: 'expert' }
       ]
     }
+  },
+  beforeCreate () {
+    const apiURL = `${SERVER_URI}/api/users/verify/checkAuth`
+    axios.get(apiURL, { headers: authHeader() })
+      .then()
+      .catch(() => {
+        this.$router.push({
+          name: 'login'
+        })
+      })
   },
   methods: {
     onSubmit (event) {
