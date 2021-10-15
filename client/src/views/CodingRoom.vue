@@ -1,23 +1,39 @@
 <template>
-  <b-row>
-    <b-col cols="6">
-      <h3 class="heading">Code Editor</h3>
-      <b-form-textarea
-        class="text-area panel-body-left"
-        @input="updateCode"
-        v-model="code"
-        placeholder="Type your code here..."
-        v-chat-scroll
-      >
-        <p>{{code}}</p>
-      </b-form-textarea>
-    </b-col>
-    <b-col cols="6">
-      <div class="panel panel-primary">
-        <div class="panel-heading">
-          <h3 class="heading">Chat Box</h3>
-        </div>
-        <div class="panel-body-right" v-chat-scroll>
+  <div>
+    <b-row>
+      <b-col>
+        <b-button @click.prevent="swapRoles()" type="button" class="swapRolesButton px-4 mb-5">
+          Swap Roles
+        </b-button>
+      </b-col>
+      <b-col>
+        <h3 class="text-center mb-5">TIMER PLACEHOLDER</h3>
+      </b-col>
+      <b-col>
+        <b-button variant="danger" @click.prevent="leaveRoom()" type="button" class="endButton px-4 float-end mb-5">
+          End Session
+        </b-button>
+      </b-col>
+    </b-row>
+    <b-row>
+      <b-col cols="6">
+        <h3 class="heading">Code Editor</h3>
+        <b-form-textarea
+            class="text-area panel-body-left"
+            @input="updateCode"
+            v-model="code"
+            placeholder="Type your code here..."
+            v-chat-scroll
+        >
+          <p>{{code}}</p>
+        </b-form-textarea>
+      </b-col>
+      <b-col cols="6">
+        <div class="panel panel-primary">
+          <div class="panel-heading">
+            <h3 class="heading">Chat Box</h3>
+          </div>
+          <div class="panel-body-right" v-chat-scroll>
             <b-list-group-item v-for="item in chats" class="chat" :key="item.id">
               <div class="right clearfix" v-if="item.name === name">
                 <div class="chat-body clearfix">
@@ -44,33 +60,25 @@
                 </div>
               </div>
             </b-list-group-item>
+          </div>
         </div>
-      </div>
-      <b-form @submit="onSendMessage" class="chat-form">
-        <b-input-group>
-          <b-form-input
-            id="message"
-            class="chat-form-element"
-            v-model.trim="message"
-            placeholder="Chat here..."
-            required
-          />
-          <b-input-group-append>
-            <b-btn class="chat-form-element" type="submit" variant="primary">Send</b-btn>
-          </b-input-group-append>
-        </b-input-group>
-      </b-form>
-    </b-col>
-    <div class="form-group justify-content-center d-flex">
-      <b-button variant="danger"
-        @click.prevent="leaveRoom()"
-        type="button"
-        class="endButton ml-auto mt-4 mb-2 px-5"
-      >
-        End Session
-      </b-button>
-    </div>
-  </b-row>
+        <b-form @submit="onSendMessage" class="chat-form">
+          <b-input-group>
+            <b-form-input
+                id="message"
+                class="chat-form-element"
+                v-model.trim="message"
+                placeholder="Chat here..."
+                required
+            />
+            <b-input-group-append>
+              <b-btn class="chat-form-element" type="submit" variant="primary">Send</b-btn>
+            </b-input-group-append>
+          </b-input-group>
+        </b-form>
+      </b-col>
+    </b-row>
+  </div>
 </template>
 
 <script>
@@ -122,6 +130,10 @@ export default {
 
     sendChat (chat) {
       this.socket.emit('send-chat', chat)
+    },
+
+    swapRoles () {
+
     },
 
     leaveRoom () {
@@ -196,5 +208,19 @@ export default {
   .text-area {
     font-size: 17px;
     font-family: 'Courier New', Courier, monospace;
+  }
+
+  .swapRolesButton {
+    color: black;
+    background-color: #89CFF0;
+    outline-color: #89CFF0;
+    border-color: #89CFF0;
+  }
+
+  .swapRolesButton:hover {
+    color: black;
+    background-color: #50abd6;
+    outline-color: #50abd6;
+    border-color: #50abd6;
   }
 </style>

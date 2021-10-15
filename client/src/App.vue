@@ -2,7 +2,7 @@
   <div>
     <!-- Nav bar -->
     <nav class="navbar justify-content-between flex-nowrap flex-row">
-      <div class="container d-flex justify-content-center">
+      <div class="container d-flex">
         <h3 class="fw-bold mt-4 mb-4">PeerPrep</h3>
       </div>
     </nav>
