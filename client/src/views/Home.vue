@@ -37,30 +37,53 @@
 </template>
 
 <script>
-// TODO: allow access only if authenticated
+import io from 'socket.io-client'
 import axios from 'axios'
 import authHeader from '../utils/authHeader'
-import { SERVER_URI } from '../constants'
+import { SERVER_URI, SOCKET_URI } from '../constants'
 
 export default {
   name: 'home',
   data () {
     return {
+      socket: null,
+      waitingUsers: null,
       selected: [],
       fields: [
         { key: 'difficulty', thStyle: { display: 'none' } },
         { key: 'hasWaitingUser', thStyle: { display: 'none' } }
-      ],
-      difficultyOptions: [
-        { key: 'beginner', difficulty: 'Beginner', hasWaitingUser: true },
-        { key: 'intermediate', difficulty: 'Intermediate', hasWaitingUser: true },
-        { key: 'expert', difficulty: 'Expert', hasWaitingUser: false }
       ]
     }
   },
+
+  computed: {
+    difficultyOptions () {
+      return [{
+        key: 'beginner',
+        difficulty: 'Beginner',
+        hasWaitingUser: this.waitingUsers ? this.waitingUsers.beginner : false
+      }, {
+        key: 'intermediate',
+        difficulty: 'Intermediate',
+        hasWaitingUser: this.waitingUsers ? this.waitingUsers.intermediate : false
+      }, {
+        key: 'expert',
+        difficulty: 'Expert',
+        hasWaitingUser: this.waitingUsers ? this.waitingUsers.expert : false
+      }]
+    }
+  },
+
   beforeCreate () {
     const apiURL = `${SERVER_URI}/api/users/verify/checkAuth`
     axios.get(apiURL, { headers: authHeader() })
+      .then(() => {
+        this.socket = io(SOCKET_URI)
+        this.socket.emit('join-waiting-users-listener')
+        this.socket.on('update-waiting-users', (waitingUsers) => {
+          this.waitingUsers = waitingUsers
+        })
+      })
       .catch(() => {
         this.$router.push({
           name: 'login'

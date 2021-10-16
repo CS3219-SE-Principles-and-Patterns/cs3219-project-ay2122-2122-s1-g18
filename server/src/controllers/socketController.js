@@ -1,28 +1,41 @@
 const { assert } = require('console')
 
-const waitingUsers = new Map()
+const waitingUsers = {}
 const userMatchingPreferences = new Map()
 
+function addWaitingUser (matchBy, socket) {
+  waitingUsers[matchBy] = socket.id
+  socket.to('waiting-users-listener').emit('update-waiting-users', waitingUsers)
+}
+
+function removeWaitingUser (matchBy, io) {
+  waitingUsers[matchBy] = null
+  io.to('waiting-users-listener').emit('update-waiting-users', waitingUsers)
+}
+
 exports.createEventListeners = (socket, io) => {
+  socket.on('join-waiting-users-listener', () => {
+    socket.join('waiting-users-listener')
+  })
+
   socket.on('find-match', (matchBy) => {
     userMatchingPreferences.set(socket.id, matchBy)
 
-    if (!waitingUsers.has(matchBy)) {
-      waitingUsers.set(matchBy, socket.id)
+    if (!waitingUsers[matchBy]) {
+      addWaitingUser(matchBy, socket)
       return
     }
 
     // Use waiting user's socket id as room id
-    const codingRoomId = waitingUsers.get(matchBy)
+    const codingRoomId = waitingUsers[matchBy]
     socket.join(codingRoomId)
     io.to(codingRoomId).emit('match-found', codingRoomId)
-    waitingUsers.delete(matchBy)
+    removeWaitingUser(matchBy, io)
   })
 
   socket.on('end-wait', (matchBy) => {
-    assert(waitingUsers.has(matchBy))
-    assert(waitingUsers.get(matchBy) === socket.id)
-    waitingUsers.delete(matchBy)
+    assert(waitingUsers[matchBy] === socket.id)
+    removeWaitingUser(matchBy, io)
     userMatchingPreferences.delete(socket.id)
   })
 
@@ -37,7 +50,7 @@ exports.createEventListeners = (socket, io) => {
   socket.on('disconnect', () => {
     if (userMatchingPreferences.has(socket.id)) {
       const matchBy = userMatchingPreferences.get(socket.id)
-      waitingUsers.delete(matchBy)
+      removeWaitingUser(matchBy, io)
       userMatchingPreferences.delete(socket.id)
     }
   })
