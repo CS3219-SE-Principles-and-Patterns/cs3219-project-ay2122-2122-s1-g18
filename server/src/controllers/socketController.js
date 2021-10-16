@@ -1,30 +1,29 @@
 const { assert } = require('console')
 
-const waitingUsers = []
+const waitingUsers = new Map()
 const userMatchingPreferences = new Map()
 
 exports.createEventListeners = (socket, io) => {
   socket.on('find-match', (matchBy) => {
     userMatchingPreferences.set(socket.id, matchBy)
 
-    if (!waitingUsers[matchBy]) {
-      waitingUsers[matchBy] = socket.id
+    if (!waitingUsers.has(matchBy)) {
+      waitingUsers.set(matchBy, socket.id)
       return
     }
 
     // Use waiting user's socket id as room id
-    const codingRoomId = waitingUsers[matchBy]
+    const codingRoomId = waitingUsers.get(matchBy)
     socket.join(codingRoomId)
     io.to(codingRoomId).emit('match-found', codingRoomId)
-    waitingUsers[matchBy] = null
+    waitingUsers.delete(matchBy)
   })
 
   socket.on('end-wait', (matchBy) => {
-    assert(waitingUsers[matchBy] === socket.id)
-    if (waitingUsers[matchBy] === socket.id) {
-      waitingUsers[matchBy] = null
-      userMatchingPreferences.delete(socket.id)
-    }
+    assert(waitingUsers.has(matchBy))
+    assert(waitingUsers.get(matchBy) === socket.id)
+    waitingUsers.delete(matchBy)
+    userMatchingPreferences.delete(socket.id)
   })
 
   socket.on('send-chat', (chat) => {
@@ -36,9 +35,9 @@ exports.createEventListeners = (socket, io) => {
   })
 
   socket.on('disconnect', () => {
-    const matchBy = userMatchingPreferences.get(socket.id)
-    if (matchBy) {
-      waitingUsers[matchBy] = null
+    if (userMatchingPreferences.has(socket.id)) {
+      const matchBy = userMatchingPreferences.get(socket.id)
+      waitingUsers.delete(matchBy)
       userMatchingPreferences.delete(socket.id)
     }
   })
