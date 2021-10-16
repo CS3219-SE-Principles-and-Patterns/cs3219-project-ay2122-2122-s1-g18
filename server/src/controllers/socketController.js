@@ -1,11 +1,11 @@
 const { assert } = require('console')
 
 const waitingUsers = []
-const userPreferences = new Map()
+const userMatchingPreferences = new Map()
 
 exports.createEventListeners = (socket, io) => {
   socket.on('find-match', (matchBy) => {
-    userPreferences.set(socket.id, matchBy)
+    userMatchingPreferences.set(socket.id, matchBy)
 
     if (!waitingUsers[matchBy]) {
       waitingUsers[matchBy] = socket.id
@@ -23,7 +23,7 @@ exports.createEventListeners = (socket, io) => {
     assert(waitingUsers[matchBy] === socket.id)
     if (waitingUsers[matchBy] === socket.id) {
       waitingUsers[matchBy] = null
-      userPreferences.delete(socket.id)
+      userMatchingPreferences.delete(socket.id)
     }
   })
 
@@ -36,8 +36,10 @@ exports.createEventListeners = (socket, io) => {
   })
 
   socket.on('disconnect', () => {
-    const matchBy = userPreferences.get(socket.id)
-    waitingUsers[matchBy] = null
-    userPreferences.delete(socket.id)
+    const matchBy = userMatchingPreferences.get(socket.id)
+    if (matchBy) {
+      waitingUsers[matchBy] = null
+      userMatchingPreferences.delete(socket.id)
+    }
   })
 }
