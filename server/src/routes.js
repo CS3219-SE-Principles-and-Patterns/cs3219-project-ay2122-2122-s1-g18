@@ -5,12 +5,9 @@ const interviewQuestionsController = require('./controllers/interviewQuestionsCo
 
 // Auth Routes
 router.route('/users')
-  .get(authController.getAllUsers)
   .post(authController.userLogin)
-  .delete(authController.deleteAllUsers)
-
-router.route('/users/:userId')
-  .get(authController.getUser)
+  .put(authController.updatePassword)
+  .delete(authController.deleteUser)
 
 router.route('/users/signup')
   .post(authController.createUser)
@@ -20,6 +17,7 @@ router.route('/users/verify/:id/:token')
 
 router.route('/users/verify/checkAuth')
   .get(checkAuth.allowIfLoggedIn)
+  .post(authController.addBlacklist)
 
 router.route('/interview-questions')
   .get(interviewQuestionsController.getInterviewQuestions)

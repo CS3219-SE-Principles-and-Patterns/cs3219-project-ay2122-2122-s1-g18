@@ -1,10 +1,17 @@
 <template>
   <div>
     <!-- Nav bar -->
-    <nav class="navbar justify-content-between flex-nowrap flex-row">
-      <div class="container d-flex">
-        <h3 class="fw-bold mt-4 mb-4">PeerPrep</h3>
-      </div>
+    <nav class="nav-bar justify-content-between flex-nowrap flex-row">
+      <b-container fluid>
+        <b-row>
+          <b-col cols="10">
+            <h3 class="fw-bold mt-3 mb-3 ms-5">PeerPrep</h3>
+          </b-col>
+          <b-col cols="2" v-if="isLogin">
+            <logout class="mt-3 mb-3"></logout>
+          </b-col>
+        </b-row>
+      </b-container>
     </nav>
 
     <!-- Router view -->
@@ -15,14 +22,21 @@
 </template>
 
 <script>
+import Logout from '@/components/Logout'
 export default {
-  name: 'App'
+  name: 'App',
+  components: { Logout },
+  computed: {
+    isLogin () {
+      return this.$route.name !== 'landing'
+    }
+  }
 }
 </script>
 
 <style>
-.navbar {
+.nav-bar {
   background-color: #ffa8a1;
-  height: 60px;
+  height: 70px;
 }
 </style>

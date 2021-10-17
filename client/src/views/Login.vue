@@ -1,7 +1,7 @@
 <template>
-  <div class="row justify-content-center">
-    <div class="col-md-6">
-      <h3 class="text-center">Login</h3>
+  <b-row class="justify-content-center">
+    <b-col cols="8" >
+      <h3 class="text-center mb-4">Log In</h3>
       <b-alert v-if="isNewUser" show="30">
         An email has been sent to your account. Verify before proceeding.
       </b-alert>
@@ -15,13 +15,23 @@
         Email not verified. Please verify your email before continuing.
       </b-alert>
       <form @submit.prevent="handleSubmitForm">
-        <div class="form-group mb-2">
-          <label class="mb-2">Username</label>
-          <input type="text" class="form-control" v-model="user.username" required>
+        <div class="form-group mb-4">
+          <input
+              type="text"
+              placeholder="Username"
+              class="form-control"
+              v-model="user.username"
+              required
+          >
         </div>
         <div class="form-group">
-          <label class="mb-2">Password</label>
-          <input type="password" class="form-control" v-model="user.password" required>
+          <input
+              type="password"
+              class="form-control"
+              placeholder="Password"
+              v-model="user.password"
+              required
+          >
         </div>
         <div class="form-group justify-content-center d-flex">
           <b-button
@@ -29,23 +39,24 @@
             variant="success"
             @click="handleSubmitForm"
           >
-            Start
+            Log In
           </b-button>
         </div>
       </form>
-      <b-button
+    </b-col>
+    <b-button
         variant="link"
-        :to="{name: 'signup'}"
+        @click="changeView"
         class="link justify-content-center d-flex"
-      >
-        Sign up for an account instead!
-      </b-button>
-    </div>
-  </div>
+    >
+      Do not have an account? Sign up here!
+    </b-button>
+  </b-row>
 </template>
 
 <script>
 import axios from 'axios'
+import authHeader from '../utils/authHeader'
 import { SERVER_URI } from '@/constants'
 
 export default {
@@ -61,6 +72,18 @@ export default {
       invalidEmail: false
     }
   },
+  beforeCreate () {
+    const apiURL = `${SERVER_URI}/api/users/verify/checkAuth`
+    axios.get(apiURL, { headers: authHeader() })
+      .then(() => {
+        this.$router.push({
+          name: 'home'
+        })
+      })
+      .catch(() => {
+        console.log('Please login or signup')
+      })
+  },
   computed: {
     isNewUser () {
       return this.$route.params.newUser
@@ -75,8 +98,11 @@ export default {
       axios.post(apiURL, this.user)
         .then((data) => {
           if (data && data.data) {
-            this.token = data.data.token
-            localStorage.setItem('accessToken', JSON.stringify(this.token))
+            const user = {
+              username: data.data.username,
+              token: data.data.token
+            }
+            sessionStorage.setItem('user', JSON.stringify(user))
             this.$router.push({
               name: 'home'
             })
@@ -96,6 +122,9 @@ export default {
             this.wrongCredentials = true
           }
         })
+    },
+    changeView () {
+      this.$emit('change-view')
     }
   }
 }

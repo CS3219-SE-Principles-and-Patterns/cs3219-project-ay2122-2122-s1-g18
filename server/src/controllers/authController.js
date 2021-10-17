@@ -4,6 +4,7 @@ const randomBytes = require('randombytes')
 
 const User = require('../models/users')
 const Token = require('../models/userToken')
+const BlacklistToken = require('../models/blacklistToken')
 const sendEmail = require('../utils/email')
 
 function validateEmail (email) {
@@ -11,42 +12,101 @@ function validateEmail (email) {
   return re.test(String(email).toLowerCase())
 }
 
-// GET all users
-exports.getAllUsers = function (req, res) {
-  User.find()
-    .exec()
-    .then(users => {
-      res.status(200).json({
-        message: 'Success: All Users Displayed!',
-        data: users
-      })
-    })
-    .catch(err => {
-      res.status(500).json({
-        error: err
-      })
-    })
-}
+// DELETE a new user
+exports.deleteUser = function (req, res) {
+  const username = req.body.username.trim()
+  const password = req.body.password.trim()
 
-// GET specific user
-exports.getUser = function (req, res) {
-  const id = req.params.userId
-  User.findById(id)
+  const regex = (string) => new RegExp(['^', string, '$'].join(''), 'i')
+  User.find({ username: regex(username) })
     .exec()
     .then(user => {
-      if (user) {
-        res.status(200).json({
-          message: 'Success: User found!',
-          data: user
+      if (user.length > 0) {
+        bcrypt.compare(password, user[0].password, (err, result) => {
+          if (err) {
+            return res.status(401).json({
+              message: 'Wrong password. Unable to delete account'
+            })
+          }
+          if (result) {
+            User.deleteOne({ username: username })
+              .exec()
+              .then(() => {
+                return res.status(200).json({
+                  message: 'Success: Account Deleted'
+                })
+              })
+              .catch(() => {
+                return res.status(500).json({
+                  message: 'Failure: Unable to delete account'
+                })
+              })
+          } else {
+            return res.status(401).json({
+              message: 'Wrong password. Unable to delete account'
+            })
+          }
         })
       } else {
-        res.status(400).json({
-          message: 'Failure: Invalid ID. No User Found!'
+        return res.status(500).json({
+          message: 'Cannot find user. Unable to delete account'
         })
       }
     })
-    .catch(err => {
-      res.status(500).json({ error: err })
+}
+
+// PUT a user
+exports.updatePassword = function (req, res) {
+  const username = req.body.username.trim()
+  const oldPassword = req.body.oldPassword.trim()
+  const newPassword = req.body.newPassword.trim()
+
+  const regex = (string) => new RegExp(['^', string, '$'].join(''), 'i')
+  User.findOne({ username: regex(username) })
+    .exec()
+    .then(user => {
+      if (user) {
+        bcrypt.compare(oldPassword, user.password, (err, result) => {
+          if (err) {
+            return res.status(401).json({
+              message: 'Wrong password. Unable to reset password'
+            })
+          }
+          if (result) {
+            bcrypt.hash(newPassword, 10, (err, hash) => {
+              if (err) {
+                return res.status(500).json({
+                  error: err
+                })
+              } else {
+                user.password = hash
+                user.save()
+                  .then(() => {
+                    return res.status(200).json({
+                      message: 'Success: Password Updated'
+                    })
+                  })
+                  .catch(err => {
+                    return res.status(500).json({
+                      error: err
+                    })
+                  })
+              }
+            })
+          } else {
+            return res.status(401).json({
+              message: 'Unable to find user'
+            })
+          }
+        })
+      } else {
+        return res.status(500).json({
+          message: 'Cannot find user. Unable to delete account'
+        })
+      }
+    })
+    .catch((err) => {
+      console.log(err)
     })
 }
 
@@ -219,7 +279,8 @@ exports.userLogin = function (req, res) {
           )
           return res.status(200).json({
             message: 'Authentication successful',
-            token: token
+            token: token,
+            username: user[0].username
           })
         }
         if (!user[0].verify) {
@@ -240,27 +301,28 @@ exports.userLogin = function (req, res) {
     })
 }
 
-// DELETE all users and tokens
-exports.deleteAllUsers = function (req, res) {
-  User.deleteMany({})
-    .exec()
-    .then()
-    .catch(err => {
-      return res.status(500).json({
-        message: 'Failure: Failed to Delete All Users!',
-        error: err
-      })
+// POST blacklist token
+exports.addBlacklist = function (req, res) {
+  const temp = req.headers.authorization.split(' ')[1]
+  // checks if token is present
+  if (!temp) {
+    return res.status(400).json({
+      message: 'Failure: Unable to log out'
     })
-  Token.deleteMany({})
-    .exec()
-    .then()
-    .catch(err => {
-      return res.status(500).json({
-        message: 'Failure: Failed to Delete All Tokens!',
-        error: err
-      })
-    })
-  return res.status(200).json({
-    message: 'Success: All Users and Tokens Deleted'
+  }
+  // create user object and save in database with relevant information
+  const token = new BlacklistToken({
+    token: temp
   })
+  token.save()
+    .then(() => {
+      return res.status(200).json({
+        message: 'Success'
+      })
+    })
+    .catch(err => {
+      return res.status(500).json({
+        error: err
+      })
+    })
 }
