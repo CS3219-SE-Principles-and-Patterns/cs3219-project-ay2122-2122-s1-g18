@@ -2,7 +2,12 @@
   <div>
     <b-row>
       <b-col>
-        <b-button @click.prevent="swapRoles()" type="button" class="swapRolesButton px-4 mb-5">
+        <b-button
+          @click.prevent="loadNextCodingQuestion()"
+          type="button"
+          class="nextQuestionButton px-4 mb-5"
+          :disabled="isSecondQuestion"
+        >
           Next Coding Question
         </b-button>
       </b-col>
@@ -122,7 +127,8 @@ export default {
       isInterviewer: this.$route.params.isInterviewer,
       message: '',
       code: '',
-      interviewQuestions: null
+      interviewQuestions: null,
+      isSecondQuestion: false
     }
   },
 
@@ -142,16 +148,7 @@ export default {
       timestamp: this.getTimeNow()
     }
     this.sendChat(joinRoomChat)
-
-    const role = this.isInterviewer ? 'INTERVIEWER' : 'INTERVIEWEE'
-    const assignedRoleChat = {
-      room: this.room,
-      name: 'PeerPrep Bot',
-      message: `Your role for this coding question is ${role}`,
-      timestamp: this.getTimeNow(),
-      isPrivate: true
-    }
-    this.sendChat(assignedRoleChat)
+    this.sendAssignedRoleChat()
 
     this.socket.on('new-chat', (chat) => this.chats.push(chat))
 
@@ -177,8 +174,23 @@ export default {
       this.socket.emit('send-chat', chat)
     },
 
-    swapRoles () {
+    sendAssignedRoleChat () {
+      const role = this.isInterviewer ? 'INTERVIEWER' : 'INTERVIEWEE'
+      const assignedRoleChat = {
+        room: this.room,
+        name: 'PeerPrep Bot',
+        message: `Your role for this coding question is ${role}`,
+        timestamp: this.getTimeNow(),
+        isPrivate: true
+      }
+      this.sendChat(assignedRoleChat)
+    },
 
+    loadNextCodingQuestion () {
+      this.isInterviewer = !this.isInterviewer
+      this.sendAssignedRoleChat()
+      this.clearCode()
+      this.isSecondQuestion = true
     },
 
     leaveRoom () {
@@ -204,6 +216,14 @@ export default {
 
     updateCode (evt) {
       this.code = evt
+      this.socket.emit('update-code', {
+        room: this.room,
+        code: this.code
+      })
+    },
+
+    clearCode () {
+      this.code = ''
       this.socket.emit('update-code', {
         room: this.room,
         code: this.code
@@ -255,13 +275,13 @@ export default {
     font-family: 'Courier New', Courier, monospace;
   }
 
-  .swapRolesButton {
+  .nextQuestionButton {
     background-color: #5ab4dd;
     outline-color: #5ab4dd;
     border-color: #5ab4dd;
   }
 
-  .swapRolesButton:hover {
+  .nextQuestionButton:hover {
     background-color: #4493b8;
     outline-color: #4493b8;
     border-color: #4493b8;
