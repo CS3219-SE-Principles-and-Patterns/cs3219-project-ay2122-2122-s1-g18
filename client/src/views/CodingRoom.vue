@@ -28,11 +28,25 @@
           <p>{{code}}</p>
         </b-form-textarea>
       </b-col>
-      <b-col cols="6">
-        <div class="panel panel-primary">
-          <div class="panel-heading">
-            <h3 class="heading">Chat Box</h3>
-          </div>
+      <b-col>
+        <b-col class="panel panel-primary">
+          <b-row class="panel-heading" align-v="start" align-h="between">
+            <b-col>
+              <h3 class="heading">Chat</h3>
+            </b-col>
+            <b-col>
+              <!-- TODO: Only show in interviewer view -->
+              <b-dropdown class="float-end" right text="Send Interview Question">
+                <b-dropdown-item
+                  v-for="question in interviewQuestions"
+                  :key="question._id"
+                  @click.prevent="sendChat(getChat(question.text))"
+                >
+                  {{ question.text }}
+                </b-dropdown-item>
+              </b-dropdown>
+            </b-col>
+          </b-row>
           <div class="panel-body-right" v-chat-scroll>
             <b-list-group-item v-for="item in chats" class="chat" :key="item.id">
               <div class="right clearfix" v-if="item.name === name">
@@ -61,7 +75,7 @@
               </div>
             </b-list-group-item>
           </div>
-        </div>
+        </b-col>
         <b-form @submit="onSendMessage" class="chat-form">
           <b-input-group>
             <b-form-input
@@ -82,8 +96,11 @@
 </template>
 
 <script>
+import axios from 'axios'
 import Vue from 'vue'
 import VueChatScroll from 'vue-chat-scroll'
+import { SERVER_URI } from '@/constants'
+
 Vue.use(VueChatScroll)
 
 export default {
@@ -95,8 +112,17 @@ export default {
       name: this.$route.params.name,
       socket: this.$route.params.socket,
       message: '',
-      code: ''
+      code: '',
+      interviewQuestions: null
     }
+  },
+
+  beforeCreate () {
+    const url = `${SERVER_URI}/api/interview-questions`
+    axios.get(url)
+      .then((response) => {
+        this.interviewQuestions = response.data.data
+      })
   },
 
   created () {
@@ -119,11 +145,11 @@ export default {
       return new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
     },
 
-    getChat () {
+    getChat (message) {
       return {
         room: this.room,
         name: this.name,
-        message: this.message,
+        message,
         timestamp: this.getTimeNow()
       }
     },
@@ -153,7 +179,7 @@ export default {
 
     onSendMessage (evt) {
       evt.preventDefault()
-      this.sendChat(this.getChat())
+      this.sendChat(this.getChat(this.message))
       this.message = ''
     },
 
