@@ -79,16 +79,21 @@ export default {
   methods: {
     findMatch () {
       this.socket.emit('find-match', this.matchBy)
-      this.socket.on('match-found', (roomId) => {
+      this.socket.on('match-found', (roomInfo) => {
         this.$router.push({
           name: 'codingroom',
           params: {
             socket: this.socket,
-            id: roomId,
-            name: this.socket.id
+            id: roomInfo.id,
+            name: this.socket.id,
+            isInterviewer: this.isInterviewer(this.socket.id, roomInfo.interviewer)
           }
         })
       })
+    },
+
+    isInterviewer (socketId, interviewerId) {
+      return socketId === interviewerId
     },
 
     handleTimesUp () {

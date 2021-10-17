@@ -3,7 +3,7 @@
     <b-row>
       <b-col>
         <b-button @click.prevent="swapRoles()" type="button" class="swapRolesButton px-4 mb-5">
-          Swap Roles
+          Next Coding Question
         </b-button>
       </b-col>
       <b-col>
@@ -35,8 +35,12 @@
               <h3 class="heading">Chat</h3>
             </b-col>
             <b-col>
-              <!-- TODO: Only show in interviewer view -->
-              <b-dropdown class="float-end" right text="Send Interview Question">
+              <b-dropdown
+                class="float-end"
+                right
+                text="Send Interview Question"
+                v-if="isInterviewer"
+              >
                 <b-dropdown-item
                   v-for="question in interviewQuestions"
                   :key="question._id"
@@ -53,6 +57,7 @@
                 <div class="chat-body clearfix">
                   <div class="header">
                     <strong class="primary-font">{{ item.name }}</strong>
+                    <b-badge class="badge">{{ isInterviewer? 'Interviewer' : 'Interviewee' }}</b-badge>
                     <small class="pull-right text-muted">
                       <span class="glyphicon glyphicon-time" />
                       {{ item.timestamp }}
@@ -65,6 +70,9 @@
                 <div class="chat-body clearfix">
                   <div class="header">
                     <strong class="primary-font">{{ item.name }}</strong>
+                    <b-badge class="badge" v-if="item.name !== 'PeerPrep Bot'">
+                      {{ isInterviewer? 'Interviewee' : 'Interviewer' }}
+                    </b-badge>
                     <small class="pull-right text-muted">
                       <span class="glyphicon glyphicon-time" />
                       {{ item.timestamp }}
@@ -111,6 +119,7 @@ export default {
       room: this.$route.params.id,
       name: this.$route.params.name,
       socket: this.$route.params.socket,
+      isInterviewer: this.$route.params.isInterviewer,
       message: '',
       code: '',
       interviewQuestions: null
@@ -133,6 +142,16 @@ export default {
       timestamp: this.getTimeNow()
     }
     this.sendChat(joinRoomChat)
+
+    const role = this.isInterviewer ? 'INTERVIEWER' : 'INTERVIEWEE'
+    const assignedRoleChat = {
+      room: this.room,
+      name: 'PeerPrep Bot',
+      message: `Your role for this coding question is ${role}`,
+      timestamp: this.getTimeNow(),
+      isPrivate: true
+    }
+    this.sendChat(assignedRoleChat)
 
     this.socket.on('new-chat', (chat) => this.chats.push(chat))
 
@@ -205,7 +224,7 @@ export default {
 
   .chat .chat-body p {
     margin: 0;
-    font-size: 18px;
+    font-size: 16px;
   }
 
   .panel-body-left {
@@ -232,21 +251,24 @@ export default {
   }
 
   .text-area {
-    font-size: 17px;
+    font-size: 16px;
     font-family: 'Courier New', Courier, monospace;
   }
 
   .swapRolesButton {
-    color: black;
-    background-color: #89CFF0;
-    outline-color: #89CFF0;
-    border-color: #89CFF0;
+    background-color: #5ab4dd;
+    outline-color: #5ab4dd;
+    border-color: #5ab4dd;
   }
 
   .swapRolesButton:hover {
-    color: black;
-    background-color: #50abd6;
-    outline-color: #50abd6;
-    border-color: #50abd6;
+    background-color: #4493b8;
+    outline-color: #4493b8;
+    border-color: #4493b8;
+  }
+
+  .badge {
+    background-color: #5ab4dd;
+    margin: 5px;
   }
 </style>

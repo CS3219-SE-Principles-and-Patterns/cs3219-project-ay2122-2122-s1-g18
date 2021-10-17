@@ -13,23 +13,34 @@ function removeWaitingUser (matchBy, io) {
   io.to('waiting-users-listener').emit('update-waiting-users', waitingUsers)
 }
 
+function randSelectInterviewer (user1, user2) {
+  const rand = Math.round(Math.random())
+  if (rand <= 0) {
+    return user1
+  }
+  return user2
+}
+
 exports.createEventListeners = (socket, io) => {
   socket.on('join-waiting-users-listener', () => {
     socket.join('waiting-users-listener')
   })
 
   socket.on('find-match', (matchBy) => {
-    userMatchingPreferences.set(socket.id, matchBy)
-
     if (!waitingUsers[matchBy]) {
+      userMatchingPreferences.set(socket.id, matchBy)
       addWaitingUser(matchBy, socket)
       return
     }
 
+    const waitingUserMatched = waitingUsers[matchBy]
     // Use waiting user's socket id as room id
-    const codingRoomId = waitingUsers[matchBy]
-    socket.join(codingRoomId)
-    io.to(codingRoomId).emit('match-found', codingRoomId)
+    const codingRoomInfo = {
+      id: waitingUserMatched,
+      interviewer: randSelectInterviewer(socket.id, waitingUserMatched)
+    }
+    socket.join(codingRoomInfo.id)
+    io.to(codingRoomInfo.id).emit('match-found', codingRoomInfo)
     removeWaitingUser(matchBy, io)
   })
 
@@ -40,7 +51,11 @@ exports.createEventListeners = (socket, io) => {
   })
 
   socket.on('send-chat', (chat) => {
-    io.to(chat.room).emit('new-chat', chat)
+    if (chat.isPrivate) {
+      socket.emit('new-chat', chat)
+    } else {
+      io.to(chat.room).emit('new-chat', chat)
+    }
   })
 
   socket.on('update-code', (codeUpdate) => {
