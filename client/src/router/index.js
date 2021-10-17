@@ -3,27 +3,25 @@ import VueRouter from 'vue-router'
 
 Vue.use(VueRouter)
 
-const routes = [{
-  path: '/home',
-  name: 'home',
-  component: () => import('../views/Home')
-}, {
-  path: '/signup',
-  name: 'signup',
-  component: () => import('../views/Signup')
-}, {
-  path: '/login',
-  name: 'login',
-  component: () => import('../views/Login')
-}, {
-  path: '/matching',
-  name: 'matching',
-  component: () => import('../views/Matching')
-}, {
-  path: '/coding-room',
-  name: 'codingroom',
-  component: () => import('../views/CodingRoom')
-}]
+const routes = [
+  {
+    path: '/',
+    name: 'landing',
+    component: () => import('../views/Landing')
+  },
+  {
+    path: '/home',
+    name: 'home',
+    component: () => import('../views/Home')
+  }, {
+    path: '/matching',
+    name: 'matching',
+    component: () => import('../views/Matching')
+  }, {
+    path: '/coding-room',
+    name: 'codingroom',
+    component: () => import('../views/CodingRoom')
+  }]
 
 const router = new VueRouter({
   mode: 'history',
