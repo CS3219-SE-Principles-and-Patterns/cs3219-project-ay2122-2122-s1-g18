@@ -2,8 +2,13 @@
   <div>
     <b-row>
       <b-col>
-        <b-button @click.prevent="swapRoles()" type="button" class="swapRolesButton px-4 mb-5">
-          Swap Roles
+        <b-button
+          @click.prevent="handleNextQuestionButtonClick()"
+          type="button"
+          class="nextQuestionButton px-4 mb-5"
+          :disabled="isSecondQuestion"
+        >
+          Next Coding Question
         </b-button>
       </b-col>
       <b-col>
@@ -35,8 +40,12 @@
               <h3 class="heading">Chat</h3>
             </b-col>
             <b-col>
-              <!-- TODO: Only show in interviewer view -->
-              <b-dropdown class="float-end" right text="Send Interview Question">
+              <b-dropdown
+                class="float-end"
+                right
+                text="Send Interview Question"
+                v-if="isInterviewer"
+              >
                 <b-dropdown-item
                   v-for="question in interviewQuestions"
                   :key="question._id"
@@ -53,6 +62,7 @@
                 <div class="chat-body clearfix">
                   <div class="header">
                     <strong class="primary-font">{{ item.name }}</strong>
+                    <b-badge class="badge">{{ isInterviewer? 'Interviewer' : 'Interviewee' }}</b-badge>
                     <small class="pull-right text-muted">
                       <span class="glyphicon glyphicon-time" />
                       {{ item.timestamp }}
@@ -65,6 +75,9 @@
                 <div class="chat-body clearfix">
                   <div class="header">
                     <strong class="primary-font">{{ item.name }}</strong>
+                    <b-badge class="badge" v-if="item.name !== 'PeerPrep Bot'">
+                      {{ isInterviewer? 'Interviewee' : 'Interviewer' }}
+                    </b-badge>
                     <small class="pull-right text-muted">
                       <span class="glyphicon glyphicon-time" />
                       {{ item.timestamp }}
@@ -111,9 +124,11 @@ export default {
       room: this.$route.params.id,
       name: this.$route.params.name,
       socket: this.$route.params.socket,
+      isInterviewer: this.$route.params.isInterviewer,
       message: '',
       code: '',
-      interviewQuestions: null
+      interviewQuestions: null,
+      isSecondQuestion: false
     }
   },
 
@@ -133,12 +148,15 @@ export default {
       timestamp: this.getTimeNow()
     }
     this.sendChat(joinRoomChat)
+    this.sendAssignedRoleChat()
 
     this.socket.on('new-chat', (chat) => this.chats.push(chat))
 
     this.socket.on('new-code', (code) => {
       this.code = code
     })
+
+    this.socket.on('next-question', () => this.loadNextCodingQuestion())
   },
   methods: {
     getTimeNow () {
@@ -158,8 +176,27 @@ export default {
       this.socket.emit('send-chat', chat)
     },
 
-    swapRoles () {
+    sendAssignedRoleChat () {
+      const role = this.isInterviewer ? 'INTERVIEWER' : 'INTERVIEWEE'
+      const assignedRoleChat = {
+        room: this.room,
+        name: 'PeerPrep Bot',
+        message: `Your role for this coding question is ${role}`,
+        timestamp: this.getTimeNow(),
+        isPrivate: true
+      }
+      this.sendChat(assignedRoleChat)
+    },
 
+    handleNextQuestionButtonClick () {
+      this.socket.emit('load-next-question', this.room)
+    },
+
+    loadNextCodingQuestion () {
+      this.isInterviewer = !this.isInterviewer
+      this.sendAssignedRoleChat()
+      this.clearCode()
+      this.isSecondQuestion = true
     },
 
     leaveRoom () {
@@ -189,6 +226,14 @@ export default {
         room: this.room,
         code: this.code
       })
+    },
+
+    clearCode () {
+      this.code = ''
+      this.socket.emit('update-code', {
+        room: this.room,
+        code: this.code
+      })
     }
   }
 }
@@ -205,7 +250,7 @@ export default {
 
   .chat .chat-body p {
     margin: 0;
-    font-size: 18px;
+    font-size: 16px;
   }
 
   .panel-body-left {
@@ -232,21 +277,24 @@ export default {
   }
 
   .text-area {
-    font-size: 17px;
+    font-size: 16px;
     font-family: 'Courier New', Courier, monospace;
   }
 
-  .swapRolesButton {
-    color: black;
-    background-color: #89CFF0;
-    outline-color: #89CFF0;
-    border-color: #89CFF0;
+  .nextQuestionButton {
+    background-color: #5ab4dd;
+    outline-color: #5ab4dd;
+    border-color: #5ab4dd;
   }
 
-  .swapRolesButton:hover {
-    color: black;
-    background-color: #50abd6;
-    outline-color: #50abd6;
-    border-color: #50abd6;
+  .nextQuestionButton:hover {
+    background-color: #4493b8;
+    outline-color: #4493b8;
+    border-color: #4493b8;
+  }
+
+  .badge {
+    background-color: #5ab4dd;
+    margin: 5px;
   }
 </style>
