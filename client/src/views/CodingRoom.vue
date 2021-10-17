@@ -12,7 +12,9 @@
         </b-button>
       </b-col>
       <b-col>
-        <h3 class="text-center mb-5">TIMER PLACEHOLDER</h3>
+        <div class='container d-flex justify-content-center'>
+          <CountUpTimer ref='countUpTimer'/>
+        </div>
       </b-col>
       <b-col>
         <b-button variant="danger" @click.prevent="leaveRoom()" type="button" class="endButton px-4 float-end mb-5">
@@ -110,6 +112,7 @@
 
 <script>
 import axios from 'axios'
+import CountUpTimer from '../components/CountUpTimer'
 import Vue from 'vue'
 import VueChatScroll from 'vue-chat-scroll'
 import { SERVER_URI } from '@/constants'
@@ -118,6 +121,11 @@ Vue.use(VueChatScroll)
 
 export default {
   name: 'codingroom',
+
+  components: {
+    CountUpTimer
+  },
+
   data () {
     return {
       chats: [],
@@ -200,6 +208,7 @@ export default {
     },
 
     leaveRoom () {
+      this.$refs.countUpTimer.onClick()
       if (window.confirm('Do you really want to end the session?')) {
         const leaveRoomChat = {
           room: this.room,
@@ -211,6 +220,8 @@ export default {
         this.$router.push({
           name: 'home'
         })
+      } else {
+        this.$refs.countUpTimer.onResume()
       }
     },
 
