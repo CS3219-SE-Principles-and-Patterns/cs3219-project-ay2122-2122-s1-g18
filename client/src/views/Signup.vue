@@ -1,7 +1,7 @@
 <template>
-  <div class="row justify-content-center">
-    <div class="col-md-6">
-      <h3 class="text-center">Create an account</h3>
+  <b-row class="row justify-content-center">
+    <b-col cols="8">
+      <h3 class="text-center mb-4">Create an account</h3>
       <b-alert v-if="missingField" show="10">
         Missing field. Please fill up all fields.
       </b-alert>
@@ -15,21 +15,36 @@
         Failed to create account. Please try again later.
       </b-alert>
       <form @submit.prevent="handleSubmitForm">
-        <div class="form-group mb-2">
-          <label class="mb-2">Email</label>
-          <input type="text" class="form-control" v-model="user.email" required>
+        <div class="form-group mb-4">
+          <input
+              type="text"
+              class="form-control"
+              placeholder="Email"
+              v-model="user.email"
+              required
+          >
         </div>
-        <div class="form-group">
-          <label class="mb-2">Username</label>
-          <input type="text" class="form-control" v-model="user.username" required>
+        <div class="form-group mb-4">
+          <input
+              type="text"
+              class="form-control"
+              placeholder="Username"
+              v-model="user.username"
+              required
+          >
         </div>
-        <div class="form-group">
-          <label class="mb-2">Password</label>
-          <input type="password" class="form-control" v-model="user.password" required>
+        <div class="form-group mb-4">
+          <input
+              type="password"
+              class="form-control"
+              placeholder="Password"
+              v-model="user.password"
+              required
+          >
         </div>
         <div class="form-group justify-content-center d-flex">
           <b-button
-            class="createButton mt-4 mb-2 px-5"
+            class="createButton mb-2 px-5"
             variant="success"
             @click="handleSubmitForm"
           >
@@ -37,20 +52,21 @@
           </b-button>
         </div>
       </form>
-      <b-button
+    </b-col>
+    <b-button
         variant="link"
-        :to="{name: 'login'}"
+        @click="changeView"
         class="link justify-content-center d-flex"
-      >
-        Already have an account? Login here!
-      </b-button>
-    </div>
-  </div>
+    >
+      Already have an account? Login here!
+    </b-button>
+  </b-row>
 </template>
 
 <script>
 import axios from 'axios'
 import { SERVER_URI } from '../constants'
+import authHeader from '@/utils/authHeader'
 
 export default {
   name: 'Signup',
@@ -67,6 +83,18 @@ export default {
       fail: false
     }
   },
+  beforeCreate () {
+    const apiURL = `${SERVER_URI}/api/users/verify/checkAuth`
+    axios.get(apiURL, { headers: authHeader() })
+      .then(() => {
+        this.$router.push({
+          name: 'home'
+        })
+      })
+      .catch(() => {
+        console.log('Please login or signup')
+      })
+  },
   methods: {
     handleSubmitForm () {
       this.missingField = false
@@ -77,7 +105,7 @@ export default {
       axios.post(apiURL, this.user)
         .then(() => {
           this.$router.push({
-            name: 'login',
+            name: 'home',
             params: {
               newUser: true
             }
@@ -95,6 +123,9 @@ export default {
             this.fail = true
           }
         })
+    },
+    changeView () {
+      this.$emit('change-view')
     }
   }
 }

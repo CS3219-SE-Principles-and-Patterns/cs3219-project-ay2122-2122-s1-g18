@@ -2,8 +2,13 @@
   <div>
     <b-row>
       <b-col>
-        <b-button @click.prevent="swapRoles()" type="button" class="swapRolesButton px-4 mb-5">
-          Swap Roles
+        <b-button
+          @click.prevent="handleNextQuestionButtonClick()"
+          type="button"
+          class="nextQuestionButton px-4 mb-5"
+          :disabled="isSecondQuestion"
+        >
+          Next Coding Question
         </b-button>
       </b-col>
       <b-col>
@@ -30,17 +35,36 @@
           <p>{{code}}</p>
         </b-form-textarea>
       </b-col>
-      <b-col cols="6">
-        <div class="panel panel-primary">
-          <div class="panel-heading">
-            <h3 class="heading">Chat Box</h3>
-          </div>
+      <b-col>
+        <b-col class="panel panel-primary">
+          <b-row class="panel-heading" align-v="start" align-h="between">
+            <b-col>
+              <h3 class="heading">Chat</h3>
+            </b-col>
+            <b-col>
+              <b-dropdown
+                class="float-end"
+                right
+                text="Send Interview Question"
+                v-if="isInterviewer"
+              >
+                <b-dropdown-item
+                  v-for="question in interviewQuestions"
+                  :key="question._id"
+                  @click.prevent="sendChat(getChat(question.text))"
+                >
+                  {{ question.text }}
+                </b-dropdown-item>
+              </b-dropdown>
+            </b-col>
+          </b-row>
           <div class="panel-body-right" v-chat-scroll>
             <b-list-group-item v-for="item in chats" class="chat" :key="item.id">
               <div class="right clearfix" v-if="item.name === name">
                 <div class="chat-body clearfix">
                   <div class="header">
                     <strong class="primary-font">{{ item.name }}</strong>
+                    <b-badge class="badge">{{ isInterviewer? 'Interviewer' : 'Interviewee' }}</b-badge>
                     <small class="pull-right text-muted">
                       <span class="glyphicon glyphicon-time" />
                       {{ item.timestamp }}
@@ -53,6 +77,9 @@
                 <div class="chat-body clearfix">
                   <div class="header">
                     <strong class="primary-font">{{ item.name }}</strong>
+                    <b-badge class="badge" v-if="item.name !== 'PeerPrep Bot'">
+                      {{ isInterviewer? 'Interviewee' : 'Interviewer' }}
+                    </b-badge>
                     <small class="pull-right text-muted">
                       <span class="glyphicon glyphicon-time" />
                       {{ item.timestamp }}
@@ -63,7 +90,7 @@
               </div>
             </b-list-group-item>
           </div>
-        </div>
+        </b-col>
         <b-form @submit="onSendMessage" class="chat-form">
           <b-input-group>
             <b-form-input
@@ -84,9 +111,12 @@
 </template>
 
 <script>
+import axios from 'axios'
 import CountUpTimer from '../components/CountUpTimer'
 import Vue from 'vue'
 import VueChatScroll from 'vue-chat-scroll'
+import { SERVER_URI } from '@/constants'
+
 Vue.use(VueChatScroll)
 
 export default {
@@ -102,9 +132,20 @@ export default {
       room: this.$route.params.id,
       name: this.$route.params.name,
       socket: this.$route.params.socket,
+      isInterviewer: this.$route.params.isInterviewer,
       message: '',
-      code: ''
+      code: '',
+      interviewQuestions: null,
+      isSecondQuestion: false
     }
+  },
+
+  beforeCreate () {
+    const url = `${SERVER_URI}/api/interview-questions`
+    axios.get(url)
+      .then((response) => {
+        this.interviewQuestions = response.data.data
+      })
   },
 
   created () {
@@ -115,23 +156,26 @@ export default {
       timestamp: this.getTimeNow()
     }
     this.sendChat(joinRoomChat)
+    this.sendAssignedRoleChat()
 
     this.socket.on('new-chat', (chat) => this.chats.push(chat))
 
     this.socket.on('new-code', (code) => {
       this.code = code
     })
+
+    this.socket.on('next-question', () => this.loadNextCodingQuestion())
   },
   methods: {
     getTimeNow () {
       return new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
     },
 
-    getChat () {
+    getChat (message) {
       return {
         room: this.room,
         name: this.name,
-        message: this.message,
+        message,
         timestamp: this.getTimeNow()
       }
     },
@@ -140,8 +184,27 @@ export default {
       this.socket.emit('send-chat', chat)
     },
 
-    swapRoles () {
+    sendAssignedRoleChat () {
+      const role = this.isInterviewer ? 'INTERVIEWER' : 'INTERVIEWEE'
+      const assignedRoleChat = {
+        room: this.room,
+        name: 'PeerPrep Bot',
+        message: `Your role for this coding question is ${role}`,
+        timestamp: this.getTimeNow(),
+        isPrivate: true
+      }
+      this.sendChat(assignedRoleChat)
+    },
 
+    handleNextQuestionButtonClick () {
+      this.socket.emit('load-next-question', this.room)
+    },
+
+    loadNextCodingQuestion () {
+      this.isInterviewer = !this.isInterviewer
+      this.sendAssignedRoleChat()
+      this.clearCode()
+      this.isSecondQuestion = true
     },
 
     leaveRoom () {
@@ -164,12 +227,20 @@ export default {
 
     onSendMessage (evt) {
       evt.preventDefault()
-      this.sendChat(this.getChat())
+      this.sendChat(this.getChat(this.message))
       this.message = ''
     },
 
     updateCode (evt) {
       this.code = evt
+      this.socket.emit('update-code', {
+        room: this.room,
+        code: this.code
+      })
+    },
+
+    clearCode () {
+      this.code = ''
       this.socket.emit('update-code', {
         room: this.room,
         code: this.code
@@ -190,7 +261,7 @@ export default {
 
   .chat .chat-body p {
     margin: 0;
-    font-size: 18px;
+    font-size: 16px;
   }
 
   .panel-body-left {
@@ -217,21 +288,24 @@ export default {
   }
 
   .text-area {
-    font-size: 17px;
+    font-size: 16px;
     font-family: 'Courier New', Courier, monospace;
   }
 
-  .swapRolesButton {
-    color: black;
-    background-color: #89CFF0;
-    outline-color: #89CFF0;
-    border-color: #89CFF0;
+  .nextQuestionButton {
+    background-color: #5ab4dd;
+    outline-color: #5ab4dd;
+    border-color: #5ab4dd;
   }
 
-  .swapRolesButton:hover {
-    color: black;
-    background-color: #50abd6;
-    outline-color: #50abd6;
-    border-color: #50abd6;
+  .nextQuestionButton:hover {
+    background-color: #4493b8;
+    outline-color: #4493b8;
+    border-color: #4493b8;
+  }
+
+  .badge {
+    background-color: #5ab4dd;
+    margin: 5px;
   }
 </style>
