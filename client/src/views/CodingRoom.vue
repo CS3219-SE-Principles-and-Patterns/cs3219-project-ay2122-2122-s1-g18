@@ -3,7 +3,7 @@
     <b-row>
       <b-col>
         <b-button
-          @click.prevent="loadNextCodingQuestion()"
+          @click.prevent="handleNextQuestionButtonClick()"
           type="button"
           class="nextQuestionButton px-4 mb-5"
           :disabled="isSecondQuestion"
@@ -155,6 +155,8 @@ export default {
     this.socket.on('new-code', (code) => {
       this.code = code
     })
+
+    this.socket.on('next-question', () => this.loadNextCodingQuestion())
   },
   methods: {
     getTimeNow () {
@@ -184,6 +186,10 @@ export default {
         isPrivate: true
       }
       this.sendChat(assignedRoleChat)
+    },
+
+    handleNextQuestionButtonClick () {
+      this.socket.emit('load-next-question', this.room)
     },
 
     loadNextCodingQuestion () {

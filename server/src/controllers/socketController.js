@@ -62,6 +62,8 @@ exports.createEventListeners = (socket, io) => {
     io.to(codeUpdate.room).emit('new-code', codeUpdate.code)
   })
 
+  socket.on('load-next-question', (room) => io.to(room).emit('next-question'))
+
   socket.on('disconnect', () => {
     if (userMatchingPreferences.has(socket.id)) {
       const matchBy = userMatchingPreferences.get(socket.id)
