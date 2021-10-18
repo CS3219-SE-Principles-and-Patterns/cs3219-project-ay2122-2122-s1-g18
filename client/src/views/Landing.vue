@@ -11,6 +11,9 @@
       <b-col cols="6">
         <b-card class="right-panel">
           <div v-if="isLoginView">
+            <b-alert v-if="isNewUser" show="30">
+              An email has been sent to your account. Verify before proceeding.
+            </b-alert>
             <login @change-view="changeView"></login>
           </div>
           <div v-if="!isLoginView">
@@ -31,17 +34,27 @@ export default {
   components: { Signup, Login },
   data () {
     return {
-      isLogin: true
+      isLogin: true,
+      newUser: false
     }
   },
   computed: {
     isLoginView () {
       return this.isLogin
+    },
+    isNewUser () {
+      return this.newUser
     }
   },
   methods: {
-    changeView () {
+    changeView (isNewUser) {
+      this.newUser = false
       this.isLogin = !this.isLogin
+      if (isNewUser) {
+        this.newUser = true
+        console.log(this.isLogin)
+      }
+      console.log(isNewUser)
     }
   }
 }

@@ -98,11 +98,8 @@ export default {
       axios.post(apiURL, this.user)
         .then((data) => {
           if (data && data.data) {
-            const user = {
-              username: data.data.username,
-              token: data.data.token
-            }
-            sessionStorage.setItem('user', JSON.stringify(user))
+            sessionStorage.setItem('username', JSON.stringify(data.data.username))
+            sessionStorage.setItem('token', JSON.stringify(data.data.token))
             this.$router.push({
               name: 'home'
             })
@@ -124,7 +121,7 @@ export default {
         })
     },
     changeView () {
-      this.$emit('change-view')
+      this.$emit('change-view', false)
     }
   }
 }
