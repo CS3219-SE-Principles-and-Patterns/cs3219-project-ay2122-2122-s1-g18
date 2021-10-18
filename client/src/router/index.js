@@ -21,6 +21,9 @@ const routes = [
     path: '/coding-room',
     name: 'codingroom',
     component: () => import('../views/CodingRoom')
+  }, {
+    path: '*',
+    redirect: '/'
   }]
 
 const router = new VueRouter({

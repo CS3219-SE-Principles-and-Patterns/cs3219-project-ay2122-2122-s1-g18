@@ -55,7 +55,7 @@
     </b-col>
     <b-button
         variant="link"
-        @click="changeView"
+        @click="changeView(false)"
         class="link justify-content-center d-flex"
     >
       Already have an account? Login here!
@@ -104,12 +104,7 @@ export default {
       const apiURL = `${SERVER_URI}/api/users/signup`
       axios.post(apiURL, this.user)
         .then(() => {
-          this.$router.push({
-            name: 'home',
-            params: {
-              newUser: true
-            }
-          })
+          this.changeView(true)
         })
         .catch((err) => {
           const errMessage = err.response.data.message
@@ -124,8 +119,8 @@ export default {
           }
         })
     },
-    changeView () {
-      this.$emit('change-view')
+    changeView (isNewUser) {
+      this.$emit('change-view', isNewUser)
     }
   }
 }
