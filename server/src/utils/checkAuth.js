@@ -4,7 +4,7 @@ const BlacklistToken = require('../models/blacklistToken')
 exports.allowIfLoggedIn = (req, res) => {
   try {
     const token = req.headers.authorization.split(' ')[1]
-    jwt.verify(token, process.env.SECRET_KEY)
+    jwt.verify(token, process.env.JWT_SECRET_KEY)
     BlacklistToken.find({ token: token })
       .exec()
       .then((result) => {

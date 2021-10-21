@@ -272,7 +272,7 @@ exports.userLogin = function (req, res) {
             userId: user[0]._id,
             username: user[0].username
           },
-          process.env.SECRET_KEY,
+          process.env.JWT_SECRET_KEY,
           {
             expiresIn: '3h'
           }
