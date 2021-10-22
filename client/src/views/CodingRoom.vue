@@ -201,6 +201,7 @@ export default {
     },
 
     loadNextCodingQuestion () {
+      this.$refs.countUpTimer.reset()
       this.isInterviewer = !this.isInterviewer
       this.sendAssignedRoleChat()
       this.clearCode()
