@@ -56,7 +56,6 @@
 
 <script>
 import axios from 'axios'
-import authHeader from '../utils/authHeader'
 import { SERVER_URI } from '@/constants'
 
 export default {
@@ -71,18 +70,6 @@ export default {
       wrongCredentials: false,
       invalidEmail: false
     }
-  },
-  beforeCreate () {
-    const apiURL = `${SERVER_URI}/api/users/verify/checkAuth`
-    axios.get(apiURL, { headers: authHeader() })
-      .then(() => {
-        this.$router.push({
-          name: 'home'
-        })
-      })
-      .catch(() => {
-        console.log('Please login or signup')
-      })
   },
   computed: {
     isNewUser () {
