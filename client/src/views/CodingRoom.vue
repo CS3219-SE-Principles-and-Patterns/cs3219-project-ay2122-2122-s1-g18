@@ -166,7 +166,58 @@ export default {
 
     this.socket.on('next-question', () => this.loadNextCodingQuestion())
   },
+
+  mounted () {
+    this.addListeners()
+  },
+
+  destroyed () {
+    this.removeListeners()
+  },
+
   methods: {
+    addListeners () {
+      window.addEventListener('popstate', this.popStateListener)
+      window.addEventListener('beforeunload', this.beforeUnloadListener)
+    },
+
+    removeListeners () {
+      window.removeEventListener('popstate', this.popStateListener)
+      window.removeEventListener('beforeunload', this.beforeUnloadListener)
+    },
+
+    popStateListener () {
+      this.$refs.countUpTimer.onClick()
+      if (window.confirm('Do you really want to go back? You cannot return to this page after.')) {
+        const leaveRoomChat = {
+          room: this.room,
+          name: 'PeerPrep Bot',
+          message: this.name + ' left this room',
+          timestamp: this.getTimeNow()
+        }
+        this.sendChat(leaveRoomChat)
+        this.$router.push({
+          name: 'home'
+        })
+      } else {
+        // TODO: user still goes back even if they click cancel, allow realtime communication again
+        this.$refs.countUpTimer.onResume()
+      }
+    },
+
+    beforeUnloadListener (e) {
+      // TODO: synchronise timer, allow realtime communication again
+      // this.$refs.countUpTimer.onClick()
+      e.preventDefault()
+      e.returnValue = ''
+      if (window.closed) {
+        console.log('Window closed')
+      } else {
+        console.log('Window not closed')
+        // this.$refs.countUpTimer.onResume()
+      }
+    },
+
     getTimeNow () {
       return new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
     },
@@ -201,6 +252,7 @@ export default {
     },
 
     loadNextCodingQuestion () {
+      this.$refs.countUpTimer.reset()
       this.isInterviewer = !this.isInterviewer
       this.sendAssignedRoleChat()
       this.clearCode()
