@@ -1,7 +1,7 @@
 const dotenv = require('dotenv')
 const express = require('express')
 const mongoose = require('mongoose')
-const path = require('path')
+// const path = require('path')
 const constants = require('./src/constants')
 const routes = require('./src/routes')
 const socketController = require('./src/controllers/socketController')
@@ -28,7 +28,7 @@ app.use(express.urlencoded({
   extended: true
 }))
 app.use(express.json())
-app.use(express.static(path.join(__dirname, 'dist')))
+// app.use(express.static(path.join(__dirname, 'dist')))
 
 app.get('/', (req, res) => {
   res.json({
@@ -41,9 +41,9 @@ app.listen(port, () => {
   console.log('Running on port', port)
 })
 
-app.get('/*', (req, res) => {
-  res.sendFile(path.join(__dirname, 'dist', 'index.html'))
-})
+// app.get('/*', (req, res) => {
+//   res.sendFile(path.join(__dirname, 'dist', 'index.html'))
+// })
 
 app.use('/api', routes)
 
