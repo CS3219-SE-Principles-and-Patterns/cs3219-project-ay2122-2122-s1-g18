@@ -24,6 +24,7 @@ function randSelectInterviewer (user1, user2) {
 exports.createEventListeners = (socket, io) => {
   socket.on('join-waiting-users-listener', () => {
     socket.join('waiting-users-listener')
+    socket.emit('update-waiting-users', waitingUsers)
   })
 
   socket.on('find-match', (matchBy) => {
