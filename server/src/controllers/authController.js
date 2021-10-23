@@ -2,6 +2,7 @@ const bcrypt = require('bcrypt')
 const jwt = require('jsonwebtoken')
 const randomBytes = require('randombytes')
 
+const constants = require('../constants')
 const User = require('../models/users')
 const Token = require('../models/userToken')
 const BlacklistToken = require('../models/blacklistToken')
@@ -164,7 +165,10 @@ exports.createUser = function (req, res) {
             })
             token.save()
               .then(() => {
-                const message = `http://localhost:8000/api/users/verify/${user.id}/${token.token}`
+                const serverUri = process.env.NODE_ENV === 'production'
+                  ? constants.PRODUCTION_SERVER_URI
+                  : constants.DEV_SERVER_URI
+                const message = `${serverUri}/api/users/verify/${user.id}/${token.token}`
                 sendEmail(user.email, 'Verify Email for PeerPrep', message)
                 return res.status(200).json({
                   message: 'An email has been sent to your account. Please verify.'
@@ -272,7 +276,7 @@ exports.userLogin = function (req, res) {
             userId: user[0]._id,
             username: user[0].username
           },
-          process.env.SECRET_KEY,
+          process.env.JWT_SECRET_KEY,
           {
             expiresIn: '3h'
           }
