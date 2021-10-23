@@ -26,8 +26,8 @@
 </template>
 
 <script>
-import Login from '@/views/Login'
-import Signup from '@/views/Signup'
+import Login from '../views/Login'
+import Signup from '../views/Signup'
 // TODO: Design left panel to introduce PeerPrep
 export default {
   name: 'Landing',
@@ -52,7 +52,6 @@ export default {
       this.isLogin = !this.isLogin
       if (isNewUser) {
         this.newUser = true
-        console.log(this.isLogin)
       }
       console.log(isNewUser)
     }

@@ -2,7 +2,6 @@ const bcrypt = require('bcrypt')
 const jwt = require('jsonwebtoken')
 const randomBytes = require('randombytes')
 
-const constants = require('../constants')
 const User = require('../models/users')
 const Token = require('../models/userToken')
 const BlacklistToken = require('../models/blacklistToken')
@@ -96,13 +95,13 @@ exports.updatePassword = function (req, res) {
             })
           } else {
             return res.status(401).json({
-              message: 'Unable to find user'
+              message: 'Wrong password. Unable to reset password'
             })
           }
         })
       } else {
         return res.status(500).json({
-          message: 'Cannot find user. Unable to delete account'
+          message: 'Cannot find user. Unable to change password'
         })
       }
     })
@@ -165,10 +164,7 @@ exports.createUser = function (req, res) {
             })
             token.save()
               .then(() => {
-                const serverUri = process.env.NODE_ENV === 'production'
-                  ? constants.PRODUCTION_SERVER_URI
-                  : constants.DEV_SERVER_URI
-                const message = `${serverUri}/api/users/verify/${user.id}/${token.token}`
+                const message = `http://localhost:8000/api/users/verify/${user.id}/${token.token}`
                 sendEmail(user.email, 'Verify Email for PeerPrep', message)
                 return res.status(200).json({
                   message: 'An email has been sent to your account. Please verify.'
