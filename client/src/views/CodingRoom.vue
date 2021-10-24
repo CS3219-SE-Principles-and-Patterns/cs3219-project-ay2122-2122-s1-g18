@@ -112,9 +112,9 @@
 
 <script>
 import axios from 'axios'
-import CountUpTimer from '../components/CountUpTimer'
 import Vue from 'vue'
 import VueChatScroll from 'vue-chat-scroll'
+import CountUpTimer from '../components/CountUpTimer'
 import { SERVER_URI } from '@/constants'
 
 Vue.use(VueChatScroll)
@@ -187,7 +187,7 @@ export default {
     },
 
     popStateListener () {
-      this.$refs.countUpTimer.onClick()
+      // TODO: user still goes back even if they click cancel, allow realtime communication again
       if (window.confirm('Do you really want to go back? You cannot return to this page after.')) {
         const leaveRoomChat = {
           room: this.room,
@@ -199,22 +199,17 @@ export default {
         this.$router.push({
           name: 'home'
         })
-      } else {
-        // TODO: user still goes back even if they click cancel, allow realtime communication again
-        this.$refs.countUpTimer.onResume()
       }
     },
 
     beforeUnloadListener (e) {
-      // TODO: synchronise timer, allow realtime communication again
-      // this.$refs.countUpTimer.onClick()
+      // TODO: allow realtime communication again
       e.preventDefault()
       e.returnValue = ''
       if (window.closed) {
         console.log('Window closed')
       } else {
         console.log('Window not closed')
-        // this.$refs.countUpTimer.onResume()
       }
     },
 
@@ -260,7 +255,6 @@ export default {
     },
 
     leaveRoom () {
-      this.$refs.countUpTimer.onClick()
       if (window.confirm('Do you really want to end the session?')) {
         const leaveRoomChat = {
           room: this.room,
@@ -272,8 +266,6 @@ export default {
         this.$router.push({
           name: 'home'
         })
-      } else {
-        this.$refs.countUpTimer.onResume()
       }
     },
 
