@@ -60,7 +60,7 @@ exports.createEventListeners = (socket, io) => {
   })
 
   socket.on('update-code', (codeUpdate) => {
-    io.to(codeUpdate.room).emit('new-code', codeUpdate.code)
+    io.to(codeUpdate.room).emit('new-code', codeUpdate.codeChanges)
   })
 
   socket.on('load-next-question', (room) => io.to(room).emit('next-question'))
