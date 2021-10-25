@@ -23,6 +23,18 @@
       </b-col>
     </b-row>
     <b-row>
+      <b-col cols="3">
+        <h3 class="heading">Coding Question</h3>
+          <!-- <b-form-textarea
+            v-chat-scroll
+          >
+
+          </b-form-textarea> -->
+          <p style="color: green; font-size:22px;">{{codingQuestion.question_title}}</p>
+          <p class="pre-formatted" style="font-size:16px;">{{codingQuestion.question_text}}</p>
+          <p>{{codingQuestion.url}}</p>
+
+      </b-col>
       <b-col cols="6">
         <h3 class="heading">Code Editor</h3>
         <b-form-textarea
@@ -136,7 +148,9 @@ export default {
       message: '',
       code: '',
       interviewQuestions: null,
-      isSecondQuestion: false
+      isSecondQuestion: false,
+      difficulty: this.$route.params.difficulty,
+      codingQuestion: null
     }
   },
 
@@ -145,6 +159,11 @@ export default {
     axios.get(url)
       .then((response) => {
         this.interviewQuestions = response.data.data
+      })
+    const codingQuestionsURL = `${SERVER_URI}/api/coding-questions`
+    axios.get(codingQuestionsURL)
+      .then((response) => {
+        this.codingQuestion = response.data.data[0]
       })
   },
 
@@ -308,4 +327,8 @@ export default {
     background-color: #5ab4dd;
     margin: 5px;
   }
+
+  .pre-formatted {
+    white-space: pre-wrap
+}
 </style>

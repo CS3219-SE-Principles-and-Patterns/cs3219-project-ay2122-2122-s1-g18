@@ -86,7 +86,8 @@ export default {
             socket: this.socket,
             id: roomInfo.id,
             name: this.socket.id,
-            isInterviewer: this.isInterviewer(this.socket.id, roomInfo.interviewer)
+            isInterviewer: this.isInterviewer(this.socket.id, roomInfo.interviewer),
+            difficulty: this.matchBy
           }
         })
       })

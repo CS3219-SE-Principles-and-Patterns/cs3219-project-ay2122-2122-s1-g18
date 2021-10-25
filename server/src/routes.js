@@ -2,6 +2,8 @@ const router = require('express').Router()
 const authController = require('./controllers/authController')
 const checkAuth = require('./utils/checkAuth')
 const interviewQuestionsController = require('./controllers/interviewQuestionsController')
+const codingQuestionsController = require('./controllers/codingQuestionsController')
+
 
 // Auth Routes
 router.route('/users')
@@ -22,5 +24,9 @@ router.route('/users/verify/checkAuth')
 router.route('/interview-questions')
   .get(interviewQuestionsController.getInterviewQuestions)
   .post(interviewQuestionsController.createInterviewQuestion)
+
+router.route('/coding-questions')
+  .get(codingQuestionsController.getCodingQuestions)
+  // .post(interviewQuestionsController.createInterviewQuestion)
 
 module.exports = router
