@@ -82,6 +82,10 @@ export default {
   },
   methods: {
     onDifficultySelected (selected) {
+      if (selected.length <= 0) {
+        this.selected = null
+        return
+      }
       this.selected = selected[0].key
     },
 
