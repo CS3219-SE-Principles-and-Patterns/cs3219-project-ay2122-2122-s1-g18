@@ -6,11 +6,13 @@ const userMatchingPreferences = new Map()
 function addWaitingUser (matchBy, socket) {
   waitingUsers[matchBy] = socket.id
   socket.to('waiting-users-listener').emit('update-waiting-users', waitingUsers)
+  console.log('Waiting room after add: ', waitingUsers)
 }
 
 function removeWaitingUser (matchBy, io) {
   waitingUsers[matchBy] = null
   io.to('waiting-users-listener').emit('update-waiting-users', waitingUsers)
+  console.log('Waiting room after remove: ', waitingUsers)
 }
 
 function randSelectInterviewer (user1, user2) {
