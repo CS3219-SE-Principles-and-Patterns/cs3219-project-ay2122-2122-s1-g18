@@ -18,16 +18,19 @@ app.use((req, res, next) => {
 
   if (corsWhitelist.indexOf(req.headers.origin) !== -1) {
     res.setHeader('Access-Control-Allow-Origin', req.headers.origin)
-    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE')
+    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS')
     res.setHeader('Access-Control-Allow-Headers', 'content-type, authorization')
   }
 
   next()
 })
+
 app.use(express.urlencoded({
   extended: true
 }))
+
 app.use(express.json())
+
 if (process.env.NODE_ENV === 'production') {
   app.use(express.static(path.join(__dirname, 'dist')))
 }
@@ -38,10 +41,7 @@ app.get('/', (req, res) => {
   })
 })
 
-const port = process.env.PORT || 8000
-app.listen(port, () => {
-  console.log('Running on port', port)
-})
+app.use('/api', routes)
 
 if (process.env.NODE_ENV === 'production') {
   app.get('/*', (req, res) => {
@@ -49,15 +49,15 @@ if (process.env.NODE_ENV === 'production') {
   })
 }
 
-app.use('/api', routes)
-
-// socket IO
-httpServer.listen(4000)
+const port = process.env.PORT || 8000
+httpServer.listen(port, () => {
+  console.log('Running on port', port)
+})
 
 const io = require('socket.io')(httpServer, {
   cors: {
     origin: process.env.NODE_ENV === 'production'
-      ? constants.PRODUCTION_SERVER_URI
+      ? [constants.PRODUCTION_SERVER_URI]
       : constants.DEV_CLIENT_URI,
     credentials: true
   }
