@@ -166,13 +166,13 @@ exports.createUser = function (req, res) {
             })
             token.save()
               .then(() => {
-                let message = 'Hello from Shrek Tech!\nPlease click on the link below to verify your account:\n'
+                let message = 'Hello from SHReK Tech!\nPlease click on the link below to verify your account:\n'
                 message += process.env.NODE_ENV === 'production'
                   ? `${constants.PRODUCTION_VERIFY_EMAIL_URI}/${user.id}/${token.token}`
                   : `${constants.DEV_VERIFY_EMAIL_URI}/${user.id}/${token.token}`
-                sendEmail(user.email, 'Verify your email for Shrek Tech', message)
+                sendEmail(user.email, 'Verify your email for SHReK Tech', message)
                 return res.status(200).json({
-                  message: 'A verification email has been sent to your account.'
+                  message: 'A verification email has been sent to your account. Please verify your email before proceeding.'
                 })
               })
               .catch(err => {
@@ -359,7 +359,7 @@ exports.resetPasswordEmail = function (req, res) {
             message += process.env.NODE_ENV === 'production'
               ? `${constants.PRODUCTION_RESET_PASSWORD_URI}/${user._id}/${token.token}`
               : `${constants.DEV_RESET_PASSWORD_URI}/${user._id}/${token.token}`
-            sendEmail(user.email, 'Request to reset password for Shrek Tech', message)
+            sendEmail(user.email, 'Request to reset password for SHReK Tech', message)
             return res.status(200).json({
               message: 'A reset email has been sent to your account.'
             })
