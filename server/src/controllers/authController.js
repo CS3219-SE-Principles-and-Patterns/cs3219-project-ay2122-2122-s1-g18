@@ -7,6 +7,8 @@ const Token = require('../models/userToken')
 const BlacklistToken = require('../models/blacklistToken')
 const sendEmail = require('../utils/email')
 
+const constants = require('../constants')
+
 function validateEmail (email) {
   const re = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
   return re.test(String(email).toLowerCase())
@@ -164,7 +166,9 @@ exports.createUser = function (req, res) {
             })
             token.save()
               .then(() => {
-                const message = `http://localhost:8000/api/users/verify/${user.id}/${token.token}`
+                const message = process.env.NODE_ENV === 'production'
+                  ? `${constants.PRODUCTION_VERIFY_EMAIL_URI}/${user.id}/${token.token}`
+                  : `${constants.DEV_VERIFY_EMAIL_URI}/${user.id}/${token.token}`
                 sendEmail(user.email, 'Verify Email for PeerPrep', message)
                 return res.status(200).json({
                   message: 'An email has been sent to your account. Please verify.'
@@ -233,11 +237,13 @@ exports.getEmailVerification = async function (req, res) {
           })
         })
     } else {
+      // console.log('error! inside else of if(token)', token)
       return res.status(404).json({
         message: 'Failure: Invalid Link!'
       })
     }
   } else {
+    // console.log('error! inside else of if(user)', user)
     return res.status(404).json({
       message: 'Failure: Invalid Link!'
     })
@@ -350,7 +356,10 @@ exports.resetPasswordEmail = function (req, res) {
         })
         token.save()
           .then(() => {
-            const message = `Click on the link to reset your password:\nhttp://localhost:8080/reset/${user._id}/${token.token}`
+            let message = 'Click on the link to reset your password:\n'
+            message += process.env.NODE_ENV === 'production'
+              ? `${constants.PRODUCTION_RESET_PASSWORD_URI}/${user._id}/${token.token}`
+              : `${constants.DEV_RESET_PASSWORD_URI}/${user._id}/${token.token}`
             sendEmail(user.email, 'Reset Password for PeerPrep', message)
             return res.status(200).json({
               message: 'An email has been sent to your account. Please verify.'
