@@ -36,7 +36,7 @@
         Unable to find user. Please create an account instead.
       </h6>
       <h6 v-if="success">
-        Check your email for further instructions.
+        Please check your email for further instructions.
       </h6>
       <form v-else @submit.prevent="handleSubmitForm">
         <div class="form-group mb-4">
