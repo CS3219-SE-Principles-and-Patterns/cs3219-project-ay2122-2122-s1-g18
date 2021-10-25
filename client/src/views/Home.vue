@@ -48,7 +48,7 @@ export default {
       username: sessionStorage.getItem('username').split('"')[1],
       socket: null,
       waitingUsers: null,
-      selected: [],
+      selected: null,
       fields: [
         { key: 'difficulty', thStyle: { display: 'none' } },
         { key: 'hasWaitingUser', thStyle: { display: 'none' } }
@@ -87,12 +87,14 @@ export default {
 
     onSubmit (event) {
       event.preventDefault()
-      this.$router.push({
-        name: 'matching',
-        params: {
-          matchBy: this.selected
-        }
-      })
+      if (this.selected) {
+        this.$router.push({
+          name: 'matching',
+          params: {
+            matchBy: this.selected
+          }
+        })
+      }
     }
   }
 }
