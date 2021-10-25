@@ -11,6 +11,10 @@ router.route('/users')
   .put(authController.updatePassword)
   .delete(authController.deleteUser)
 
+router.route('/users/reset')
+  .post(authController.resetPasswordEmail)
+  .put(authController.resetPassword)
+
 router.route('/users/signup')
   .post(authController.createUser)
 

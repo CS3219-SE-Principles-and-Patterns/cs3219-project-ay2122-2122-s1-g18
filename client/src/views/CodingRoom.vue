@@ -38,14 +38,12 @@
       <b-col cols="6">
         <h3 class="heading">Code Editor</h3>
         <b-form-textarea
-            class="text-area panel-body-left"
-            @input="updateCode"
-            v-model="code"
-            placeholder="Type your code here..."
-            v-chat-scroll
-        >
-          <p>{{code}}</p>
-        </b-form-textarea>
+          class="text-area panel-body-left"
+          @input="updateCode"
+          v-model="code"
+          placeholder="Type your code here..."
+          v-chat-scroll
+        />
       </b-col>
       <b-col>
         <b-col class="panel panel-primary">
@@ -123,11 +121,12 @@
 </template>
 
 <script>
+import Automerge from 'automerge'
 import axios from 'axios'
-import CountUpTimer from '../components/CountUpTimer'
 import Vue from 'vue'
 import VueChatScroll from 'vue-chat-scroll'
-import { SERVER_URI } from '@/constants'
+import CountUpTimer from '../components/CountUpTimer'
+import { SERVER_URI } from '../constants'
 
 Vue.use(VueChatScroll)
 
@@ -147,6 +146,7 @@ export default {
       isInterviewer: this.$route.params.isInterviewer,
       message: '',
       code: '',
+      automergeCode: null,
       interviewQuestions: null,
       isSecondQuestion: false,
       difficulty: this.$route.params.difficulty,
@@ -177,15 +177,80 @@ export default {
     this.sendChat(joinRoomChat)
     this.sendAssignedRoleChat()
 
+    this.initialiseAutomergeCode()
+
     this.socket.on('new-chat', (chat) => this.chats.push(chat))
 
-    this.socket.on('new-code', (code) => {
-      this.code = code
+    this.socket.on('new-code', (codeChanges) => {
+      const formattedChanges = [new Uint8Array(codeChanges[0])]
+      let _patch
+      [this.automergeCode, _patch] = Automerge.applyChanges(this.automergeCode, formattedChanges)
+      this.code = this.automergeCode.code
     })
 
     this.socket.on('next-question', () => this.loadNextCodingQuestion())
   },
+
+  mounted () {
+    this.addListeners()
+  },
+
+  destroyed () {
+    this.removeListeners()
+  },
+
   methods: {
+    initialiseAutomergeCode () {
+      if (!this.isInterviewer) {
+        this.automergeCode = Automerge.init()
+        return
+      }
+
+      this.automergeCode = Automerge.from({ code: '' })
+      const changes = Automerge.getAllChanges(this.automergeCode)
+      this.socket.emit('update-code', {
+        room: this.room,
+        codeChanges: changes
+      })
+    },
+
+    addListeners () {
+      window.addEventListener('popstate', this.popStateListener)
+      window.addEventListener('beforeunload', this.beforeUnloadListener)
+    },
+
+    removeListeners () {
+      window.removeEventListener('popstate', this.popStateListener)
+      window.removeEventListener('beforeunload', this.beforeUnloadListener)
+    },
+
+    popStateListener () {
+      // TODO: user still goes back even if they click cancel, allow realtime communication again
+      if (window.confirm('Do you really want to go back? You cannot return to this page after.')) {
+        const leaveRoomChat = {
+          room: this.room,
+          name: 'PeerPrep Bot',
+          message: this.name + ' left this room',
+          timestamp: this.getTimeNow()
+        }
+        this.sendChat(leaveRoomChat)
+        this.$router.push({
+          name: 'home'
+        })
+      }
+    },
+
+    beforeUnloadListener (e) {
+      // TODO: allow realtime communication again
+      e.preventDefault()
+      e.returnValue = ''
+      if (window.closed) {
+        console.log('Window closed')
+      } else {
+        console.log('Window not closed')
+      }
+    },
+
     getTimeNow () {
       return new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
     },
@@ -220,6 +285,7 @@ export default {
     },
 
     loadNextCodingQuestion () {
+      this.$refs.countUpTimer.reset()
       this.isInterviewer = !this.isInterviewer
       this.sendAssignedRoleChat()
       this.clearCode()
@@ -227,7 +293,6 @@ export default {
     },
 
     leaveRoom () {
-      this.$refs.countUpTimer.onClick()
       if (window.confirm('Do you really want to end the session?')) {
         const leaveRoomChat = {
           room: this.room,
@@ -239,8 +304,6 @@ export default {
         this.$router.push({
           name: 'home'
         })
-      } else {
-        this.$refs.countUpTimer.onResume()
       }
     },
 
@@ -251,19 +314,20 @@ export default {
     },
 
     updateCode (evt) {
-      this.code = evt
+      const newCode = Automerge.change(this.automergeCode, `Edit by ${this.name}`, (doc) => {
+        doc.code = evt
+      })
+      const changes = Automerge.getChanges(this.automergeCode, newCode)
+      this.automergeCode = newCode
       this.socket.emit('update-code', {
         room: this.room,
-        code: this.code
+        codeChanges: changes
       })
     },
 
     clearCode () {
       this.code = ''
-      this.socket.emit('update-code', {
-        room: this.room,
-        code: this.code
-      })
+      this.updateCode('')
     }
   }
 }

@@ -38,9 +38,7 @@
 
 <script>
 import io from 'socket.io-client'
-import axios from 'axios'
-import authHeader from '../utils/authHeader'
-import { SERVER_URI, SOCKET_URI } from '../constants'
+import { SERVER_URI } from '../constants'
 
 export default {
   name: 'home',
@@ -73,22 +71,12 @@ export default {
       }]
     }
   },
-
-  beforeCreate () {
-    const apiURL = `${SERVER_URI}/api/users/verify/checkAuth`
-    axios.get(apiURL, { headers: authHeader() })
-      .then(() => {
-        this.socket = io(SOCKET_URI)
-        this.socket.emit('join-waiting-users-listener')
-        this.socket.on('update-waiting-users', (waitingUsers) => {
-          this.waitingUsers = waitingUsers
-        })
-      })
-      .catch(() => {
-        this.$router.push({
-          name: 'landing'
-        })
-      })
+  created () {
+    this.socket = io(SERVER_URI)
+    this.socket.emit('join-waiting-users-listener')
+    this.socket.on('update-waiting-users', (waitingUsers) => {
+      this.waitingUsers = waitingUsers
+    })
   },
   methods: {
     onDifficultySelected (selected) {

@@ -95,13 +95,13 @@ exports.updatePassword = function (req, res) {
             })
           } else {
             return res.status(401).json({
-              message: 'Unable to find user'
+              message: 'Wrong password. Unable to reset password'
             })
           }
         })
       } else {
         return res.status(500).json({
-          message: 'Cannot find user. Unable to delete account'
+          message: 'Cannot find user. Unable to change password'
         })
       }
     })
@@ -272,7 +272,7 @@ exports.userLogin = function (req, res) {
             userId: user[0]._id,
             username: user[0].username
           },
-          process.env.SECRET_KEY,
+          process.env.JWT_SECRET_KEY,
           {
             expiresIn: '3h'
           }
@@ -325,4 +325,120 @@ exports.addBlacklist = function (req, res) {
         error: err
       })
     })
+}
+
+// POST email to get reset password link
+exports.resetPasswordEmail = function (req, res) {
+  const email = req.body.email.trim()
+
+  const regex = (string) => new RegExp(['^', string, '$'].join(''), 'i')
+
+  // validates email format
+  if (!validateEmail(email)) {
+    return res.status(400).json({
+      message: 'Failure: Invalid Email Format!'
+    })
+  }
+
+  User.findOne({ email: regex(email) })
+    .exec()
+    .then(user => {
+      if (user) {
+        const token = new Token({
+          userId: user._id,
+          token: randomBytes(16).toString('hex')
+        })
+        token.save()
+          .then(() => {
+            const message = `Click on the link to reset your password:\nhttp://localhost:8080/reset/${user._id}/${token.token}`
+            sendEmail(user.email, 'Reset Password for PeerPrep', message)
+            return res.status(200).json({
+              message: 'An email has been sent to your account. Please verify.'
+            })
+          })
+          .catch(err => {
+            return res.status(500).json({
+              error: err
+            })
+          })
+      } else {
+        return res.status(404).json({
+          message: 'Failure: User not found.'
+        })
+      }
+    })
+    .catch(err => {
+      return res.status(500).json({
+        error: err
+      })
+    })
+}
+
+// PUT new password
+exports.resetPassword = async function (req, res) {
+  const password = req.body.newPassword.trim()
+  const userId = req.body.userId.trim()
+  const tokenId = req.body.token.trim()
+
+  const user = await User.findById(userId)
+    .exec()
+    .then(user => {
+      return user
+    })
+    .catch(err => {
+      return res.status(500).json({
+        message: 'Unable to reset password.',
+        error: err
+      })
+    })
+  if (user) {
+    const token = await Token.findOne({ userId: user._id, token: tokenId })
+      .exec()
+      .then(token => {
+        // remove the token from database after verification
+        return token
+      })
+      .catch(err => {
+        return res.status(500).json({
+          message: 'Unable to reset password.',
+          error: err
+        })
+      })
+    if (token) {
+      Token.findByIdAndRemove(token._id)
+        .exec()
+        .then()
+        .catch(err => {
+          return res.status(500).json({
+            message: 'Failure: Unable to Remove Token',
+            error: err
+          })
+        })
+
+      bcrypt.hash(password, 10, (err, hash) => {
+        if (err) {
+          return res.status(500).json({
+            error: err
+          })
+        } else {
+          user.password = hash
+          user.save()
+            .then(() => {
+              return res.status(200).json({
+                message: 'Success: Password Updated'
+              })
+            })
+            .catch(err => {
+              return res.status(500).json({
+                error: err
+              })
+            })
+        }
+      })
+    } else {
+      return res.status(500).json({
+        message: 'Failure: Invalid Token!'
+      })
+    }
+  }
 }

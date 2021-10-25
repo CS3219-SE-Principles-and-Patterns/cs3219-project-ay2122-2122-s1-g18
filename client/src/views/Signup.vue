@@ -60,13 +60,19 @@
     >
       Already have an account? Login here!
     </b-button>
+    <b-button
+        variant="link"
+        @click="resetPassword"
+        class="link justify-content-center d-flex"
+    >
+      Forgot your password? Click here to reset!
+    </b-button>
   </b-row>
 </template>
 
 <script>
 import axios from 'axios'
 import { SERVER_URI } from '../constants'
-import authHeader from '@/utils/authHeader'
 
 export default {
   name: 'Signup',
@@ -83,18 +89,7 @@ export default {
       fail: false
     }
   },
-  beforeCreate () {
-    const apiURL = `${SERVER_URI}/api/users/verify/checkAuth`
-    axios.get(apiURL, { headers: authHeader() })
-      .then(() => {
-        this.$router.push({
-          name: 'home'
-        })
-      })
-      .catch(() => {
-        console.log('Please login or signup')
-      })
-  },
+
   methods: {
     handleSubmitForm () {
       this.missingField = false
@@ -121,6 +116,9 @@ export default {
     },
     changeView (isNewUser) {
       this.$emit('change-view', isNewUser)
+    },
+    resetPassword () {
+      this.$emit('reset-password')
     }
   }
 }

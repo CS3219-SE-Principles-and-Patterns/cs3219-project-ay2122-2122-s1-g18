@@ -2,9 +2,6 @@
   <b-row class="justify-content-center">
     <b-col cols="8" >
       <h3 class="text-center mb-4">Log In</h3>
-      <b-alert v-if="isNewUser" show="30">
-        An email has been sent to your account. Verify before proceeding.
-      </b-alert>
       <b-alert v-if="missingField" show="30">
         Missing field. Please fill up all fields.
       </b-alert>
@@ -51,12 +48,18 @@
     >
       Do not have an account? Sign up here!
     </b-button>
+    <b-button
+        variant="link"
+        @click="resetPassword"
+        class="link justify-content-center d-flex"
+    >
+      Forgot your password? Click here to reset!
+    </b-button>
   </b-row>
 </template>
 
 <script>
 import axios from 'axios'
-import authHeader from '../utils/authHeader'
 import { SERVER_URI } from '@/constants'
 
 export default {
@@ -71,18 +74,6 @@ export default {
       wrongCredentials: false,
       invalidEmail: false
     }
-  },
-  beforeCreate () {
-    const apiURL = `${SERVER_URI}/api/users/verify/checkAuth`
-    axios.get(apiURL, { headers: authHeader() })
-      .then(() => {
-        this.$router.push({
-          name: 'home'
-        })
-      })
-      .catch(() => {
-        console.log('Please login or signup')
-      })
   },
   computed: {
     isNewUser () {
@@ -122,6 +113,9 @@ export default {
     },
     changeView () {
       this.$emit('change-view', false)
+    },
+    resetPassword () {
+      this.$emit('reset-password')
     }
   }
 }

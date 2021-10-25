@@ -5,13 +5,10 @@ Adapted from https://thewebdev.info/2020/03/01/create-a-vue-js-stopwatch/
 </template>
 
 <script>
-let toAdd = null
-let oldTime = null
-let newTime = null
-
 export default {
   data () {
     return {
+      timeStart: null,
       elapsedTime: 0,
       timer: undefined
     }
@@ -32,28 +29,12 @@ export default {
 
   methods: {
     start () {
-      this.timer = setInterval(() => {
-        this.elapsedTime += 1000
-      }, 1000)
-    },
-
-    stop () {
-      clearInterval(this.timer)
+      this.timeStart = new Date()
+      this.timer = setInterval(() => (this.elapsedTime = new Date() - this.timeStart), 1000)
     },
 
     reset () {
-      this.elapsedTime = 0
-    },
-
-    onClick () {
-      toAdd = this.elapsedTime
-      oldTime = new Date(new Date().getTime() + (1000 * 60 * 20))
-    },
-
-    onResume () {
-      newTime = new Date(new Date().getTime() + (1000 * 60 * 20))
-      const difference = newTime - oldTime
-      this.elapsedTime = difference + toAdd
+      this.timeStart = new Date()
     }
   }
 }

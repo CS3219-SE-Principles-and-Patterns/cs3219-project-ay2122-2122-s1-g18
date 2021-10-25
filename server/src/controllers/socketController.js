@@ -24,6 +24,7 @@ function randSelectInterviewer (user1, user2) {
 exports.createEventListeners = (socket, io) => {
   socket.on('join-waiting-users-listener', () => {
     socket.join('waiting-users-listener')
+    socket.emit('update-waiting-users', waitingUsers)
   })
 
   socket.on('find-match', (matchBy) => {
@@ -36,12 +37,17 @@ exports.createEventListeners = (socket, io) => {
     const waitingUserMatched = waitingUsers[matchBy]
     // Use waiting user's socket id as room id
     const codingRoomInfo = {
-      id: waitingUserMatched,
+      id: `${waitingUserMatched}-${socket.id}`,
       interviewer: randSelectInterviewer(socket.id, waitingUserMatched)
     }
     socket.join(codingRoomInfo.id)
-    io.to(codingRoomInfo.id).emit('match-found', codingRoomInfo)
+    socket.to(waitingUserMatched).emit('match-found', codingRoomInfo)
     removeWaitingUser(matchBy, io)
+  })
+
+  socket.on('join-room', (roomInfo) => {
+    socket.join(roomInfo.id)
+    io.to(roomInfo.id).emit('coding-room-ready', roomInfo)
   })
 
   socket.on('end-wait', (matchBy) => {
@@ -59,7 +65,7 @@ exports.createEventListeners = (socket, io) => {
   })
 
   socket.on('update-code', (codeUpdate) => {
-    io.to(codeUpdate.room).emit('new-code', codeUpdate.code)
+    socket.to(codeUpdate.room).emit('new-code', codeUpdate.codeChanges)
   })
 
   socket.on('load-next-question', (room) => io.to(room).emit('next-question'))

@@ -1,5 +1,8 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
+import { SERVER_URI } from '@/constants'
+import axios from 'axios'
+import authHeader from '@/utils/authHeader'
 
 Vue.use(VueRouter)
 
@@ -18,6 +21,10 @@ const routes = [
     name: 'matching',
     component: () => import('../views/Matching')
   }, {
+    path: '/reset/:id/:token',
+    name: 'reset',
+    component: () => import('../views/Reset')
+  }, {
     path: '/coding-room',
     name: 'codingroom',
     component: () => import('../views/CodingRoom')
@@ -30,6 +37,21 @@ const router = new VueRouter({
   mode: 'history',
   base: process.env.BASE_URL,
   routes
+})
+
+router.beforeEach((to, from, next) => {
+  if (to.name === 'landing' || to.name === 'reset') {
+    next()
+  } else {
+    const apiURL = `${SERVER_URI}/api/users/verify/checkAuth`
+    axios.get(apiURL, { headers: authHeader() })
+      .then(() => {
+        next()
+      })
+      .catch(() => {
+        next({ name: 'landing' })
+      })
+  }
 })
 
 export default router

@@ -7,7 +7,7 @@
           <b-col cols="10">
             <h3 class="fw-bold mt-3 mb-3 ms-5">PeerPrep</h3>
           </b-col>
-          <b-col cols="2" v-if="isLogin">
+          <b-col cols="2" v-if="enableLogout">
             <logout class="mt-3 mb-3"></logout>
           </b-col>
         </b-row>
@@ -27,8 +27,8 @@ export default {
   name: 'App',
   components: { Logout },
   computed: {
-    isLogin () {
-      return this.$route.name !== 'landing'
+    enableLogout () {
+      return this.$route.name === 'home'
     }
   }
 }
