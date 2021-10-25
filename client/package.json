@@ -10,6 +10,7 @@
   "author": "CS3219 AY2122 S1 G18",
   "license": "ISC",
   "dependencies": {
+    "automerge": "^1.0.1-preview.5",
     "axios": "^0.22.0",
     "bootstrap": "^5.1.1",
     "bootstrap-vue": "^2.21.2",
@@ -49,7 +50,14 @@
     "parserOptions": {
       "parser": "babel-eslint"
     },
-    "rules": {}
+    "rules": {
+      "no-unused-vars": [
+        "error",
+        {
+          "varsIgnorePattern": "^_"
+        }
+      ]
+    }
   },
   "browserslist": [
     "> 1%",

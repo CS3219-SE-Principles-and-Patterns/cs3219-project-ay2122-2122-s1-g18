@@ -26,14 +26,12 @@
       <b-col cols="6">
         <h3 class="heading">Code Editor</h3>
         <b-form-textarea
-            class="text-area panel-body-left"
-            @input="updateCode"
-            v-model="code"
-            placeholder="Type your code here..."
-            v-chat-scroll
-        >
-          <p>{{code}}</p>
-        </b-form-textarea>
+          class="text-area panel-body-left"
+          @input="updateCode"
+          v-model="code"
+          placeholder="Type your code here..."
+          v-chat-scroll
+        />
       </b-col>
       <b-col>
         <b-col class="panel panel-primary">
@@ -111,10 +109,11 @@
 </template>
 
 <script>
+import Automerge from 'automerge'
 import axios from 'axios'
-import CountUpTimer from '../components/CountUpTimer'
 import Vue from 'vue'
 import VueChatScroll from 'vue-chat-scroll'
+import CountUpTimer from '../components/CountUpTimer'
 import { SERVER_URI } from '@/constants'
 
 Vue.use(VueChatScroll)
@@ -135,6 +134,7 @@ export default {
       isInterviewer: this.$route.params.isInterviewer,
       message: '',
       code: '',
+      automergeCode: null,
       interviewQuestions: null,
       isSecondQuestion: false
     }
@@ -158,10 +158,15 @@ export default {
     this.sendChat(joinRoomChat)
     this.sendAssignedRoleChat()
 
+    this.initialiseAutomergeCode()
+
     this.socket.on('new-chat', (chat) => this.chats.push(chat))
 
-    this.socket.on('new-code', (code) => {
-      this.code = code
+    this.socket.on('new-code', (codeChanges) => {
+      const formattedChanges = [new Uint8Array(codeChanges[0])]
+      let _patch
+      [this.automergeCode, _patch] = Automerge.applyChanges(this.automergeCode, formattedChanges)
+      this.code = this.automergeCode.code
     })
 
     this.socket.on('next-question', () => this.loadNextCodingQuestion())
@@ -176,6 +181,20 @@ export default {
   },
 
   methods: {
+    initialiseAutomergeCode () {
+      if (!this.isInterviewer) {
+        this.automergeCode = Automerge.init()
+        return
+      }
+
+      this.automergeCode = Automerge.from({ code: '' })
+      const changes = Automerge.getAllChanges(this.automergeCode)
+      this.socket.emit('update-code', {
+        room: this.room,
+        codeChanges: changes
+      })
+    },
+
     addListeners () {
       window.addEventListener('popstate', this.popStateListener)
       window.addEventListener('beforeunload', this.beforeUnloadListener)
@@ -284,19 +303,20 @@ export default {
     },
 
     updateCode (evt) {
-      this.code = evt
+      const newCode = Automerge.change(this.automergeCode, `Edit by ${this.name}`, (doc) => {
+        doc.code = evt
+      })
+      const changes = Automerge.getChanges(this.automergeCode, newCode)
+      this.automergeCode = newCode
       this.socket.emit('update-code', {
         room: this.room,
-        code: this.code
+        codeChanges: changes
       })
     },
 
     clearCode () {
       this.code = ''
-      this.socket.emit('update-code', {
-        room: this.room,
-        code: this.code
-      })
+      this.updateCode('')
     }
   }
 }
