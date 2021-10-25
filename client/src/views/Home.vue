@@ -1,5 +1,6 @@
 <template>
   <div>
+    <h2 class="mb-5">Welcome back, {{ username }}!</h2>
     <h3 class="heading">Difficulty Level</h3>
     <b-col class="mt-3" cols="3">
       <b-table
@@ -44,6 +45,7 @@ export default {
   name: 'home',
   data () {
     return {
+      username: sessionStorage.getItem('username').split('"')[1],
       socket: null,
       waitingUsers: null,
       selected: [],

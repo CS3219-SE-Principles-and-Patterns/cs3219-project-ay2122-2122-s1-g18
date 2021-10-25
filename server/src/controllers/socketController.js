@@ -56,6 +56,14 @@ exports.createEventListeners = (socket, io) => {
     userMatchingPreferences.delete(socket.id)
   })
 
+  socket.on('typing', (room) => {
+    socket.to(room).emit('typing')
+  })
+
+  socket.on('stop-typing', (room) => {
+    socket.to(room).emit('stop-typing')
+  })
+
   socket.on('send-chat', (chat) => {
     if (chat.isPrivate) {
       socket.emit('new-chat', chat)
