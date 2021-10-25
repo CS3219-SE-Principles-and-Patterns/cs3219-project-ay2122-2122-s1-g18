@@ -38,7 +38,7 @@
 
 <script>
 import io from 'socket.io-client'
-import { SOCKET_URI } from '@/constants'
+import { SERVER_URI } from '../constants'
 
 export default {
   name: 'home',
@@ -72,9 +72,7 @@ export default {
     }
   },
   created () {
-    this.socket = io(SOCKET_URI)
-    console.log(SOCKET_URI)
-    console.log(this.socket)
+    this.socket = io(SERVER_URI)
     this.socket.emit('join-waiting-users-listener')
     this.socket.on('update-waiting-users', (waitingUsers) => {
       this.waitingUsers = waitingUsers

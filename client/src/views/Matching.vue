@@ -38,7 +38,7 @@
 <script>
 import io from 'socket.io-client'
 import Timer from '../components/Timer'
-import { SOCKET_URI } from '@/constants'
+import { SERVER_URI } from '../constants'
 
 export default {
   name: 'matching',
@@ -50,7 +50,7 @@ export default {
     return {
       TIME_LIMIT: 30,
       matchBy: this.$route.params.matchBy,
-      socket: io(SOCKET_URI),
+      socket: io(SERVER_URI),
       showMatchNotFoundModal: false
     }
   },

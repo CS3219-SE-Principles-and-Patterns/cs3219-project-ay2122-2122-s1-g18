@@ -13,10 +13,9 @@ const httpServer = require('http').createServer(app)
 
 app.use((req, res, next) => {
   const corsWhitelist = process.env.NODE_ENV === 'production'
-    ? [constants.PRODUCTION_SERVER_URI, constants.PRODUCTION_CLIENT_URI]
+    ? [constants.PRODUCTION_SERVER_URI]
     : [constants.DEV_CLIENT_URI, constants.DEV_SOCKET_URI]
-  // console.log(req.headers.origin)
-  // console.log(corsWhitelist.indexOf(req.headers.origin))
+
   if (corsWhitelist.indexOf(req.headers.origin) !== -1) {
     res.setHeader('Access-Control-Allow-Origin', req.headers.origin)
     res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS')
@@ -37,12 +36,8 @@ app.get('/', (req, res) => {
   })
 })
 
-// const serveStatic = require('serve-static')
-// const path = require('path')
-// app.use(serveStatic(path.join(__dirname, 'dist')))
-
 const port = process.env.PORT || 8000
-app.listen(port, () => {
+httpServer.listen(port, () => {
   console.log('Running on port', port)
 })
 
@@ -52,29 +47,16 @@ app.get('/*', (req, res) => {
 
 app.use('/api', routes)
 
-// socket IO
-// httpServer.listen(4000)
-
-// const socketOptions = {
-//   path: '/socket.io',
-//   pingInterval: 10 * 1000,
-//   pingTimeout: 5000,
-//   transports: ['websocket']
-// }
-
 const io = require('socket.io')(httpServer, {
   cors: {
     origin: process.env.NODE_ENV === 'production'
-      ? [constants.PRODUCTION_SERVER_URI, constants.PRODUCTION_CLIENT_URI]
+      ? [constants.PRODUCTION_SERVER_URI]
       : constants.DEV_CLIENT_URI,
     credentials: true
   }
 })
 
-console.log(io)
-
 io.on('connection', (socket) => {
-  console.log('Server socket', socket, 'created')
   socketController.createEventListeners(socket, io)
 })
 

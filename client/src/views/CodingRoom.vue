@@ -115,7 +115,7 @@ import axios from 'axios'
 import CountUpTimer from '../components/CountUpTimer'
 import Vue from 'vue'
 import VueChatScroll from 'vue-chat-scroll'
-import { SERVER_URI } from '@/constants'
+import { SERVER_URI } from '../constants'
 
 Vue.use(VueChatScroll)
 
