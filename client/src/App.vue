@@ -39,8 +39,4 @@ export default {
   background-color: #ffa8a1;
   height: 70px;
 }
-
-.logo {
-  height: 50px;
-}
 </style>
