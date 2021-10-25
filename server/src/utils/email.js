@@ -18,13 +18,13 @@ const sendEmail = (email, subject, text) => {
       subject: subject,
       text: text
     }).then(() => {
-      console.info('Success: Verification Email Sent')
+      console.info('Success: Email Sent')
     }
     ).catch(() => {
-      console.error('Failure: Verification Email Failed To Send')
+      console.error('Failure: Email Failed To Send')
     })
   } catch (err) {
-    console.error('Failure: Verification Email Failed To Send')
+    console.error('Failure: Email Failed To Send')
     console.error(err)
   }
 }

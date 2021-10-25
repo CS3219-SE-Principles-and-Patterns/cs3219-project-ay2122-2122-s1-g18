@@ -21,6 +21,10 @@ const routes = [
     name: 'matching',
     component: () => import('../views/Matching')
   }, {
+    path: '/reset/:id/:token',
+    name: 'reset',
+    component: () => import('../views/Reset')
+  }, {
     path: '/coding-room',
     name: 'codingroom',
     component: () => import('../views/CodingRoom')
@@ -36,7 +40,7 @@ const router = new VueRouter({
 })
 
 router.beforeEach((to, from, next) => {
-  if (to.name === 'landing') {
+  if (to.name === 'landing' || to.name === 'reset') {
     next()
   } else {
     const apiURL = `${SERVER_URI}/api/users/verify/checkAuth`

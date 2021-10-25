@@ -1,11 +1,11 @@
 <template>
   <div>
     <b-dropdown id="dropdown-1" right text="Profile Settings" class="md-2">
-      <b-dropdown-item v-b-modal.modal-1 @click="resetState">Reset Password</b-dropdown-item>
+      <b-dropdown-item v-b-modal.modal-1 @click="resetState">Change Password</b-dropdown-item>
       <b-dropdown-item v-b-modal.modal-2 @click="resetState">Delete Account</b-dropdown-item>
       <b-dropdown-item @click="logout">Log Out</b-dropdown-item>
     </b-dropdown>
-    <b-modal id="modal-1" title="Reset Password" hide-footer>
+    <b-modal id="modal-1" title="Change Password" hide-footer>
       <h6 v-if="missingField">
         Missing field. Please fill up all fields.
       </h6>
