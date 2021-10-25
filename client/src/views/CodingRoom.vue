@@ -3,6 +3,7 @@
     <b-row>
       <b-col>
         <b-button
+          id="nextQuestionButton"
           @click.prevent="handleNextQuestionButtonClick()"
           type="button"
           class="nextQuestionButton px-4 mb-5"
@@ -10,6 +11,13 @@
         >
           Next Coding Question
         </b-button>
+        <b-tooltip class="tooltip" target="nextQuestionButton" triggers="hover" ref="tooltip">
+          Upon clicking this button,<br>
+          1. Your role will be swapped<br>
+          2. The current code will be cleared<br>
+          3. You will receive a new coding question<br>
+          4. The timer will be reset<br>
+        </b-tooltip>
       </b-col>
       <b-col>
         <div class='container d-flex justify-content-center'>
@@ -58,7 +66,7 @@
           </b-row>
           <div class="panel-body-right" v-chat-scroll>
             <b-list-group-item v-for="item in chats" class="chat" :key="item.id">
-              <div class="right clearfix" v-if="item.name === name">
+              <div class="right clearfix" v-if="item.name === username">
                 <div class="chat-body clearfix">
                   <div class="header">
                     <strong class="primary-font">{{ item.name }}</strong>
@@ -87,6 +95,7 @@
                 </div>
               </div>
             </b-list-group-item>
+            <small class="text-muted" v-if="typing">User is typing...</small>
           </div>
         </b-col>
         <b-form @submit="onSendMessage" class="chat-form">
@@ -132,11 +141,19 @@ export default {
       name: this.$route.params.name,
       socket: this.$route.params.socket,
       isInterviewer: this.$route.params.isInterviewer,
+      username: sessionStorage.getItem('username').split('"')[1],
+      typing: false,
       message: '',
       code: '',
       automergeCode: null,
       interviewQuestions: null,
       isSecondQuestion: false
+    }
+  },
+
+  watch: {
+    message (value) {
+      value ? this.socket.emit('typing', this.room) : this.socket.emit('stop-typing', this.room)
     }
   },
 
@@ -152,7 +169,7 @@ export default {
     const joinRoomChat = {
       room: this.room,
       name: 'SHReK Tech Bot',
-      message: this.name + ' joined this room',
+      message: this.username + ' joined this room',
       timestamp: this.getTimeNow()
     }
     this.sendChat(joinRoomChat)
@@ -160,7 +177,20 @@ export default {
 
     this.initialiseAutomergeCode()
 
-    this.socket.on('new-chat', (chat) => this.chats.push(chat))
+    this.socket.on('typing', () => {
+      this.typing = true
+    })
+
+    this.socket.on('stop-typing', () => {
+      this.typing = false
+    })
+
+    this.socket.on('new-chat', (chat) => {
+      this.chats.push(chat)
+      if (chat.left) {
+        this.typing = false
+      }
+    })
 
     this.socket.on('new-code', (codeChanges) => {
       const formattedChanges = [new Uint8Array(codeChanges[0])]
@@ -211,7 +241,7 @@ export default {
         const leaveRoomChat = {
           room: this.room,
           name: 'SHReK Tech Bot',
-          message: this.name + ' left this room',
+          message: this.username + ' left this room',
           timestamp: this.getTimeNow()
         }
         this.sendChat(leaveRoomChat)
@@ -239,7 +269,7 @@ export default {
     getChat (message) {
       return {
         room: this.room,
-        name: this.name,
+        name: this.username,
         message,
         timestamp: this.getTimeNow()
       }
@@ -262,6 +292,7 @@ export default {
     },
 
     handleNextQuestionButtonClick () {
+      this.$refs.tooltip.$emit('close')
       this.socket.emit('load-next-question', this.room)
     },
 
@@ -271,6 +302,8 @@ export default {
       this.sendAssignedRoleChat()
       this.clearCode()
       this.isSecondQuestion = true
+      this.typing = false
+      this.message = ''
     },
 
     leaveRoom () {
@@ -278,8 +311,9 @@ export default {
         const leaveRoomChat = {
           room: this.room,
           name: 'SHReK Tech Bot',
-          message: this.name + ' left this room',
-          timestamp: this.getTimeNow()
+          message: this.username + ' left this room',
+          timestamp: this.getTimeNow(),
+          left: true
         }
         this.sendChat(leaveRoomChat)
         this.$router.push({
@@ -295,7 +329,7 @@ export default {
     },
 
     updateCode (evt) {
-      const newCode = Automerge.change(this.automergeCode, `Edit by ${this.name}`, (doc) => {
+      const newCode = Automerge.change(this.automergeCode, `Edit by ${this.username}`, (doc) => {
         doc.code = evt
       })
       const changes = Automerge.getChanges(this.automergeCode, newCode)
@@ -366,6 +400,11 @@ export default {
     background-color: #4493b8;
     outline-color: #4493b8;
     border-color: #4493b8;
+  }
+
+  .tooltip-inner {
+    text-align: left;
+    max-width: 300px;
   }
 
   .badge {
