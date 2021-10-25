@@ -237,13 +237,11 @@ exports.getEmailVerification = async function (req, res) {
           })
         })
     } else {
-      // console.log('error! inside else of if(token)', token)
       return res.status(404).json({
         message: 'Failure: Invalid Link!'
       })
     }
   } else {
-    // console.log('error! inside else of if(user)', user)
     return res.status(404).json({
       message: 'Failure: Invalid Link!'
     })
