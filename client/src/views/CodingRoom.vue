@@ -193,10 +193,12 @@ export default {
     })
 
     this.socket.on('new-code', (codeChanges) => {
-      const formattedChanges = [new Uint8Array(codeChanges[0])]
-      let _patch
-      [this.automergeCode, _patch] = Automerge.applyChanges(this.automergeCode, formattedChanges)
-      this.code = this.automergeCode.code
+      if (codeChanges && codeChanges.length > 0) {
+        const formattedChanges = [new Uint8Array(codeChanges[0])]
+        let _patch
+        [this.automergeCode, _patch] = Automerge.applyChanges(this.automergeCode, formattedChanges)
+        this.code = this.automergeCode.code
+      }
     })
 
     this.socket.on('next-question', () => this.loadNextCodingQuestion())
