@@ -11,7 +11,7 @@
         >
           Next Coding Question
         </b-button>
-        <b-tooltip class="tooltip" target="nextQuestionButton" triggers="hover">
+        <b-tooltip class="tooltip" target="nextQuestionButton" triggers="hover" ref="tooltip">
           Upon clicking this button,<br>
           1. Your role will be swapped<br>
           2. The current code will be cleared<br>
@@ -292,6 +292,7 @@ export default {
     },
 
     handleNextQuestionButtonClick () {
+      this.$refs.tooltip.$emit('close')
       this.socket.emit('load-next-question', this.room)
     },
 
