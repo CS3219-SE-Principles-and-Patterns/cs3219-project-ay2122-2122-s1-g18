@@ -24,6 +24,7 @@ app.use((req, res, next) => {
 
   next()
 })
+
 app.use(express.urlencoded({
   extended: true
 }))
@@ -36,16 +37,16 @@ app.get('/', (req, res) => {
   })
 })
 
-const port = process.env.PORT || 8000
-httpServer.listen(port, () => {
-  console.log('Running on port', port)
-})
+app.use('/api', routes)
 
 app.get('/*', (req, res) => {
   res.sendFile(path.join(__dirname, 'dist', 'index.html'))
 })
 
-app.use('/api', routes)
+const port = process.env.PORT || 8000
+httpServer.listen(port, () => {
+  console.log('Running on port', port)
+})
 
 const io = require('socket.io')(httpServer, {
   cors: {
