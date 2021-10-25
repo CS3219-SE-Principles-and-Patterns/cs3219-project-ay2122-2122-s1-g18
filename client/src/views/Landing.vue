@@ -2,9 +2,9 @@
   <div>
     <b-row>
       <b-col cols="6">
-        <b-card class="left-panel" title="About PeerPrep">
+        <b-card class="left-panel" title="About SHReK Tech">
           <b-card-text>
-            PeerPrep is a project that aims to help students with their technical interview.
+            SHReK Tech is a project that aims to help students with their technical interview.
           </b-card-text>
         </b-card>
       </b-col>
@@ -67,7 +67,7 @@ import Login from '../views/Login'
 import Signup from '../views/Signup'
 import { SERVER_URI } from '../constants'
 import axios from 'axios'
-// TODO: Design left panel to introduce PeerPrep
+// TODO: Design left panel to introduce SHReK Tech
 export default {
   name: 'Landing',
   components: { Signup, Login },

@@ -5,7 +5,7 @@
       <b-container fluid>
         <b-row>
           <b-col cols="10">
-            <h3 class="fw-bold mt-3 mb-3 ms-5">PeerPrep</h3>
+            <h3 class="fw-bold mt-3 mb-3 ms-5">SHReK Tech</h3>
           </b-col>
           <b-col cols="2" v-if="enableLogout">
             <logout class="mt-3 mb-3"></logout>
@@ -38,5 +38,9 @@ export default {
 .nav-bar {
   background-color: #ffa8a1;
   height: 70px;
+}
+
+.logo {
+  height: 50px;
 }
 </style>

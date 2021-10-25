@@ -165,9 +165,9 @@ exports.createUser = function (req, res) {
             token.save()
               .then(() => {
                 const message = `http://localhost:8000/api/users/verify/${user.id}/${token.token}`
-                sendEmail(user.email, 'Verify Email for PeerPrep', message)
+                sendEmail(user.email, 'Verify Email for SHReK Tech', message)
                 return res.status(200).json({
-                  message: 'An email has been sent to your account. Please verify.'
+                  message: 'An email has been sent to your account. Please verify your email before proceeding.'
                 })
               })
               .catch(err => {
@@ -351,7 +351,7 @@ exports.resetPasswordEmail = function (req, res) {
         token.save()
           .then(() => {
             const message = `Click on the link to reset your password:\nhttp://localhost:8080/reset/${user._id}/${token.token}`
-            sendEmail(user.email, 'Reset Password for PeerPrep', message)
+            sendEmail(user.email, 'Reset Password for SHReK Tech', message)
             return res.status(200).json({
               message: 'An email has been sent to your account. Please verify.'
             })
