@@ -7,6 +7,8 @@ const Token = require('../models/userToken')
 const BlacklistToken = require('../models/blacklistToken')
 const sendEmail = require('../utils/email')
 
+const constants = require('../constants')
+
 function validateEmail (email) {
   const re = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
   return re.test(String(email).toLowerCase())
@@ -164,10 +166,13 @@ exports.createUser = function (req, res) {
             })
             token.save()
               .then(() => {
-                const message = `http://localhost:8000/api/users/verify/${user.id}/${token.token}`
-                sendEmail(user.email, 'Verify Email for PeerPrep', message)
+                let message = 'Hello from SHReK Tech!\nPlease click on the link below to verify your account:\n'
+                message += process.env.NODE_ENV === 'production'
+                  ? `${constants.PRODUCTION_VERIFY_EMAIL_URI}/${user.id}/${token.token}`
+                  : `${constants.DEV_VERIFY_EMAIL_URI}/${user.id}/${token.token}`
+                sendEmail(user.email, 'Verify your email for SHReK Tech', message)
                 return res.status(200).json({
-                  message: 'An email has been sent to your account. Please verify.'
+                  message: 'A verification email has been sent to your account. Please verify your email before proceeding.'
                 })
               })
               .catch(err => {
@@ -350,10 +355,13 @@ exports.resetPasswordEmail = function (req, res) {
         })
         token.save()
           .then(() => {
-            const message = `Click on the link to reset your password:\nhttp://localhost:8080/reset/${user._id}/${token.token}`
-            sendEmail(user.email, 'Reset Password for PeerPrep', message)
+            let message = 'If you have requested for a password reset, please click on the link below to reset your password:\n'
+            message += process.env.NODE_ENV === 'production'
+              ? `${constants.PRODUCTION_RESET_PASSWORD_URI}/${user._id}/${token.token}`
+              : `${constants.DEV_RESET_PASSWORD_URI}/${user._id}/${token.token}`
+            sendEmail(user.email, 'Request to reset password for SHReK Tech', message)
             return res.status(200).json({
-              message: 'An email has been sent to your account. Please verify.'
+              message: 'A reset email has been sent to your account.'
             })
           })
           .catch(err => {

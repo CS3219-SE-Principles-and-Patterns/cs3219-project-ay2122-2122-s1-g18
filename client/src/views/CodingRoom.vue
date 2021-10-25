@@ -83,7 +83,7 @@
                 <div class="chat-body clearfix">
                   <div class="header">
                     <strong class="primary-font">{{ item.name }}</strong>
-                    <b-badge class="badge" v-if="item.name !== 'ShrekTech Bot'">
+                    <b-badge class="badge" v-if="item.name !== 'SHReK Tech Bot'">
                       {{ isInterviewer? 'Interviewee' : 'Interviewer' }}
                     </b-badge>
                     <small class="pull-right text-muted">
@@ -168,7 +168,7 @@ export default {
   created () {
     const joinRoomChat = {
       room: this.room,
-      name: 'ShrekTech Bot',
+      name: 'SHReK Tech Bot',
       message: this.username + ' joined this room',
       timestamp: this.getTimeNow()
     }
@@ -240,7 +240,7 @@ export default {
       if (window.confirm('Do you really want to go back? You cannot return to this page after.')) {
         const leaveRoomChat = {
           room: this.room,
-          name: 'ShrekTech Bot',
+          name: 'SHReK Tech Bot',
           message: this.username + ' left this room',
           timestamp: this.getTimeNow()
         }
@@ -283,7 +283,7 @@ export default {
       const role = this.isInterviewer ? 'INTERVIEWER' : 'INTERVIEWEE'
       const assignedRoleChat = {
         room: this.room,
-        name: 'ShrekTech Bot',
+        name: 'SHReK Tech Bot',
         message: `Your role for this coding question is ${role}`,
         timestamp: this.getTimeNow(),
         isPrivate: true
@@ -309,7 +309,7 @@ export default {
       if (window.confirm('Do you really want to end the session?')) {
         const leaveRoomChat = {
           room: this.room,
-          name: 'ShrekTech Bot',
+          name: 'SHReK Tech Bot',
           message: this.username + ' left this room',
           timestamp: this.getTimeNow(),
           left: true

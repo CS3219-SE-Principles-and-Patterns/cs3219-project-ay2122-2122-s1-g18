@@ -6,7 +6,7 @@
         Missing field. Please fill up all fields.
       </b-alert>
       <b-alert v-if="wrongCredentials" show="30">
-        Wrong username/ password.
+        Wrong username/password.
       </b-alert>
       <b-alert v-if="invalidEmail" show="30">
         Email not verified. Please verify your email before continuing.
