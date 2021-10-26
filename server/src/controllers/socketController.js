@@ -1,4 +1,5 @@
 const { assert } = require('console')
+const codingQuestionsController = require('./codingQuestionsController')
 
 const waitingUsers = {}
 const userMatchingPreferences = new Map()
@@ -21,8 +22,11 @@ function randSelectInterviewer (user1, user2) {
   return user2
 }
 
-function getCodingQuestionIdx () {
-  return Math.floor(Math.random() * 30);
+function getCodingQuestionIdx (matchBy) {
+  // console.log(matchBy)
+  // console.log(codingQuestionsController.getNumEasyCodingQuestions())
+  // console.log(codingQuestionsController.getEasyCodingQuestions().data.length)
+  return Math.floor(Math.random() *(20));
 }
 
 exports.createEventListeners = (socket, io) => {
@@ -43,8 +47,8 @@ exports.createEventListeners = (socket, io) => {
     const codingRoomInfo = {
       id: `${waitingUserMatched}-${socket.id}`,
       interviewer: randSelectInterviewer(socket.id, waitingUserMatched),
-      codingQuestionIdx: getCodingQuestionIdx(),
-      codingQuestionIdx2: getCodingQuestionIdx()
+      codingQuestionIdx: getCodingQuestionIdx(matchBy),
+      codingQuestionIdx2: getCodingQuestionIdx(matchBy)
     }
     socket.join(codingRoomInfo.id)
     socket.to(waitingUserMatched).emit('match-found', codingRoomInfo)

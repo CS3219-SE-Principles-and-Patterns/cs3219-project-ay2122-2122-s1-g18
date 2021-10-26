@@ -12,9 +12,16 @@
         </b-button>
       </b-col>
       <b-col>
-        <div class='container d-flex justify-content-center'>
-          <CountUpTimer ref='countUpTimer'/>
-        </div>
+        <b-col>
+          <div class='container d-flex justify-content-center'>
+            <CountUpTimer ref='countUpTimer'/>
+          </div>
+        </b-col>
+        <b-col>
+          <div class='container d-flex justify-content-center'>
+            <p style="color:brown">{{recommended_time}}</p>
+          </div>
+        </b-col>
       </b-col>
       <b-col>
         <b-button variant="danger" @click.prevent="leaveRoom()" type="button" class="endButton px-4 float-end mb-5">
@@ -23,19 +30,19 @@
       </b-col>
     </b-row>
     <b-row>
-      <b-col cols="3">
+      <b-col cols="4">
         <h3 class="heading">Coding Question</h3>
-          <!-- <b-form-textarea
-            v-chat-scroll
-          >
-
-          </b-form-textarea> -->
+        <div class="scroll-box">
           <p style="color: green; font-size:22px;">{{codingQuestion.question_title}}</p>
           <p class="pre-formatted" style="font-size:16px;">{{codingQuestion.question_text}}</p>
           <p>{{codingQuestion.url}}</p>
+        </div>
+          <!-- <p style="color: green; font-size:22px;">{{codingQuestion.question_title}}</p>
+          <p class="pre-formatted" style="font-size:16px;">{{codingQuestion.question_text}}</p>
+          <p>{{codingQuestion.url}}</p> -->
 
       </b-col>
-      <b-col cols="6">
+      <b-col cols="5">
         <h3 class="heading">Code Editor</h3>
         <b-form-textarea
           class="text-area panel-body-left"
@@ -150,6 +157,7 @@ export default {
       interviewQuestions: null,
       isSecondQuestion: false,
       difficulty: this.$route.params.difficulty,
+      recommended_time: '',
       codingQuestion: '',
       codingQuestion2: '',
       codingQuestionIdx: this.$route.params.codingQuestionIdx,
@@ -187,7 +195,18 @@ export default {
       this.code = this.automergeCode.code
     })
 
-    const codingQuestionsURL = `${SERVER_URI}/api/coding-questions`
+    var codingQuestionsURL = ''
+    console.log(this.difficulty)
+    if (this.difficulty === 'beginner') {
+      this.recommended_time = 'Recommended: 00:30:00'
+      codingQuestionsURL = `${SERVER_URI}/api/easy-coding-questions`
+    } else if (this.difficulty === 'intermediate') {
+      this.recommended_time = 'Recommended: 00:45:00'
+      codingQuestionsURL = `${SERVER_URI}/api/medium-coding-questions`
+    } else {
+      this.recommended_time = 'Recommended: 1:00:00'
+      codingQuestionsURL = `${SERVER_URI}/api/hard-coding-questions`
+    }
     axios.get(codingQuestionsURL)
       .then((response) => {
         this.codingQuestion = response.data.data[this.codingQuestionIdx]
@@ -401,5 +420,13 @@ export default {
 
   .pre-formatted {
     white-space: pre-wrap
+  }
+
+  .scroll-box {
+    background: #f4f4f4;
+    border: 2px solid rgba(0, 0, 0, 0.1);
+    height: 500px; /* maximum height of the box, feel free to change this! */
+    padding: 15px;
+    overflow-y: scroll;
 }
 </style>

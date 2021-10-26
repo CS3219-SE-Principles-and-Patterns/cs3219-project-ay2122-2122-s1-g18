@@ -29,8 +29,13 @@ router.route('/interview-questions')
   .get(interviewQuestionsController.getInterviewQuestions)
   .post(interviewQuestionsController.createInterviewQuestion)
 
-router.route('/coding-questions')
-  .get(codingQuestionsController.getCodingQuestions)
-  // .post(interviewQuestionsController.createInterviewQuestion)
+router.route('/easy-coding-questions')
+  .get(codingQuestionsController.getEasyCodingQuestions)
+
+router.route('/medium-coding-questions')
+  .get(codingQuestionsController.getMediumCodingQuestions)
+
+router.route('/hard-coding-questions')
+  .get(codingQuestionsController.getHardCodingQuestions)
 
 module.exports = router

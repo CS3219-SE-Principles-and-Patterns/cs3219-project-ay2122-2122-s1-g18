@@ -25,4 +25,4 @@ const codingQuestionSchema = new Schema({
   }
 })
 
-module.exports = mongoose.model('CodingQuestions', codingQuestionSchema)
+module.exports = mongoose.model('CodingQuestions3', codingQuestionSchema)
