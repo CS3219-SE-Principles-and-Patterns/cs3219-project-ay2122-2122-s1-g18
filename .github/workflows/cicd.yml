@@ -61,4 +61,5 @@ jobs:
           git pull
           git add .
           git commit -m "Deploy"
-          git subtree push --prefix server heroku main
+          git push heroku main
+        working-directory: server
