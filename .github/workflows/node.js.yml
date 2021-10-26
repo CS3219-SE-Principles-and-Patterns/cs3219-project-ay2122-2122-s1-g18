@@ -51,13 +51,13 @@ jobs:
           heroku_email: ${{secrets.HEROKU_EMAIL}}
           justlogin: true
       - name: Add Heroku remote
-        run: heroku git:remote -a shrek-tech
+        run: heroku git:remote -a shrektech
         working-directory: server
       - name: Push to Heroku
         run: |
           git config --global user.email ${{secrets.HEROKU_EMAIL}}
           git config --global user.name ${{secrets.GIT_NAME}}
-          git fetch
+          git fetch --all --unshallow
           git add .
           git commit -m "Deploy"
           git subtree push --prefix server heroku main
