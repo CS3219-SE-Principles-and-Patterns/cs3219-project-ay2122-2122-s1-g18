@@ -95,7 +95,7 @@
                 </div>
               </div>
             </b-list-group-item>
-            <small class="text-muted" v-if="typing">User is typing...</small>
+            <small class="text-muted" v-if="typing">{{ matchedUser }} is typing...</small>
           </div>
         </b-col>
         <b-form @submit="onSendMessage" class="chat-form">
@@ -120,6 +120,7 @@
 <script>
 import Automerge from 'automerge'
 import axios from 'axios'
+import io from 'socket.io-client'
 import Vue from 'vue'
 import VueChatScroll from 'vue-chat-scroll'
 import CountUpTimer from '../components/CountUpTimer'
@@ -142,6 +143,7 @@ export default {
       socket: this.$route.params.socket,
       isInterviewer: this.$route.params.isInterviewer,
       username: sessionStorage.getItem('username').split('"')[1],
+      matchedUser: '',
       typing: false,
       message: '',
       code: '',
@@ -153,7 +155,11 @@ export default {
 
   watch: {
     message (value) {
-      value ? this.socket.emit('typing', this.room) : this.socket.emit('stop-typing', this.room)
+      const message = {
+        room: this.room,
+        user: this.username
+      }
+      value ? this.socket.emit('typing', message) : this.socket.emit('stop-typing', this.room)
     }
   },
 
@@ -177,11 +183,13 @@ export default {
 
     this.initialiseAutomergeCode()
 
-    this.socket.on('typing', () => {
+    this.socket.on('typing', (user) => {
+      this.matchedUser = user
       this.typing = true
     })
 
     this.socket.on('stop-typing', () => {
+      this.matchedUser = ''
       this.typing = false
     })
 
@@ -238,19 +246,18 @@ export default {
     },
 
     popStateListener () {
-      // TODO: user still goes back even if they click cancel, allow realtime communication again
-      if (window.confirm('Do you really want to go back? You cannot return to this page after.')) {
-        const leaveRoomChat = {
-          room: this.room,
-          name: 'SHReK Tech Bot',
-          message: this.username + ' left this room',
-          timestamp: this.getTimeNow()
-        }
-        this.sendChat(leaveRoomChat)
-        this.$router.push({
-          name: 'home'
-        })
+      alert('You cannot rejoin this room anymore!')
+      this.socket = io(SERVER_URI)
+      const leaveRoomChat = {
+        room: this.room,
+        name: 'SHReK Tech Bot',
+        message: this.username + ' left this room',
+        timestamp: this.getTimeNow()
       }
+      this.sendChat(leaveRoomChat)
+      this.$router.push({
+        name: 'home'
+      })
     },
 
     beforeUnloadListener (e) {

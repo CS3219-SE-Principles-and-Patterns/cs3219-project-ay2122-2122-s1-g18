@@ -11,8 +11,7 @@ const routes = [
     path: '/',
     name: 'landing',
     component: () => import('../views/Landing')
-  },
-  {
+  }, {
     path: '/home',
     name: 'home',
     component: () => import('../views/Home')
