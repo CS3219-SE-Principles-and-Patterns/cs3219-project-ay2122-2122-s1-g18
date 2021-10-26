@@ -236,7 +236,6 @@ export default {
     })
 
     var codingQuestionsURL = ''
-    console.log(this.difficulty)
     if (this.difficulty === 'beginner') {
       this.recommended_time = 'Recommended: 00:30:00'
       codingQuestionsURL = `${SERVER_URI}/api/easy-coding-questions`
@@ -249,11 +248,7 @@ export default {
     }
     axios.get(codingQuestionsURL)
       .then((response) => {
-        console.log(this.codingQuestionIdx)
-        console.log(response.data.data)
         this.codingQuestion = response.data.data[this.codingQuestionIdx]
-        // console.log(this.codingQuestion)
-
         this.codingQuestion2 = response.data.data[this.codingQuestionIdx2]
       })
 
