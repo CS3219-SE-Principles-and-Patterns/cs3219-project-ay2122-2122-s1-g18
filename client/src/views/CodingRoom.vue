@@ -150,7 +150,11 @@ export default {
       interviewQuestions: null,
       isSecondQuestion: false,
       difficulty: this.$route.params.difficulty,
-      codingQuestion: null
+      codingQuestion: '',
+      codingQuestion2: '',
+      codingQuestionIdx: this.$route.params.codingQuestionIdx,
+      codingQuestionIdx2: this.$route.params.codingQuestionIdx2
+
     }
   },
 
@@ -159,11 +163,6 @@ export default {
     axios.get(url)
       .then((response) => {
         this.interviewQuestions = response.data.data
-      })
-    const codingQuestionsURL = `${SERVER_URI}/api/coding-questions`
-    axios.get(codingQuestionsURL)
-      .then((response) => {
-        this.codingQuestion = response.data.data[0]
       })
   },
 
@@ -187,6 +186,13 @@ export default {
       [this.automergeCode, _patch] = Automerge.applyChanges(this.automergeCode, formattedChanges)
       this.code = this.automergeCode.code
     })
+
+    const codingQuestionsURL = `${SERVER_URI}/api/coding-questions`
+    axios.get(codingQuestionsURL)
+      .then((response) => {
+        this.codingQuestion = response.data.data[this.codingQuestionIdx]
+        this.codingQuestion2 = response.data.data[this.codingQuestionIdx2]
+      })
 
     this.socket.on('next-question', () => this.loadNextCodingQuestion())
   },
@@ -290,6 +296,7 @@ export default {
       this.sendAssignedRoleChat()
       this.clearCode()
       this.isSecondQuestion = true
+      this.codingQuestion = this.codingQuestion2
     },
 
     leaveRoom () {

@@ -21,6 +21,10 @@ function randSelectInterviewer (user1, user2) {
   return user2
 }
 
+function getCodingQuestionIdx () {
+  return Math.floor(Math.random() * 30);
+}
+
 exports.createEventListeners = (socket, io) => {
   socket.on('join-waiting-users-listener', () => {
     socket.join('waiting-users-listener')
@@ -38,7 +42,9 @@ exports.createEventListeners = (socket, io) => {
     // Use waiting user's socket id as room id
     const codingRoomInfo = {
       id: `${waitingUserMatched}-${socket.id}`,
-      interviewer: randSelectInterviewer(socket.id, waitingUserMatched)
+      interviewer: randSelectInterviewer(socket.id, waitingUserMatched),
+      codingQuestionIdx: getCodingQuestionIdx(),
+      codingQuestionIdx2: getCodingQuestionIdx()
     }
     socket.join(codingRoomInfo.id)
     socket.to(waitingUserMatched).emit('match-found', codingRoomInfo)
