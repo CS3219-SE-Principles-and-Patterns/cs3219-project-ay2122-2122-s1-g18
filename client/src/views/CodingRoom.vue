@@ -3,6 +3,7 @@
     <b-row>
       <b-col>
         <b-button
+          id="nextQuestionButton"
           @click.prevent="handleNextQuestionButtonClick()"
           type="button"
           class="nextQuestionButton px-4 mb-5"
@@ -10,6 +11,13 @@
         >
           Next Coding Question
         </b-button>
+        <b-tooltip class="tooltip" target="nextQuestionButton" triggers="hover" ref="tooltip">
+          Upon clicking this button,<br>
+          1. Your role will be swapped<br>
+          2. The current code will be cleared<br>
+          3. You will receive a new coding question<br>
+          4. The timer will be reset<br>
+        </b-tooltip>
       </b-col>
       <b-col>
         <b-col>
@@ -77,7 +85,7 @@
           </b-row>
           <div class="panel-body-right" v-chat-scroll>
             <b-list-group-item v-for="item in chats" class="chat" :key="item.id">
-              <div class="right clearfix" v-if="item.name === name">
+              <div class="right clearfix" v-if="item.name === username">
                 <div class="chat-body clearfix">
                   <div class="header">
                     <strong class="primary-font">{{ item.name }}</strong>
@@ -94,7 +102,7 @@
                 <div class="chat-body clearfix">
                   <div class="header">
                     <strong class="primary-font">{{ item.name }}</strong>
-                    <b-badge class="badge" v-if="item.name !== 'PeerPrep Bot'">
+                    <b-badge class="badge" v-if="item.name !== 'SHReK Tech Bot'">
                       {{ isInterviewer? 'Interviewee' : 'Interviewer' }}
                     </b-badge>
                     <small class="pull-right text-muted">
@@ -106,6 +114,7 @@
                 </div>
               </div>
             </b-list-group-item>
+            <small class="text-muted" v-if="typing">{{ matchedUser }} is typing...</small>
           </div>
         </b-col>
         <b-form @submit="onSendMessage" class="chat-form">
@@ -130,6 +139,7 @@
 <script>
 import Automerge from 'automerge'
 import axios from 'axios'
+import io from 'socket.io-client'
 import Vue from 'vue'
 import VueChatScroll from 'vue-chat-scroll'
 import CountUpTimer from '../components/CountUpTimer'
@@ -151,6 +161,9 @@ export default {
       name: this.$route.params.name,
       socket: this.$route.params.socket,
       isInterviewer: this.$route.params.isInterviewer,
+      username: sessionStorage.getItem('username').split('"')[1],
+      matchedUser: '',
+      typing: false,
       message: '',
       code: '',
       automergeCode: null,
@@ -166,6 +179,16 @@ export default {
     }
   },
 
+  watch: {
+    message (value) {
+      const message = {
+        room: this.room,
+        user: this.username
+      }
+      value ? this.socket.emit('typing', message) : this.socket.emit('stop-typing', this.room)
+    }
+  },
+
   beforeCreate () {
     const url = `${SERVER_URI}/api/interview-questions`
     axios.get(url)
@@ -177,8 +200,8 @@ export default {
   created () {
     const joinRoomChat = {
       room: this.room,
-      name: 'PeerPrep Bot',
-      message: this.name + ' joined this room',
+      name: 'SHReK Tech Bot',
+      message: this.username + ' joined this room',
       timestamp: this.getTimeNow()
     }
     this.sendChat(joinRoomChat)
@@ -186,13 +209,30 @@ export default {
 
     this.initialiseAutomergeCode()
 
-    this.socket.on('new-chat', (chat) => this.chats.push(chat))
+    this.socket.on('typing', (user) => {
+      this.matchedUser = user
+      this.typing = true
+    })
+
+    this.socket.on('stop-typing', () => {
+      this.matchedUser = ''
+      this.typing = false
+    })
+
+    this.socket.on('new-chat', (chat) => {
+      this.chats.push(chat)
+      if (chat.left) {
+        this.typing = false
+      }
+    })
 
     this.socket.on('new-code', (codeChanges) => {
-      const formattedChanges = [new Uint8Array(codeChanges[0])]
-      let _patch
-      [this.automergeCode, _patch] = Automerge.applyChanges(this.automergeCode, formattedChanges)
-      this.code = this.automergeCode.code
+      if (codeChanges && codeChanges.length > 0) {
+        const formattedChanges = [new Uint8Array(codeChanges[0])]
+        let _patch
+        [this.automergeCode, _patch] = Automerge.applyChanges(this.automergeCode, formattedChanges)
+        this.code = this.automergeCode.code
+      }
     })
 
     var codingQuestionsURL = ''
@@ -250,19 +290,18 @@ export default {
     },
 
     popStateListener () {
-      // TODO: user still goes back even if they click cancel, allow realtime communication again
-      if (window.confirm('Do you really want to go back? You cannot return to this page after.')) {
-        const leaveRoomChat = {
-          room: this.room,
-          name: 'PeerPrep Bot',
-          message: this.name + ' left this room',
-          timestamp: this.getTimeNow()
-        }
-        this.sendChat(leaveRoomChat)
-        this.$router.push({
-          name: 'home'
-        })
+      alert('You cannot rejoin this room anymore!')
+      this.socket = io(SERVER_URI)
+      const leaveRoomChat = {
+        room: this.room,
+        name: 'SHReK Tech Bot',
+        message: this.username + ' left this room',
+        timestamp: this.getTimeNow()
       }
+      this.sendChat(leaveRoomChat)
+      this.$router.push({
+        name: 'home'
+      })
     },
 
     beforeUnloadListener (e) {
@@ -283,7 +322,7 @@ export default {
     getChat (message) {
       return {
         room: this.room,
-        name: this.name,
+        name: this.username,
         message,
         timestamp: this.getTimeNow()
       }
@@ -297,7 +336,7 @@ export default {
       const role = this.isInterviewer ? 'INTERVIEWER' : 'INTERVIEWEE'
       const assignedRoleChat = {
         room: this.room,
-        name: 'PeerPrep Bot',
+        name: 'SHReK Tech Bot',
         message: `Your role for this coding question is ${role}`,
         timestamp: this.getTimeNow(),
         isPrivate: true
@@ -306,6 +345,7 @@ export default {
     },
 
     handleNextQuestionButtonClick () {
+      this.$refs.tooltip.$emit('close')
       this.socket.emit('load-next-question', this.room)
     },
 
@@ -316,15 +356,18 @@ export default {
       this.clearCode()
       this.isSecondQuestion = true
       this.codingQuestion = this.codingQuestion2
+      this.typing = false
+      this.message = ''
     },
 
     leaveRoom () {
       if (window.confirm('Do you really want to end the session?')) {
         const leaveRoomChat = {
           room: this.room,
-          name: 'PeerPrep Bot',
-          message: this.name + ' left this room',
-          timestamp: this.getTimeNow()
+          name: 'SHReK Tech Bot',
+          message: this.username + ' left this room',
+          timestamp: this.getTimeNow(),
+          left: true
         }
         this.sendChat(leaveRoomChat)
         this.$router.push({
@@ -340,7 +383,7 @@ export default {
     },
 
     updateCode (evt) {
-      const newCode = Automerge.change(this.automergeCode, `Edit by ${this.name}`, (doc) => {
+      const newCode = Automerge.change(this.automergeCode, `Edit by ${this.username}`, (doc) => {
         doc.code = evt
       })
       const changes = Automerge.getChanges(this.automergeCode, newCode)
@@ -411,6 +454,11 @@ export default {
     background-color: #4493b8;
     outline-color: #4493b8;
     border-color: #4493b8;
+  }
+
+  .tooltip-inner {
+    text-align: left;
+    max-width: 300px;
   }
 
   .badge {

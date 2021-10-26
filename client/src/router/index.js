@@ -11,15 +11,21 @@ const routes = [
     path: '/',
     name: 'landing',
     component: () => import('../views/Landing')
-  },
-  {
+  }, {
     path: '/home',
     name: 'home',
     component: () => import('../views/Home')
   }, {
     path: '/matching',
     name: 'matching',
-    component: () => import('../views/Matching')
+    component: () => import('../views/Matching'),
+    beforeEnter: (to, from, next) => {
+      if (from.name === 'home') {
+        next()
+      } else {
+        next('/home')
+      }
+    }
   }, {
     path: '/reset/:id/:token',
     name: 'reset',
@@ -27,7 +33,14 @@ const routes = [
   }, {
     path: '/coding-room',
     name: 'codingroom',
-    component: () => import('../views/CodingRoom')
+    component: () => import('../views/CodingRoom'),
+    beforeEnter: (to, from, next) => {
+      if (from.name === 'matching') {
+        next()
+      } else {
+        next('/home')
+      }
+    }
   }, {
     path: '*',
     redirect: '/'
