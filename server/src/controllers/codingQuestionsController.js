@@ -2,7 +2,6 @@ const EasyCodingQuestion = require('../models/easyCodingQuestion')
 const MediumCodingQuestion = require('../models/mediumCodingQuestion')
 const HardCodingQuestion = require('../models/hardCodingQuestion')
 
-
 exports.getEasyCodingQuestions = function (req, res) {
   EasyCodingQuestion.find()
     .exec()

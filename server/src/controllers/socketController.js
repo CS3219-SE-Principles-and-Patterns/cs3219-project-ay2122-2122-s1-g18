@@ -1,5 +1,5 @@
 const { assert } = require('console')
-const codingQuestionsController = require('./codingQuestionsController')
+// const codingQuestionsController = require('./codingQuestionsController')
 
 const waitingUsers = {}
 const userMatchingPreferences = new Map()
@@ -26,7 +26,7 @@ function getCodingQuestionIdx (matchBy) {
   // console.log(matchBy)
   // console.log(codingQuestionsController.getNumEasyCodingQuestions())
   // console.log(codingQuestionsController.getEasyCodingQuestions().data.length)
-  return Math.floor(Math.random() *(20));
+  return Math.floor(Math.random() * (20))
 }
 
 exports.createEventListeners = (socket, io) => {
