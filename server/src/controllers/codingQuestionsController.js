@@ -49,3 +49,15 @@ exports.getHardCodingQuestions = function (req, res) {
       })
     })
 }
+
+exports.getCodingQuestionsIdx = async function (matchBy) {
+  var result
+  if (matchBy === 'beginner') {
+    result = await EasyCodingQuestion.countDocuments().exec().then((res) => {return res})
+  } else if (matchBy === 'intermediate') {
+    result = await MediumCodingQuestion.countDocuments().exec().then((res) => {return res})
+  } else {
+    result = await HardCodingQuestion.countDocuments().exec().then((res) => {return res})
+  }
+  return result
+}

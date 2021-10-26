@@ -249,7 +249,11 @@ export default {
     }
     axios.get(codingQuestionsURL)
       .then((response) => {
+        console.log(this.codingQuestionIdx)
+        console.log(response.data.data)
         this.codingQuestion = response.data.data[this.codingQuestionIdx]
+        // console.log(this.codingQuestion)
+
         this.codingQuestion2 = response.data.data[this.codingQuestionIdx2]
       })
 
