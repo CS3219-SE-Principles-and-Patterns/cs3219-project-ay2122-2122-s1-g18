@@ -56,8 +56,8 @@ exports.createEventListeners = (socket, io) => {
     userMatchingPreferences.delete(socket.id)
   })
 
-  socket.on('typing', (room) => {
-    socket.to(room).emit('typing')
+  socket.on('typing', (message) => {
+    socket.to(message.room).emit('typing', message.user)
   })
 
   socket.on('stop-typing', (room) => {

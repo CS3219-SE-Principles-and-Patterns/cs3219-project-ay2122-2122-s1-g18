@@ -95,7 +95,7 @@
                 </div>
               </div>
             </b-list-group-item>
-            <small class="text-muted" v-if="typing">User is typing...</small>
+            <small class="text-muted" v-if="typing">{{ matchedUser }} is typing...</small>
           </div>
         </b-col>
         <b-form @submit="onSendMessage" class="chat-form">
@@ -142,6 +142,7 @@ export default {
       socket: this.$route.params.socket,
       isInterviewer: this.$route.params.isInterviewer,
       username: sessionStorage.getItem('username').split('"')[1],
+      matchedUser: '',
       typing: false,
       message: '',
       code: '',
@@ -153,7 +154,11 @@ export default {
 
   watch: {
     message (value) {
-      value ? this.socket.emit('typing', this.room) : this.socket.emit('stop-typing', this.room)
+      const message = {
+        room: this.room,
+        user: this.username
+      }
+      value ? this.socket.emit('typing', message) : this.socket.emit('stop-typing', this.room)
     }
   },
 
@@ -177,11 +182,13 @@ export default {
 
     this.initialiseAutomergeCode()
 
-    this.socket.on('typing', () => {
+    this.socket.on('typing', (user) => {
+      this.matchedUser = user
       this.typing = true
     })
 
     this.socket.on('stop-typing', () => {
+      this.matchedUser = ''
       this.typing = false
     })
 
