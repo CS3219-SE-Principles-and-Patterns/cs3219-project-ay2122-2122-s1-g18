@@ -52,13 +52,15 @@ jobs:
           justlogin: true
       - name: Add Heroku remote
         run: heroku git:remote -a shrektech18
+        working-directory: server
       - name: Push to Heroku
         run: |
           git config --global user.email ${{secrets.HEROKU_EMAIL}}
           git config --global user.name ${{secrets.GIT_NAME}}
-          git checkout ba4c5085e8c23817959f3135c3d3ff448568fab7
           git branch
           git fetch
           git pull
           git add .
           git commit -m "Deploy"
+          git push heroku main
+        working-directory: server
