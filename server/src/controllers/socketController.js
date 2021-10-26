@@ -22,8 +22,8 @@ function randSelectInterviewer (user1, user2) {
 }
 
 async function getCodingQuestionIdx (matchBy) {
-  var result = await codingQuestionsController.getCodingQuestionsIdx(matchBy)
-  var result2 = Math.floor(Math.random() * (result))
+  const result = await codingQuestionsController.getCodingQuestionsIdx(matchBy)
+  const result2 = Math.floor(Math.random() * (result))
   return result2
 }
 
