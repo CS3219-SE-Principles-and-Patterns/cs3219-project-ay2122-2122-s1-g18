@@ -51,7 +51,7 @@ jobs:
           heroku_email: ${{secrets.HEROKU_EMAIL}}
           justlogin: true
       - name: Add Heroku remote
-        run: heroku git:remote -a shrektech
+        run: heroku git:remote -a shrektech18
         working-directory: server
       - name: Push to Heroku
         run: |
