@@ -120,6 +120,7 @@
 <script>
 import Automerge from 'automerge'
 import axios from 'axios'
+import io from 'socket.io-client'
 import Vue from 'vue'
 import VueChatScroll from 'vue-chat-scroll'
 import CountUpTimer from '../components/CountUpTimer'
@@ -245,19 +246,18 @@ export default {
     },
 
     popStateListener () {
-      // TODO: user still goes back even if they click cancel, allow realtime communication again
-      if (window.confirm('Do you really want to go back? You cannot return to this page after.')) {
-        const leaveRoomChat = {
-          room: this.room,
-          name: 'SHReK Tech Bot',
-          message: this.username + ' left this room',
-          timestamp: this.getTimeNow()
-        }
-        this.sendChat(leaveRoomChat)
-        this.$router.push({
-          name: 'home'
-        })
+      alert('You cannot rejoin this room anymore!')
+      this.socket = io(SERVER_URI)
+      const leaveRoomChat = {
+        room: this.room,
+        name: 'SHReK Tech Bot',
+        message: this.username + ' left this room',
+        timestamp: this.getTimeNow()
       }
+      this.sendChat(leaveRoomChat)
+      this.$router.push({
+        name: 'home'
+      })
     },
 
     beforeUnloadListener (e) {
