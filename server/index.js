@@ -13,8 +13,8 @@ const httpServer = require('http').createServer(app)
 
 app.use((req, res, next) => {
   const corsWhitelist = process.env.NODE_ENV === 'production'
-    ? [constants.PRODUCTION_SERVER_URI]
-    : [constants.DEV_CLIENT_URI, constants.DEV_SOCKET_URI]
+    ? constants.PRODUCTION_SERVER_URI
+    : constants.DEV_CLIENT_URI
 
   if (corsWhitelist.indexOf(req.headers.origin) !== -1) {
     res.setHeader('Access-Control-Allow-Origin', req.headers.origin)
@@ -57,7 +57,7 @@ httpServer.listen(port, () => {
 const io = require('socket.io')(httpServer, {
   cors: {
     origin: process.env.NODE_ENV === 'production'
-      ? [constants.PRODUCTION_SERVER_URI]
+      ? constants.PRODUCTION_SERVER_URI
       : constants.DEV_CLIENT_URI,
     credentials: true
   }
