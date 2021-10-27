@@ -62,5 +62,5 @@ jobs:
           git config --global user.name ${{secrets.GIT_NAME}}
           git add .
           git commit -m "Deploy"
-          git push -f heroku main
+          git subtree push --prefix server heroku main
         working-directory: server
