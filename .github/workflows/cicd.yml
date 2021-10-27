@@ -57,10 +57,8 @@ jobs:
         working-directory: server
       - name: Push to Heroku
         run: |
-          pwd
           git config --global user.email ${{secrets.HEROKU_EMAIL}}
           git config --global user.name ${{secrets.GIT_NAME}}
           git add .
           git commit -m "Deploy"
           git subtree push --prefix server heroku main
-        working-directory: server
