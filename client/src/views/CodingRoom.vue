@@ -72,7 +72,7 @@
                   <div class="header">
                     <strong class="primary-font">{{ item.name }}</strong>
                     <b-badge class="badge" v-if="hasMatch">
-                      {{ isInterviewer? 'Interviewer' : 'Interviewee' }}
+                      {{ isInterviewer ? 'Interviewer' : 'Interviewee' }}
                     </b-badge>
                     <small class="pull-right text-muted">
                       <span class="glyphicon glyphicon-time" />
@@ -87,7 +87,7 @@
                   <div class="header">
                     <strong class="primary-font">{{ item.name }}</strong>
                     <b-badge class="badge" v-if="hasMatch && item.name !== 'SHReK Tech Bot'">
-                      {{ isInterviewer? 'Interviewee' : 'Interviewer' }}
+                      {{ isInterviewer ? 'Interviewee' : 'Interviewer' }}
                     </b-badge>
                     <small class="pull-right text-muted">
                       <span class="glyphicon glyphicon-time" />
