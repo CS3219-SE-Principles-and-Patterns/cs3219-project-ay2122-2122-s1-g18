@@ -7,6 +7,7 @@
           @click.prevent="handleNextQuestionButtonClick()"
           type="button"
           class="nextQuestionButton px-4 mb-5"
+          v-if="hasMatch"
           :disabled="isSecondQuestion"
         >
           Next Coding Question
@@ -70,7 +71,9 @@
                 <div class="chat-body clearfix">
                   <div class="header">
                     <strong class="primary-font">{{ item.name }}</strong>
-                    <b-badge class="badge">{{ isInterviewer? 'Interviewer' : 'Interviewee' }}</b-badge>
+                    <b-badge class="badge" v-if="hasMatch">
+                      {{ isInterviewer ? 'Interviewer' : 'Interviewee' }}
+                    </b-badge>
                     <small class="pull-right text-muted">
                       <span class="glyphicon glyphicon-time" />
                       {{ item.timestamp }}
@@ -83,8 +86,8 @@
                 <div class="chat-body clearfix">
                   <div class="header">
                     <strong class="primary-font">{{ item.name }}</strong>
-                    <b-badge class="badge" v-if="item.name !== 'SHReK Tech Bot'">
-                      {{ isInterviewer? 'Interviewee' : 'Interviewer' }}
+                    <b-badge class="badge" v-if="hasMatch && item.name !== 'SHReK Tech Bot'">
+                      {{ isInterviewer ? 'Interviewee' : 'Interviewer' }}
                     </b-badge>
                     <small class="pull-right text-muted">
                       <span class="glyphicon glyphicon-time" />
@@ -139,7 +142,7 @@ export default {
     return {
       chats: [],
       room: this.$route.params.id,
-      name: this.$route.params.name,
+      hasMatch: this.$route.params.hasMatch,
       socket: this.$route.params.socket,
       isInterviewer: this.$route.params.isInterviewer,
       username: sessionStorage.getItem('username').split('"')[1],
@@ -179,8 +182,10 @@ export default {
       timestamp: this.getTimeNow()
     }
     this.sendChat(joinRoomChat)
-    this.sendAssignedRoleChat()
     this.sendWarning()
+    if (this.hasMatch) {
+      this.sendAssignedRoleChat()
+    }
 
     this.initialiseAutomergeCode()
 
@@ -322,8 +327,10 @@ export default {
     loadNextCodingQuestion () {
       this.$refs.countUpTimer.reset()
       this.isInterviewer = !this.isInterviewer
-      this.sendAssignedRoleChat()
       this.sendWarning()
+      if (this.hasMatch) {
+        this.sendAssignedRoleChat()
+      }
       this.clearCode()
       this.isSecondQuestion = true
       this.typing = false
