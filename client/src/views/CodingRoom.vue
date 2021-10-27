@@ -180,6 +180,7 @@ export default {
     }
     this.sendChat(joinRoomChat)
     this.sendAssignedRoleChat()
+    this.sendWarning()
 
     this.initialiseAutomergeCode()
 
@@ -300,6 +301,17 @@ export default {
       this.sendChat(assignedRoleChat)
     },
 
+    sendWarning () {
+      const warning = {
+        room: this.room,
+        name: 'SHReK Tech Bot',
+        message: 'Please note that you cannot return to this session after leaving or refreshing the page.',
+        timestamp: this.getTimeNow(),
+        isPrivate: true
+      }
+      this.sendChat(warning)
+    },
+
     handleNextQuestionButtonClick () {
       this.$refs.tooltip.$emit('close')
       this.socket.emit('load-next-question', this.room)
@@ -309,6 +321,7 @@ export default {
       this.$refs.countUpTimer.reset()
       this.isInterviewer = !this.isInterviewer
       this.sendAssignedRoleChat()
+      this.sendWarning()
       this.clearCode()
       this.isSecondQuestion = true
       this.typing = false
