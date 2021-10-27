@@ -211,14 +211,29 @@ export default {
     })
 
     this.socket.on('next-question', () => this.loadNextCodingQuestion())
+
+    // deals with back button
+    this.socket.on('disconnect', () => {
+      this.socket = io(SERVER_URI)
+      const leaveRoomChat = {
+        room: this.room,
+        name: 'SHReK Tech Bot',
+        message: this.username + ' left this room',
+        timestamp: this.getTimeNow()
+      }
+      this.sendChat(leaveRoomChat)
+      this.$router.push({
+        name: 'home'
+      })
+    })
   },
 
   mounted () {
-    this.addListeners()
+    this.addListener()
   },
 
   destroyed () {
-    this.removeListeners()
+    this.removeListener()
   },
 
   methods: {
@@ -236,18 +251,16 @@ export default {
       })
     },
 
-    addListeners () {
-      window.addEventListener('popstate', this.popStateListener)
+    addListener () {
       window.addEventListener('beforeunload', this.beforeUnloadListener)
     },
 
-    removeListeners () {
-      window.removeEventListener('popstate', this.popStateListener)
+    removeListener () {
       window.removeEventListener('beforeunload', this.beforeUnloadListener)
     },
 
-    popStateListener () {
-      alert('You cannot rejoin this room anymore!')
+    // deals with refresh button
+    beforeUnloadListener () {
       this.socket = io(SERVER_URI)
       const leaveRoomChat = {
         room: this.room,
@@ -259,17 +272,6 @@ export default {
       this.$router.push({
         name: 'home'
       })
-    },
-
-    beforeUnloadListener (e) {
-      // TODO: allow realtime communication again
-      e.preventDefault()
-      e.returnValue = ''
-      if (window.closed) {
-        console.log('Window closed')
-      } else {
-        console.log('Window not closed')
-      }
     },
 
     getTimeNow () {
