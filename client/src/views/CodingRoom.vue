@@ -7,6 +7,7 @@
           @click.prevent="handleNextQuestionButtonClick()"
           type="button"
           class="nextQuestionButton px-4 mb-5"
+          v-if="hasMatch"
           :disabled="isSecondQuestion"
         >
           Next Coding Question
@@ -85,7 +86,9 @@
                 <div class="chat-body clearfix">
                   <div class="header">
                     <strong class="primary-font">{{ item.name }}</strong>
-                    <b-badge class="badge">{{ isInterviewer? 'Interviewer' : 'Interviewee' }}</b-badge>
+                    <b-badge class="badge" v-if="hasMatch">
+                      {{ isInterviewer ? 'Interviewer' : 'Interviewee' }}
+                    </b-badge>
                     <small class="pull-right text-muted">
                       <span class="glyphicon glyphicon-time" />
                       {{ item.timestamp }}
@@ -98,8 +101,8 @@
                 <div class="chat-body clearfix">
                   <div class="header">
                     <strong class="primary-font">{{ item.name }}</strong>
-                    <b-badge class="badge" v-if="item.name !== 'SHReK Tech Bot'">
-                      {{ isInterviewer? 'Interviewee' : 'Interviewer' }}
+                    <b-badge class="badge" v-if="hasMatch && item.name !== 'SHReK Tech Bot'">
+                      {{ isInterviewer ? 'Interviewee' : 'Interviewer' }}
                     </b-badge>
                     <small class="pull-right text-muted">
                       <span class="glyphicon glyphicon-time" />
@@ -154,7 +157,7 @@ export default {
     return {
       chats: [],
       room: this.$route.params.id,
-      name: this.$route.params.name,
+      hasMatch: this.$route.params.hasMatch,
       socket: this.$route.params.socket,
       isInterviewer: this.$route.params.isInterviewer,
       username: sessionStorage.getItem('username').split('"')[1],
@@ -200,7 +203,10 @@ export default {
       timestamp: this.getTimeNow()
     }
     this.sendChat(joinRoomChat)
-    this.sendAssignedRoleChat()
+    this.sendWarning()
+    if (this.hasMatch) {
+      this.sendAssignedRoleChat()
+    }
 
     this.initialiseAutomergeCode()
 
@@ -258,14 +264,29 @@ export default {
       })
 
     this.socket.on('next-question', () => this.loadNextCodingQuestion())
+
+    // deals with back button
+    this.socket.on('disconnect', () => {
+      this.socket = io(SERVER_URI)
+      const leaveRoomChat = {
+        room: this.room,
+        name: 'SHReK Tech Bot',
+        message: this.username + ' left this room',
+        timestamp: this.getTimeNow()
+      }
+      this.sendChat(leaveRoomChat)
+      this.$router.push({
+        name: 'home'
+      })
+    })
   },
 
   mounted () {
-    this.addListeners()
+    this.addListener()
   },
 
   destroyed () {
-    this.removeListeners()
+    this.removeListener()
   },
 
   methods: {
@@ -283,18 +304,16 @@ export default {
       })
     },
 
-    addListeners () {
-      window.addEventListener('popstate', this.popStateListener)
+    addListener () {
       window.addEventListener('beforeunload', this.beforeUnloadListener)
     },
 
-    removeListeners () {
-      window.removeEventListener('popstate', this.popStateListener)
+    removeListener () {
       window.removeEventListener('beforeunload', this.beforeUnloadListener)
     },
 
-    popStateListener () {
-      alert('You cannot rejoin this room anymore!')
+    // deals with refresh button
+    beforeUnloadListener () {
       this.socket = io(SERVER_URI)
       const leaveRoomChat = {
         room: this.room,
@@ -306,17 +325,6 @@ export default {
       this.$router.push({
         name: 'home'
       })
-    },
-
-    beforeUnloadListener (e) {
-      // TODO: allow realtime communication again
-      e.preventDefault()
-      e.returnValue = ''
-      if (window.closed) {
-        console.log('Window closed')
-      } else {
-        console.log('Window not closed')
-      }
     },
 
     getTimeNow () {
@@ -348,6 +356,17 @@ export default {
       this.sendChat(assignedRoleChat)
     },
 
+    sendWarning () {
+      const warning = {
+        room: this.room,
+        name: 'SHReK Tech Bot',
+        message: 'Please note that you cannot return to this session after leaving or refreshing the page.',
+        timestamp: this.getTimeNow(),
+        isPrivate: true
+      }
+      this.sendChat(warning)
+    },
+
     handleNextQuestionButtonClick () {
       this.$refs.tooltip.$emit('close')
       this.socket.emit('load-next-question', this.room)
@@ -356,7 +375,10 @@ export default {
     loadNextCodingQuestion () {
       this.$refs.countUpTimer.reset()
       this.isInterviewer = !this.isInterviewer
-      this.sendAssignedRoleChat()
+      this.sendWarning()
+      if (this.hasMatch) {
+        this.sendAssignedRoleChat()
+      }
       this.clearCode()
       this.isSecondQuestion = true
       this.codingQuestion = this.codingQuestion2

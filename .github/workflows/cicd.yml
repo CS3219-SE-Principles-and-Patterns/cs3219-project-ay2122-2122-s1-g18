@@ -10,6 +10,8 @@ jobs:
 
     steps:
       - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
       - name: Set up Node.js 16.x for client
         uses: actions/setup-node@v2
         with:
@@ -57,7 +59,6 @@ jobs:
         run: |
           git config --global user.email ${{secrets.HEROKU_EMAIL}}
           git config --global user.name ${{secrets.GIT_NAME}}
-          git fetch
           git add .
           git commit -m "Deploy"
-          git subtree push --prefix server heroku main
+          git push -f heroku `git subtree split --prefix server main`:main
