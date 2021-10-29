@@ -499,7 +499,7 @@ export default {
   .scroll-box {
     background: #f4f4f4;
     border: 2px solid rgba(0, 0, 0, 0.1);
-    height: 500px; /* maximum height of the box, feel free to change this! */
+    height: 500px;
     padding: 15px;
     overflow-y: scroll;
 }
