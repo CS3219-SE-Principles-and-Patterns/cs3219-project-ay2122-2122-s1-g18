@@ -235,21 +235,31 @@ export default {
       }
     })
 
-    var codingQuestionsURL = ''
-    if (this.difficulty === 'beginner') {
-      this.recommended_time = 'Recommended: 00:30:00'
-      codingQuestionsURL = `${SERVER_URI}/api/easy-coding-questions`
-    } else if (this.difficulty === 'intermediate') {
-      this.recommended_time = 'Recommended: 00:45:00'
-      codingQuestionsURL = `${SERVER_URI}/api/medium-coding-questions`
-    } else {
-      this.recommended_time = 'Recommended: 1:00:00'
-      codingQuestionsURL = `${SERVER_URI}/api/hard-coding-questions`
+    var codingQuestionsURL = `${SERVER_URI}/api/coding-questions`
+    var difficultyLvl
+    switch (this.difficulty) {
+      case 'beginner':
+        this.recommended_time = 'Recommended: 00:30:00'
+        difficultyLvl = 1
+        break
+      case 'intermediate':
+        this.recommended_time = 'Recommended: 00:45:00'
+        difficultyLvl = 2
+        break
+      case 'expert':
+        this.recommended_time = 'Recommended: 1:00:00'
+        difficultyLvl = 3
+        break
+      default:
+        console.log('Unaccepted difficulty level.')
+        difficultyLvl = -1
     }
     axios.get(codingQuestionsURL)
       .then((response) => {
-        this.codingQuestion = response.data.data[this.codingQuestionIdx]
-        this.codingQuestion2 = response.data.data[this.codingQuestionIdx2]
+        this.codingQuestion = response.data.data.filter(
+          question => question.difficulty === difficultyLvl)[this.codingQuestionIdx]
+        this.codingQuestion2 = response.data.data.filter(
+          question => question.difficulty === difficultyLvl)[this.codingQuestionIdx2]
       })
 
     this.socket.on('next-question', () => this.loadNextCodingQuestion())

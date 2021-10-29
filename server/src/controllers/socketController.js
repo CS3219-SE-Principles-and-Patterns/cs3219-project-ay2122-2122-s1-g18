@@ -40,7 +40,10 @@ exports.createEventListeners = (socket, io) => {
     }
 
     const codingQuestionIdx1 = await getCodingQuestionIdx(matchBy)
-    const codingQuestionIdx2 = await getCodingQuestionIdx(matchBy)
+    let codingQuestionIdx2 = await getCodingQuestionIdx(matchBy)
+    while (codingQuestionIdx2 === codingQuestionIdx1) {
+      codingQuestionIdx2 = await getCodingQuestionIdx(matchBy)
+    }
 
     const waitingUserMatched = waitingUsers[matchBy]
     // Use waiting user's socket id as room id
