@@ -16,7 +16,7 @@ exports.getCodingQuestions = function (req, res) {
     })
 }
 
-exports.getCodingQuestion = function (req, res) {
+exports.getCodingQuestion = async function (req, res) {
   const skipBy = req.params.qn_idx
   CodingQuestion.find()
     .sort({ difficulty: 1, frontend_question_id: 1 })
@@ -24,7 +24,7 @@ exports.getCodingQuestion = function (req, res) {
     .limit(1)
     .then(questions => {
       res.status(200).json({
-        message: 'Success: All Coding questions retrieved!',
+        message: 'Success: Coding question retrieved!',
         data: questions
       })
     })
