@@ -21,9 +21,14 @@ function randSelectInterviewer (user1, user2) {
   return user2
 }
 
-async function getCodingQuestionIdx (matchBy) {
-  const result = await codingQuestionsController.getCodingQuestionsIdx(matchBy)
-  const result2 = Math.floor(Math.random() * (result))
+async function getCodingQuestionIdx (difficultyLvl) {
+  const result = await codingQuestionsController.getNumCodingQuestions(difficultyLvl)
+  let result2 = Math.floor(Math.random() * (result))
+
+  const difficultyLvlUnaccounted = difficultyLvl - 1
+  for (let i = 1; i <= difficultyLvlUnaccounted; i++) {
+    result2 += await codingQuestionsController.getNumCodingQuestions(i)
+  }
   return result2
 }
 
@@ -39,10 +44,21 @@ exports.createEventListeners = (socket, io) => {
       return
     }
 
-    const codingQuestionIdx1 = await getCodingQuestionIdx(matchBy)
-    let codingQuestionIdx2 = await getCodingQuestionIdx(matchBy)
-    while (codingQuestionIdx2 === codingQuestionIdx1) {
-      codingQuestionIdx2 = await getCodingQuestionIdx(matchBy)
+    let difficultyLvl = -1
+    switch (matchBy) {
+      case 'beginner':
+        difficultyLvl = 1
+        break
+      case 'intermediate':
+        difficultyLvl = 2
+        break
+      case 'expert':
+        difficultyLvl = 3
+    }
+    const codingQuestion1Idx = await getCodingQuestionIdx(difficultyLvl)
+    let codingQuestion2Idx = await getCodingQuestionIdx(difficultyLvl)
+    while (codingQuestion2Idx === codingQuestion1Idx) {
+      codingQuestion2Idx = await getCodingQuestionIdx(difficultyLvl)
     }
 
     const waitingUserMatched = waitingUsers[matchBy]
@@ -50,8 +66,8 @@ exports.createEventListeners = (socket, io) => {
     const codingRoomInfo = {
       id: `${waitingUserMatched}-${socket.id}`,
       interviewer: randSelectInterviewer(socket.id, waitingUserMatched),
-      codingQuestionIdx: codingQuestionIdx1,
-      codingQuestionIdx2: codingQuestionIdx2
+      codingQuestion1Idx: codingQuestion1Idx,
+      codingQuestion2Idx: codingQuestion2Idx
     }
     socket.join(codingRoomInfo.id)
     socket.to(waitingUserMatched).emit('match-found', codingRoomInfo)

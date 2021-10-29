@@ -28,6 +28,9 @@ router.route('/interview-questions')
   .get(interviewQuestionsController.getInterviewQuestions)
   .post(interviewQuestionsController.createInterviewQuestion)
 
+router.route('/coding-questions/:qn_idx')
+  .get(codingQuestionsController.getCodingQuestion)
+
 router.route('/coding-questions')
   .get(codingQuestionsController.getCodingQuestions)
 
