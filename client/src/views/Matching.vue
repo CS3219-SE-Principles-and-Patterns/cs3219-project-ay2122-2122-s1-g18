@@ -79,7 +79,10 @@ export default {
             socket: this.socket,
             id: roomInfo.id,
             hasMatch: true,
-            isInterviewer: this.isInterviewer(this.socket.id, roomInfo.interviewer)
+            isInterviewer: this.isInterviewer(this.socket.id, roomInfo.interviewer),
+            difficulty: this.matchBy,
+            codingQuestionIdx: roomInfo.codingQuestionIdx,
+            codingQuestionIdx2: roomInfo.codingQuestionIdx2
           }
         })
       })

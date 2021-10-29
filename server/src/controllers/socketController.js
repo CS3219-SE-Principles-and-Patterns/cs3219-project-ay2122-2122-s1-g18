@@ -1,5 +1,5 @@
 const { assert } = require('console')
-
+const codingQuestionsController = require('./codingQuestionsController')
 const waitingUsers = {}
 const userMatchingPreferences = new Map()
 
@@ -21,24 +21,37 @@ function randSelectInterviewer (user1, user2) {
   return user2
 }
 
+async function getCodingQuestionIdx (matchBy) {
+  const result = await codingQuestionsController.getCodingQuestionsIdx(matchBy)
+  const result2 = Math.floor(Math.random() * (result))
+  return result2
+}
+
 exports.createEventListeners = (socket, io) => {
   socket.on('join-waiting-users-listener', () => {
     socket.join('waiting-users-listener')
     socket.emit('update-waiting-users', waitingUsers)
   })
-
-  socket.on('find-match', (matchBy) => {
+  socket.on('find-match', async (matchBy) => {
     if (!waitingUsers[matchBy]) {
       userMatchingPreferences.set(socket.id, matchBy)
       addWaitingUser(matchBy, socket)
       return
     }
 
+    const codingQuestionIdx1 = await getCodingQuestionIdx(matchBy)
+    let codingQuestionIdx2 = await getCodingQuestionIdx(matchBy)
+    while (codingQuestionIdx2 === codingQuestionIdx1) {
+      codingQuestionIdx2 = await getCodingQuestionIdx(matchBy)
+    }
+
     const waitingUserMatched = waitingUsers[matchBy]
     // Use waiting user's socket id as room id
     const codingRoomInfo = {
       id: `${waitingUserMatched}-${socket.id}`,
-      interviewer: randSelectInterviewer(socket.id, waitingUserMatched)
+      interviewer: randSelectInterviewer(socket.id, waitingUserMatched),
+      codingQuestionIdx: codingQuestionIdx1,
+      codingQuestionIdx2: codingQuestionIdx2
     }
     socket.join(codingRoomInfo.id)
     socket.to(waitingUserMatched).emit('match-found', codingRoomInfo)

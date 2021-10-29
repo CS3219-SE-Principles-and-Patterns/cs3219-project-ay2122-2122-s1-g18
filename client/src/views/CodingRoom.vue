@@ -21,9 +21,16 @@
         </b-tooltip>
       </b-col>
       <b-col>
-        <div class='container d-flex justify-content-center'>
-          <CountUpTimer ref='countUpTimer'/>
-        </div>
+        <b-col>
+          <div class='container d-flex justify-content-center'>
+            <CountUpTimer ref='countUpTimer'/>
+          </div>
+        </b-col>
+        <b-col>
+          <div class='container d-flex justify-content-center'>
+            <p style="color:brown">{{recommended_time}}</p>
+          </div>
+        </b-col>
       </b-col>
       <b-col>
         <b-button variant="danger" @click.prevent="leaveRoom()" type="button" class="endButton px-4 float-end mb-5">
@@ -32,7 +39,15 @@
       </b-col>
     </b-row>
     <b-row>
-      <b-col cols="6">
+      <b-col cols="4">
+        <h3 class="heading">Coding Question</h3>
+        <div class="scroll-box">
+          <p style="color: green; font-size:22px;">{{codingQuestion.question_title}}</p>
+          <p class="pre-formatted" style="font-size:16px;">{{codingQuestion.question_text}}</p>
+          <p>{{codingQuestion.url}}</p>
+        </div>
+      </b-col>
+      <b-col cols="5">
         <h3 class="heading">Code Editor</h3>
         <b-form-textarea
           class="text-area panel-body-left"
@@ -152,7 +167,13 @@ export default {
       code: '',
       automergeCode: null,
       interviewQuestions: null,
-      isSecondQuestion: false
+      isSecondQuestion: false,
+      difficulty: this.$route.params.difficulty,
+      recommended_time: '',
+      codingQuestion: '',
+      codingQuestion2: '',
+      codingQuestionIdx: this.$route.params.codingQuestionIdx,
+      codingQuestionIdx2: this.$route.params.codingQuestionIdx2
     }
   },
 
@@ -214,6 +235,33 @@ export default {
         this.code = this.automergeCode.code
       }
     })
+
+    var codingQuestionsURL = `${SERVER_URI}/api/coding-questions`
+    var difficultyLvl
+    switch (this.difficulty) {
+      case 'beginner':
+        this.recommended_time = 'Recommended: 00:30:00'
+        difficultyLvl = 1
+        break
+      case 'intermediate':
+        this.recommended_time = 'Recommended: 00:45:00'
+        difficultyLvl = 2
+        break
+      case 'expert':
+        this.recommended_time = 'Recommended: 01:00:00'
+        difficultyLvl = 3
+        break
+      default:
+        console.log('Unaccepted difficulty level.')
+        difficultyLvl = -1
+    }
+    axios.get(codingQuestionsURL)
+      .then((response) => {
+        this.codingQuestion = response.data.data.filter(
+          question => question.difficulty === difficultyLvl)[this.codingQuestionIdx]
+        this.codingQuestion2 = response.data.data.filter(
+          question => question.difficulty === difficultyLvl)[this.codingQuestionIdx2]
+      })
 
     this.socket.on('next-question', () => this.loadNextCodingQuestion())
 
@@ -333,6 +381,7 @@ export default {
       }
       this.clearCode()
       this.isSecondQuestion = true
+      this.codingQuestion = this.codingQuestion2
       this.typing = false
       this.message = ''
     },
@@ -442,4 +491,16 @@ export default {
     background-color: #5ab4dd;
     margin: 5px;
   }
+
+  .pre-formatted {
+    white-space: pre-wrap
+  }
+
+  .scroll-box {
+    background: #f4f4f4;
+    border: 2px solid rgba(0, 0, 0, 0.1);
+    height: 500px;
+    padding: 15px;
+    overflow-y: scroll;
+}
 </style>
