@@ -45,10 +45,6 @@
           <p class="pre-formatted" style="font-size:16px;">{{codingQuestion.question_text}}</p>
           <p>{{codingQuestion.url}}</p>
         </div>
-          <!-- <p style="color: green; font-size:22px;">{{codingQuestion.question_title}}</p>
-          <p class="pre-formatted" style="font-size:16px;">{{codingQuestion.question_text}}</p>
-          <p>{{codingQuestion.url}}</p> -->
-
       </b-col>
       <b-col cols="5">
         <h3 class="heading">Code Editor</h3>
@@ -175,7 +171,6 @@ export default {
       codingQuestion2: '',
       codingQuestionIdx: this.$route.params.codingQuestionIdx,
       codingQuestionIdx2: this.$route.params.codingQuestionIdx2
-
     }
   },
 
@@ -247,7 +242,7 @@ export default {
         difficultyLvl = 2
         break
       case 'expert':
-        this.recommended_time = 'Recommended: 1:00:00'
+        this.recommended_time = 'Recommended: 01:00:00'
         difficultyLvl = 3
         break
       default:

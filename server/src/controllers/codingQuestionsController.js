@@ -19,7 +19,7 @@ exports.getCodingQuestionsIdx = async function (matchBy) {
   let result
   let difficultyLvl
 
-  switch(matchBy) {
+  switch (matchBy) {
     case 'beginner':
       difficultyLvl = 1
       break
@@ -34,11 +34,10 @@ exports.getCodingQuestionsIdx = async function (matchBy) {
   }
 
   if (difficultyLvl === -1) {
-    console.log("Unaccepted difficulty level.")
+    console.log('Unaccepted difficulty level.')
   } else {
-    result = await CodingQuestion.countDocuments({difficulty: {$eq: difficultyLvl}}).exec().then(
+    result = await CodingQuestion.countDocuments({ difficulty: { $eq: difficultyLvl } }).exec().then(
       (res) => { return res })
-
   }
   return result
 }
