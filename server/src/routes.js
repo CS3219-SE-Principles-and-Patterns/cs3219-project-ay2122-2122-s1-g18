@@ -1,5 +1,6 @@
 const router = require('express').Router()
 const authController = require('./controllers/authController')
+const socketController = require('./controllers/socketController')
 const checkAuth = require('./utils/checkAuth')
 const interviewQuestionsController = require('./controllers/interviewQuestionsController')
 
@@ -22,6 +23,9 @@ router.route('/users/verify/:id/:token')
 router.route('/users/verify/checkAuth')
   .get(checkAuth.allowIfLoggedIn)
   .post(authController.addBlacklist)
+
+router.route('/users/:username/session')
+  .get(socketController.hasOngoingSession)
 
 router.route('/interview-questions')
   .get(interviewQuestionsController.getInterviewQuestions)

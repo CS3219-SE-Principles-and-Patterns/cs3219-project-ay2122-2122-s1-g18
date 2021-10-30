@@ -35,23 +35,31 @@
             </b-button>
           </div>
         </b-form>
+        <b-alert :show="error" variant="danger">
+          {{ errorMessage }}
+        </b-alert>
       </b-col>
     </b-row>
   </div>
 </template>
 
 <script>
+import axios from 'axios'
 import io from 'socket.io-client'
 import { SERVER_URI } from '../constants'
+
+const UNEXPECTED_ERROR = 'We are unable to find you a match at the moment. Please try again later.'
 
 export default {
   name: 'home',
   data () {
     return {
-      username: sessionStorage.getItem('username').split('"')[1],
+      username: JSON.parse(sessionStorage.getItem('username')),
       socket: null,
       waitingUsers: null,
       selected: null,
+      error: false,
+      errorMessage: null,
       fields: [
         { key: 'difficulty', thStyle: { display: 'none' } },
         { key: 'hasWaitingUser', thStyle: { display: 'none' } }
@@ -92,16 +100,40 @@ export default {
       this.selected = selected[0].key
     },
 
-    onSubmit (event) {
+    async onSubmit (event) {
       event.preventDefault()
-      if (this.selected) {
-        this.$router.push({
-          name: 'matching',
-          params: {
-            matchBy: this.selected
-          }
-        })
+      this.error = false
+      if (!this.selected) {
+        this.setError('Please select a difficulty level for the coding question(s) you wish to attempt.')
+        return
       }
+
+      const hasOngoingSession = await this.doesUserHaveOngoingSession()
+      if (hasOngoingSession) {
+        this.setError('You already have an ongoing session.')
+        return
+      }
+
+      this.$router.push({
+        name: 'matching',
+        params: {
+          matchBy: this.selected
+        }
+      })
+    },
+
+    async doesUserHaveOngoingSession () {
+      const url = `${SERVER_URI}/api/users/${this.username}/session`
+      return axios.get(url)
+        .then((response) => {
+          return response.data.hasOngoingSession
+        })
+        .catch(() => this.setError(UNEXPECTED_ERROR))
+    },
+
+    setError (message) {
+      this.error = true
+      this.errorMessage = message
     }
   }
 }

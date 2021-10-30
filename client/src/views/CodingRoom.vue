@@ -120,7 +120,6 @@
 <script>
 import Automerge from 'automerge'
 import axios from 'axios'
-import io from 'socket.io-client'
 import Vue from 'vue'
 import VueChatScroll from 'vue-chat-scroll'
 import CountUpTimer from '../components/CountUpTimer'
@@ -142,7 +141,7 @@ export default {
       name: this.$route.params.name,
       socket: this.$route.params.socket,
       isInterviewer: this.$route.params.isInterviewer,
-      username: sessionStorage.getItem('username').split('"')[1],
+      username: JSON.parse(sessionStorage.getItem('username')),
       matchedUser: '',
       typing: false,
       message: '',
@@ -211,29 +210,6 @@ export default {
     })
 
     this.socket.on('next-question', () => this.loadNextCodingQuestion())
-
-    // deals with back button
-    this.socket.on('disconnect', () => {
-      this.socket = io(SERVER_URI)
-      const leaveRoomChat = {
-        room: this.room,
-        name: 'SHReK Tech Bot',
-        message: this.username + ' left this room',
-        timestamp: this.getTimeNow()
-      }
-      this.sendChat(leaveRoomChat)
-      this.$router.push({
-        name: 'home'
-      })
-    })
-  },
-
-  mounted () {
-    this.addListener()
-  },
-
-  destroyed () {
-    this.removeListener()
   },
 
   methods: {
@@ -248,29 +224,6 @@ export default {
       this.socket.emit('update-code', {
         room: this.room,
         codeChanges: changes
-      })
-    },
-
-    addListener () {
-      window.addEventListener('beforeunload', this.beforeUnloadListener)
-    },
-
-    removeListener () {
-      window.removeEventListener('beforeunload', this.beforeUnloadListener)
-    },
-
-    // deals with refresh button
-    beforeUnloadListener () {
-      this.socket = io(SERVER_URI)
-      const leaveRoomChat = {
-        room: this.room,
-        name: 'SHReK Tech Bot',
-        message: this.username + ' left this room',
-        timestamp: this.getTimeNow()
-      }
-      this.sendChat(leaveRoomChat)
-      this.$router.push({
-        name: 'home'
       })
     },
 
@@ -332,6 +285,7 @@ export default {
 
     leaveRoom () {
       if (window.confirm('Do you really want to end the session?')) {
+        this.socket.disconnect()
         const leaveRoomChat = {
           room: this.room,
           name: 'SHReK Tech Bot',
