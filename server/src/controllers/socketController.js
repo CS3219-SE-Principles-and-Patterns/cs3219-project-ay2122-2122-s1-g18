@@ -10,9 +10,10 @@ function addWaitingUser (matchBy, socket) {
   socket.to('waiting-users-listener').emit('update-waiting-users', waitingUsers)
 }
 
-function removeWaitingUser (matchBy, io) {
+function removeWaitingUser (matchBy, waitingUserId, io) {
   waitingUsers[matchBy] = null
   io.to('waiting-users-listener').emit('update-waiting-users', waitingUsers)
+  userMatchingPreferences.delete(waitingUserId)
 }
 
 function randSelectInterviewer (user1, user2) {
@@ -132,8 +133,7 @@ exports.createEventListeners = (socket, io) => {
     socket.join(codingRoomInfo.id)
     setCodingRoom(userInfo.username, codingRoomInfo.id)
     socket.to(waitingUserMatched).emit('match-found', codingRoomInfo)
-    removeWaitingUser(userInfo.matchBy, io)
-    userMatchingPreferences.delete(waitingUserMatched)
+    removeWaitingUser(userInfo.matchBy, waitingUserMatched, io)
   })
 
   socket.on('join-room', (username, roomInfo) => {
@@ -144,8 +144,7 @@ exports.createEventListeners = (socket, io) => {
 
   socket.on('end-wait', (matchBy) => {
     assert(waitingUsers[matchBy] === socket.id)
-    removeWaitingUser(matchBy, io)
-    userMatchingPreferences.delete(socket.id)
+    removeWaitingUser(matchBy, socket.id, io)
   })
 
   socket.on('typing', (message) => {
@@ -176,8 +175,7 @@ exports.createEventListeners = (socket, io) => {
 
 function handleSocketDisconnectWhenMatching (socket, io) {
   const matchBy = userMatchingPreferences.get(socket.id)
-  removeWaitingUser(matchBy, io)
-  userMatchingPreferences.delete(socket.id)
+  removeWaitingUser(matchBy, socket.id, io)
 }
 
 async function handleSocketDisconnectWhenCoding (socket, io) {
