@@ -30,6 +30,14 @@
         >
           Select another difficulty level
         </b-button>
+
+        <b-button
+          variant='outline-primary'
+          block
+          @click='handleProceedWithoutMatch'
+        >
+          Proceed without a match
+        </b-button>
       </div>
     </b-modal>
   </div>
@@ -76,8 +84,11 @@ export default {
           params: {
             socket: this.socket,
             id: roomInfo.id,
-            name: this.socket.id,
-            isInterviewer: this.isInterviewer(this.socket.id, roomInfo.interviewer)
+            hasMatch: true,
+            isInterviewer: this.isInterviewer(this.socket.id, roomInfo.interviewer),
+            difficulty: this.matchBy,
+            codingQuestion1Idx: roomInfo.codingQuestion1Idx,
+            codingQuestion2Idx: roomInfo.codingQuestion2Idx
           }
         })
       })
@@ -102,6 +113,18 @@ export default {
       this.socket.disconnect()
       this.showMatchNotFoundModal = false
       this.$router.push({ name: 'home' })
+    },
+
+    handleProceedWithoutMatch () {
+      this.$router.push({
+        name: 'codingroom',
+        params: {
+          socket: this.socket,
+          id: this.socket.id,
+          isInterviewer: true,
+          hasMatch: false
+        }
+      })
     }
   }
 }

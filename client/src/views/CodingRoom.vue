@@ -7,6 +7,7 @@
           @click.prevent="handleNextQuestionButtonClick()"
           type="button"
           class="nextQuestionButton px-4 mb-5"
+          v-if="hasMatch"
           :disabled="isSecondQuestion"
         >
           Next Coding Question
@@ -20,9 +21,16 @@
         </b-tooltip>
       </b-col>
       <b-col>
-        <div class='container d-flex justify-content-center'>
-          <CountUpTimer ref='countUpTimer'/>
-        </div>
+        <b-col>
+          <div class='container d-flex justify-content-center'>
+            <CountUpTimer ref='countUpTimer'/>
+          </div>
+        </b-col>
+        <b-col>
+          <div class='container d-flex justify-content-center'>
+            <p style="color:brown">{{recommended_time}}</p>
+          </div>
+        </b-col>
       </b-col>
       <b-col>
         <b-button variant="danger" @click.prevent="leaveRoom()" type="button" class="endButton px-4 float-end mb-5">
@@ -31,7 +39,15 @@
       </b-col>
     </b-row>
     <b-row>
-      <b-col cols="6">
+      <b-col cols="4">
+        <h3 class="heading">Coding Question</h3>
+        <div class="scroll-box">
+          <p style="color: green; font-size:22px;">{{codingQuestion.question_title}}</p>
+          <p class="pre-formatted" style="font-size:16px;">{{codingQuestion.question_text}}</p>
+          <p>{{codingQuestion.url}}</p>
+        </div>
+      </b-col>
+      <b-col cols="5">
         <h3 class="heading">Code Editor</h3>
         <b-form-textarea
           class="text-area panel-body-left"
@@ -70,7 +86,9 @@
                 <div class="chat-body clearfix">
                   <div class="header">
                     <strong class="primary-font">{{ item.name }}</strong>
-                    <b-badge class="badge">{{ isInterviewer? 'Interviewer' : 'Interviewee' }}</b-badge>
+                    <b-badge class="badge" v-if="hasMatch">
+                      {{ isInterviewer ? 'Interviewer' : 'Interviewee' }}
+                    </b-badge>
                     <small class="pull-right text-muted">
                       <span class="glyphicon glyphicon-time" />
                       {{ item.timestamp }}
@@ -83,8 +101,8 @@
                 <div class="chat-body clearfix">
                   <div class="header">
                     <strong class="primary-font">{{ item.name }}</strong>
-                    <b-badge class="badge" v-if="item.name !== 'SHReK Tech Bot'">
-                      {{ isInterviewer? 'Interviewee' : 'Interviewer' }}
+                    <b-badge class="badge" v-if="hasMatch && item.name !== 'SHReK Tech Bot'">
+                      {{ isInterviewer ? 'Interviewee' : 'Interviewer' }}
                     </b-badge>
                     <small class="pull-right text-muted">
                       <span class="glyphicon glyphicon-time" />
@@ -138,7 +156,7 @@ export default {
     return {
       chats: [],
       room: this.$route.params.id,
-      name: this.$route.params.name,
+      hasMatch: this.$route.params.hasMatch,
       socket: this.$route.params.socket,
       isInterviewer: this.$route.params.isInterviewer,
       username: JSON.parse(sessionStorage.getItem('username')),
@@ -148,7 +166,13 @@ export default {
       code: '',
       automergeCode: null,
       interviewQuestions: null,
-      isSecondQuestion: false
+      isSecondQuestion: false,
+      difficulty: this.$route.params.difficulty,
+      recommended_time: '',
+      codingQuestion: '',
+      codingQuestion2: '',
+      codingQuestion1Idx: this.$route.params.codingQuestion1Idx,
+      codingQuestion2Idx: this.$route.params.codingQuestion2Idx
     }
   },
 
@@ -178,8 +202,10 @@ export default {
       timestamp: this.getTimeNow()
     }
     this.sendChat(joinRoomChat)
-    this.sendAssignedRoleChat()
     this.sendWarning()
+    if (this.hasMatch) {
+      this.sendAssignedRoleChat()
+    }
 
     this.initialiseAutomergeCode()
 
@@ -208,6 +234,32 @@ export default {
         this.code = this.automergeCode.code
       }
     })
+
+    const codingQuestion1URL = `${SERVER_URI}/api/coding-questions/${this.codingQuestion1Idx}`
+    const codingQuestion2URL = `${SERVER_URI}/api/coding-questions/${this.codingQuestion2Idx}`
+
+    axios.get(codingQuestion1URL)
+      .then((response) => {
+        this.codingQuestion = response.data.data[0]
+      })
+    axios.get(codingQuestion2URL)
+      .then((response) => {
+        this.codingQuestion2 = response.data.data[0]
+      })
+
+    switch (this.difficulty) {
+      case 'beginner':
+        this.recommended_time = 'Recommended: 00:30:00'
+        break
+      case 'intermediate':
+        this.recommended_time = 'Recommended: 00:45:00'
+        break
+      case 'expert':
+        this.recommended_time = 'Recommended: 01:00:00'
+        break
+      default:
+        console.log('Unaccepted difficulty level.')
+    }
 
     this.socket.on('next-question', () => this.loadNextCodingQuestion())
   },
@@ -275,10 +327,13 @@ export default {
     loadNextCodingQuestion () {
       this.$refs.countUpTimer.reset()
       this.isInterviewer = !this.isInterviewer
-      this.sendAssignedRoleChat()
       this.sendWarning()
+      if (this.hasMatch) {
+        this.sendAssignedRoleChat()
+      }
       this.clearCode()
       this.isSecondQuestion = true
+      this.codingQuestion = this.codingQuestion2
       this.typing = false
       this.message = ''
     },
@@ -389,4 +444,16 @@ export default {
     background-color: #5ab4dd;
     margin: 5px;
   }
+
+  .pre-formatted {
+    white-space: pre-wrap
+  }
+
+  .scroll-box {
+    background: #f4f4f4;
+    border: 2px solid rgba(0, 0, 0, 0.1);
+    height: 500px;
+    padding: 15px;
+    overflow-y: scroll;
+}
 </style>

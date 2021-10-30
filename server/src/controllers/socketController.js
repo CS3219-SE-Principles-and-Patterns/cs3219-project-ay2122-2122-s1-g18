@@ -1,4 +1,5 @@
 const { assert } = require('console')
+const codingQuestionsController = require('./codingQuestionsController')
 const User = require('../models/users')
 
 const waitingUsers = {}
@@ -78,13 +79,24 @@ async function getUserBySocket (socket) {
     .catch((err) => console.log(err))
 }
 
+async function getCodingQuestionIdx (difficultyLvl) {
+  const result = await codingQuestionsController.getNumCodingQuestions(difficultyLvl)
+  let result2 = Math.floor(Math.random() * (result))
+
+  const difficultyLvlUnaccounted = difficultyLvl - 1
+  for (let i = 1; i <= difficultyLvlUnaccounted; i++) {
+    result2 += await codingQuestionsController.getNumCodingQuestions(i)
+  }
+  return result2
+}
+
 exports.createEventListeners = (socket, io) => {
   socket.on('join-waiting-users-listener', () => {
     socket.join('waiting-users-listener')
     socket.emit('update-waiting-users', waitingUsers)
   })
 
-  socket.on('find-match', (userInfo) => {
+  socket.on('find-match', async (userInfo) => {
     setOngoingSession(userInfo.username, socket.id)
 
     if (!waitingUsers[userInfo.matchBy]) {
@@ -93,10 +105,29 @@ exports.createEventListeners = (socket, io) => {
       return
     }
 
+    let difficultyLvl = -1
+    switch (userInfo.matchBy) {
+      case 'beginner':
+        difficultyLvl = 1
+        break
+      case 'intermediate':
+        difficultyLvl = 2
+        break
+      case 'expert':
+        difficultyLvl = 3
+    }
+    const codingQuestion1Idx = await getCodingQuestionIdx(difficultyLvl)
+    let codingQuestion2Idx = await getCodingQuestionIdx(difficultyLvl)
+    while (codingQuestion2Idx === codingQuestion1Idx) {
+      codingQuestion2Idx = await getCodingQuestionIdx(difficultyLvl)
+    }
+
     const waitingUserMatched = waitingUsers[userInfo.matchBy]
     const codingRoomInfo = {
       id: `${waitingUserMatched}-${socket.id}`,
-      interviewer: randSelectInterviewer(socket.id, waitingUserMatched)
+      interviewer: randSelectInterviewer(socket.id, waitingUserMatched),
+      codingQuestion1Idx: codingQuestion1Idx,
+      codingQuestion2Idx: codingQuestion2Idx
     }
     socket.join(codingRoomInfo.id)
     setCodingRoom(userInfo.username, codingRoomInfo.id)
