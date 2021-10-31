@@ -1,3 +1,5 @@
 # this .gitignore is for heroku
+coverage
 node_modules
 .env
+.nyc_output
