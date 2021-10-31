@@ -1,6 +1,5 @@
 const chai = require('chai')
 const chaiHttp = require('chai-http')
-const mongoose = require('mongoose')
 const app = require('../index')
 
 const expect = chai.expect
@@ -8,13 +7,6 @@ const expect = chai.expect
 chai.use(chaiHttp)
 
 describe('/auth', () => {
-  before('Connect to database', function (done) {
-    mongoose.connect(process.env.MONGO_URI, { useNewUrlParser: true }, function () {
-      console.log('Connected to database')
-      done()
-    })
-  })
-
   describe('Route POST /api/users/signup', () => {
     it('Should POST a new user', (done) => {
       const userToAdd = {
