@@ -1,1 +1,1 @@
-web: npm run startLive
+web: npm run live
