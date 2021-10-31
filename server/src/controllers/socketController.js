@@ -181,13 +181,15 @@ function handleSocketDisconnectWhenMatching (socket, io) {
 async function handleSocketDisconnectWhenCoding (socket, io) {
   const user = await getUserBySocket(socket.id)
   unsetCodingRoom(socket.id)
-  const leaveRoomChat = {
-    room: user.codingRoom,
-    name: 'SHReK Tech Bot',
-    message: user.username + ' left this room',
-    timestamp: getTimeNow()
+  if (user) {
+    const leaveRoomChat = {
+      room: user.codingRoom,
+      name: 'SHReK Tech Bot',
+      message: user.username + ' left this room',
+      timestamp: getTimeNow()
+    }
+    sendChat(leaveRoomChat, null, io)
   }
-  sendChat(leaveRoomChat, null, io)
 }
 
 function getTimeNow () {

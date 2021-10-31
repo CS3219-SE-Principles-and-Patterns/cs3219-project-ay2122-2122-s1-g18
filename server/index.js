@@ -3,7 +3,9 @@ const express = require('express')
 const mongoose = require('mongoose')
 const path = require('path')
 const constants = require('./src/constants')
-const routes = require('./src/routes')
+const privateRoutes = require('./src/routes/privateRoutes')
+const publicRoutes = require('./src/routes/publicRoutes')
+const authController = require('./src/controllers/authController')
 const socketController = require('./src/controllers/socketController')
 
 dotenv.config()
@@ -41,7 +43,8 @@ app.get('/', (req, res) => {
   })
 })
 
-app.use('/api', routes)
+app.use('/api', publicRoutes)
+app.use('/api', authController.authenticateJwt, privateRoutes)
 
 if (process.env.NODE_ENV === 'production') {
   app.get('/*', (req, res) => {
