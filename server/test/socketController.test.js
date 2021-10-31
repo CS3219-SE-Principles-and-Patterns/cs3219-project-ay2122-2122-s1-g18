@@ -5,8 +5,6 @@ const app = require('../index')
 const expect = chai.expect
 
 chai.use(chaiHttp)
-// eslint-disable-next-line
-const should = chai.should()
 
 describe('/socket', () => {
   describe('Route GET /api/users/:username/session', () => {
@@ -16,10 +14,10 @@ describe('/socket', () => {
         .get(`/api/users/${USERNAME}/session`)
         .end((err, res) => {
           expect(err).to.be.null
-          res.should.have.status(200)
-          res.body.should.be.a('object')
-          res.body.should.have.property('message').eql('User retrieved successfully')
-          res.body.should.have.property('hasOngoingSession').eql(true)
+          expect(res).to.have.status(200)
+          expect(res.body).to.be.a('object')
+          expect(res.body.message).to.eql('User retrieved successfully')
+          expect(res.body.hasOngoingSession).to.eql(true)
           done()
         })
     })
@@ -28,13 +26,14 @@ describe('/socket', () => {
       const USERNAME = 'userWithoutSocket'
       chai.request(app)
         .get(`/api/users/${USERNAME}/session`)
-        .then((res) => {
+        .end((err, res) => {
+          expect(err).to.be.null
           expect(res).to.have.status(200)
           expect(res.body).to.be.a('object')
           expect(res.body.message).to.eql('User retrieved successfully')
           expect(res.body.hasOngoingSession).to.eql(false)
           done()
-        }).catch(done)
+        })
     })
 
     it('Should not GET user if username does not exist', (done) => {
