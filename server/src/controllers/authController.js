@@ -15,25 +15,28 @@ function validateEmail (email) {
 }
 
 exports.authenticateJwt = async function (req, res, next) {
-  const authHeader = req.headers.authorization
-
-  if (!authHeader) {
-    return res.sendStatus(401)
-  }
-
   try {
-    const token = authHeader.split(' ')[1]
+    const token = req.headers.authorization.split(' ')[1]
     jwt.verify(token, process.env.JWT_SECRET_KEY)
-
-    const blacklist = await BlacklistToken.find({ token }).exec()
-    if (blacklist.length > 0) {
-      return res.sendStatus(401)
+    const blacklistToken = await BlacklistToken.find({ token }).exec()
+    if (blacklistToken.length > 0) {
+      return res.status(401).json({
+        message: 'Authentication Failed'
+      })
     }
-  } catch (_err) {
-    return res.sendStatus(401)
-  }
 
-  next()
+    if (req.route && req.route.path === '/users/verify/checkAuth') {
+      return res.status(200).json({
+        message: 'Authentication Success'
+      })
+    }
+
+    next()
+  } catch (_err) {
+    return res.status(401).json({
+      message: 'Authentication Failed'
+    })
+  }
 }
 
 // DELETE a new user

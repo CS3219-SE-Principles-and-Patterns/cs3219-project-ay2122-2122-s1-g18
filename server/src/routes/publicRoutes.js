@@ -1,6 +1,5 @@
 const router = require('express').Router()
 const authController = require('../controllers/authController')
-const checkAuth = require('../utils/checkAuth')
 
 router.route('/users')
   .post(authController.userLogin)
@@ -12,6 +11,6 @@ router.route('/users/signup')
   .post(authController.createUser)
 
 router.route('/users/verify/checkAuth')
-  .get(checkAuth.allowIfLoggedIn)
+  .get(authController.authenticateJwt)
 
 module.exports = router
