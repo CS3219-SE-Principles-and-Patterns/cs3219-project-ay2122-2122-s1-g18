@@ -7,8 +7,8 @@
   },
   "scripts": {
     "start": "npx nodemon index.js",
-    "startLive": "node index.js",
-    "test": "mocha --timeout 10000 --exit",
+    "build": "node index.js",
+    "test": "nyc --reporter=lcovonly mocha --timeout 10000 --exit && codecov",
     "lint": "npx eslint ."
   },
   "author": "CS3219 AY2122 S1 G18",
@@ -28,6 +28,7 @@
     "@types/node": "^16.10.3",
     "chai": "^4.3.4",
     "chai-http": "^4.3.0",
+    "codecov": "^3.8.3",
     "eslint": "^7.32.0",
     "eslint-config-standard": "^16.0.3",
     "eslint-plugin-chai-friendly": "^0.7.2",
@@ -37,6 +38,7 @@
     "express": "^4.17.1",
     "mocha": "^9.1.2",
     "nodemon": "^2.0.12",
+    "nyc": "^15.1.0",
     "serve-static": "^1.14.1"
   }
 }
