@@ -29,7 +29,14 @@ exports.hasOngoingSession = function (req, res) {
   User.findOne({ username }, function (err, user) {
     if (err) {
       res.status(500).json({
-        message: 'Cannot find user'
+        message: 'Unexpected error'
+      })
+      return
+    }
+
+    if (!user) {
+      res.status(404).json({
+        message: 'User not found'
       })
       return
     }
