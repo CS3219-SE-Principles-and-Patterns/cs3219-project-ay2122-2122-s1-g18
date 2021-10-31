@@ -27,7 +27,6 @@ jobs:
 
   lint-test-server:
     runs-on: ubuntu-latest
-    environment: production
 
     defaults:
       run:
@@ -41,6 +40,10 @@ jobs:
           node-version: 16.x
           cache: "npm"
           cache-dependency-path: "server/package-lock.json"
+      - name: Create .env
+        run: |
+          touch .env
+          echo MONGO_URI=${{ secrets.MONGO_URI }} >> .env
       - name: Install server dependencies
         run: npm install
       - name: Lint server
