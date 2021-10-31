@@ -1,6 +1,6 @@
 const chai = require('chai')
 const chaiHttp = require('chai-http')
-const mongoose = require('mongoose');
+const mongoose = require('mongoose')
 const app = require('../index')
 
 const expect = chai.expect
