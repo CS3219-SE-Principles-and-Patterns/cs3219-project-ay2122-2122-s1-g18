@@ -21,10 +21,10 @@ exports.authenticateJwt = async function (req, res, next) {
     return res.sendStatus(401)
   }
 
-  const token = authHeader.split(' ')[1]
-
   try {
+    const token = authHeader.split(' ')[1]
     jwt.verify(token, process.env.JWT_SECRET_KEY)
+
     const blacklist = await BlacklistToken.find({ token }).exec()
     if (blacklist.length > 0) {
       return res.sendStatus(401)
