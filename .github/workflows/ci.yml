@@ -27,7 +27,6 @@ jobs:
 
   lint-test-server:
     runs-on: ubuntu-latest
-    environment: production
 
     defaults:
       run:
