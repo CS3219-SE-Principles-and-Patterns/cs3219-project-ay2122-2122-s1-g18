@@ -16,6 +16,14 @@ const userSchema = new Schema({
     required: true,
     unique: true
   },
+  socket: {
+    type: String,
+    default: ''
+  },
+  codingRoom: {
+    type: String,
+    default: ''
+  },
   verify: {
     type: Boolean,
     default: false

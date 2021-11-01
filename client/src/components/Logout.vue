@@ -81,7 +81,7 @@
 
 <script>
 import axios from 'axios'
-import authHeader from '../utils/authHeader'
+import getAuthHeader from '../utils/authHeader'
 import { SERVER_URI } from '../constants'
 
 export default {
@@ -109,7 +109,7 @@ export default {
     },
     logout () {
       const apiURL = `${SERVER_URI}/api/users/verify/checkAuth`
-      axios.post(apiURL, {}, { headers: authHeader() })
+      axios.post(apiURL, {}, { headers: getAuthHeader() })
         .then(() => {
           sessionStorage.clear()
           this.$router.push({
@@ -128,7 +128,7 @@ export default {
       if (!this.missingField) {
         const apiURL = `${SERVER_URI}/api/users`
         this.user.username = JSON.parse(sessionStorage.getItem('username'))
-        axios.put(apiURL, this.user)
+        axios.put(apiURL, this.user, { headers: getAuthHeader() })
           .then(() => {
             this.user.oldPassword = ''
             this.user.newPassword = ''
@@ -154,7 +154,7 @@ export default {
           username: this.user.username,
           password: this.user.oldPassword
         }
-        axios.delete(apiURL, { data: temp })
+        axios.delete(apiURL, { data: temp }, { headers: getAuthHeader() })
           .then(() => {
             this.user.oldPassword = ''
             this.$router.push({
