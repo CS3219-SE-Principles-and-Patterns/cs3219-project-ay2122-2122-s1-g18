@@ -12,7 +12,14 @@
         >
           Next Coding Question
         </b-button>
-        <b-tooltip class="tooltip" target="nextQuestionButton" triggers="hover" ref="tooltip">
+        <b-tooltip
+            class="tooltip"
+            target="nextQuestionButton"
+            triggers="hover"
+            ref="tooltip"
+            v-if="hasMatch"
+            :disabled="isSecondQuestion"
+        >
           Upon clicking this button,<br>
           1. Your role will be swapped<br>
           2. The current code will be cleared<br>
@@ -42,9 +49,9 @@
       <b-col cols="4">
         <h3 class="heading">Coding Question</h3>
         <div class="scroll-box">
-          <p style="color: #a8ba61; font-size:22px; font-weight:600;">{{codingQuestion.question_title}}</p>
-          <p class="pre-formatted" style="font-size:16px;">{{codingQuestion.question_text}}</p>
-          <p>{{codingQuestion.url}}</p>
+          <p style="color: #a8ba61; font-size:22px; font-weight:600;">{{codingQuestion1.question_title}}</p>
+          <p class="pre-formatted" style="font-size:16px;">{{codingQuestion1.question_text}}</p>
+          <p>{{codingQuestion1.url}}</p>
         </div>
       </b-col>
       <b-col cols="5">
@@ -169,10 +176,10 @@ export default {
       isSecondQuestion: false,
       difficulty: this.$route.params.difficulty,
       recommended_time: '',
-      codingQuestion: '',
+      codingQuestion1: '',
       codingQuestion2: '',
       codingQuestion1Idx: this.$route.params.codingQuestion1Idx,
-      codingQuestion2Idx: this.$route.params.codingQuestion2Idx
+      codingQuestion2Idx: ''
     }
   },
 
@@ -195,6 +202,8 @@ export default {
   },
 
   created () {
+    this.codingQuestion2Idx = this.hasMatch ? this.$route.params.codingQuestion2Idx : ''
+
     const joinRoomChat = {
       room: this.room,
       name: 'SHReK Tech Bot',
@@ -236,15 +245,9 @@ export default {
     })
 
     const codingQuestion1URL = `/api/coding-questions/${this.codingQuestion1Idx}`
-    const codingQuestion2URL = `/api/coding-questions/${this.codingQuestion2Idx}`
-
     AXIOS.get(codingQuestion1URL, { headers: getAuthHeader() })
       .then((response) => {
-        this.codingQuestion = response.data.data[0]
-      })
-    AXIOS.get(codingQuestion2URL, { headers: getAuthHeader() })
-      .then((response) => {
-        this.codingQuestion2 = response.data.data[0]
+        this.codingQuestion1 = response.data.data[0]
       })
 
     switch (this.difficulty) {
@@ -324,7 +327,7 @@ export default {
       this.socket.emit('load-next-question', this.room)
     },
 
-    loadNextCodingQuestion () {
+    async loadNextCodingQuestion () {
       this.$refs.countUpTimer.reset()
       this.isInterviewer = !this.isInterviewer
       this.sendWarning()
@@ -332,8 +335,13 @@ export default {
         this.sendAssignedRoleChat()
       }
       this.clearCode()
+      const codingQuestion2URL = `/api/coding-questions/${this.codingQuestion2Idx}`
+      await AXIOS.get(codingQuestion2URL, { headers: getAuthHeader() })
+        .then((response) => {
+          this.codingQuestion2 = response.data.data[0]
+        })
       this.isSecondQuestion = true
-      this.codingQuestion = this.codingQuestion2
+      this.codingQuestion1 = this.codingQuestion2
       this.typing = false
       this.message = ''
     },

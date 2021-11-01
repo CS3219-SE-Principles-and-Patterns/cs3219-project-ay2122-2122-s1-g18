@@ -116,14 +116,21 @@ export default {
     },
 
     handleProceedWithoutMatch () {
-      this.$router.push({
-        name: 'codingroom',
-        params: {
-          socket: this.socket,
-          id: this.socket.id,
-          isInterviewer: true,
-          hasMatch: false
-        }
+      this.socket.emit('proceed-without-match', {
+        matchBy: this.matchBy
+      })
+      this.socket.on('room-ready', (roomInfo) => {
+        this.$router.push({
+          name: 'codingroom',
+          params: {
+            socket: this.socket,
+            id: this.socket.id,
+            isInterviewer: true,
+            hasMatch: false,
+            difficulty: this.matchBy,
+            codingQuestion1Idx: roomInfo.codingQuestion1Idx
+          }
+        })
       })
     }
   }
