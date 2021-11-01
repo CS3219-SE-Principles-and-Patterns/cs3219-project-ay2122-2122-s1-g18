@@ -2,13 +2,14 @@
   <b-row class="justify-content-center">
     <b-col cols="8" >
       <h3 class="text-center mb-4">Log In</h3>
-      <b-alert v-if="missingField" show="30">
+      <b-alert v-if="missingField"
+      variant="primary" show="30">
         Missing field. Please fill up all fields.
       </b-alert>
-      <b-alert v-if="wrongCredentials" show="30">
+      <b-alert v-if="wrongCredentials" variant="primary" show="30">
         Wrong username/password.
       </b-alert>
-      <b-alert v-if="invalidEmail" show="30">
+      <b-alert v-if="invalidEmail" variant="primary" show="30">
         Email not verified. Please verify your email before continuing.
       </b-alert>
       <form @submit.prevent="handleSubmitForm">
@@ -33,7 +34,6 @@
         <div class="form-group justify-content-center d-flex">
           <b-button
             class="createButton mt-4 mb-2 px-5"
-            variant="success"
             @click="handleSubmitForm"
           >
             Log In
@@ -121,22 +121,15 @@ export default {
 </script>
 
 <style>
-.createButton {
+.link.link {
+  color: darkslategray;
+}
+.link.link:hover {
+  color: grey;
+}
+
+.createButton .createButton:focus .createButton:hover{
+  border: #D3CCA5 !important;
   color: black;
-  background-color: #ffa8a1;
-  outline-color: #ffa8a1;
-  border-color: #ffa8a1;
-}
-.createButton:hover {
-  color: black;
-  background-color: #ffe5e3;
-  outline-color: #ffe5e3;
-  border-color: #ffe5e3;
-}
-.link {
-  color: #5f8195;
-}
-.link:hover {
-  color: #b3c3ce;
 }
 </style>
