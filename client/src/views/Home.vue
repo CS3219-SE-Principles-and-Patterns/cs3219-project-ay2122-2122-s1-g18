@@ -28,14 +28,14 @@
             />
           </template>
         </b-table>
-        <b-form class='selectButtons mt-3' @submit="onSubmit">
+        <b-form class="selectButtons mt-3" @submit="onSubmit">
           <div class="form-group justify-content-center d-flex">
-            <b-button class="mt-4 mb-2 px-5" type='submit'>
+            <b-button class="mt-4 mb-2 px-5" type="submit">
               Find a Match
             </b-button>
           </div>
         </b-form>
-        <b-alert class='alert mt-4' :show="error" variant="primary">
+        <b-alert class="alert mt-4" :show="error" variant="primary">
           {{ errorMessage }}
         </b-alert>
       </b-col>
