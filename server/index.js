@@ -17,8 +17,7 @@ app.use((req, res, next) => {
   const corsWhitelist = process.env.NODE_ENV === 'production'
     ? constants.PRODUCTION_SERVER_URI
     : constants.DEV_CLIENT_URI
-  console.log(req.headers.origin)
-  console.log(corsWhitelist.indexOf(req.headers.origin))
+
   if (corsWhitelist.indexOf(req.headers.origin) !== -1) {
     res.setHeader('Access-Control-Allow-Origin', req.headers.origin)
     res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS')
