@@ -69,7 +69,7 @@
                 right
                 text="Send Interview Question"
                 v-if="isInterviewer"
-                variant="dark"
+                variant="secondary"
               >
                 <b-dropdown-item
                   v-for="question in interviewQuestions"
@@ -127,7 +127,7 @@
                 required
             />
             <b-input-group-append>
-              <b-btn class="chat-form-element" type="submit" variant="dark">Send</b-btn>
+              <b-btn class="chat-form-element" type="submit" variant="secondary">Send</b-btn>
             </b-input-group-append>
           </b-input-group>
         </b-form>
