@@ -152,7 +152,7 @@ export default {
           username: this.user.username,
           password: this.user.oldPassword
         }
-        AXIOS.delete(apiURL, { data: temp }, { headers: getAuthHeader() })
+        AXIOS.delete(apiURL, { headers: getAuthHeader(), data: temp })
           .then(() => {
             this.user.oldPassword = ''
             this.$router.push({
