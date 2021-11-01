@@ -35,7 +35,7 @@
             </b-button>
           </div>
         </b-form>
-        <b-alert :show="error" variant="danger">
+        <b-alert :show="error" variant="primary">
           {{ errorMessage }}
         </b-alert>
       </b-col>
