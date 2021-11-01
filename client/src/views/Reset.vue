@@ -42,8 +42,7 @@
 </template>
 
 <script>
-import axios from 'axios'
-import { SERVER_URI } from '@/constants'
+import AXIOS from '../utils/axiosConfig'
 
 export default {
   name: 'Reset',
@@ -67,8 +66,8 @@ export default {
       this.user.userId = this.$route.params.id
       this.user.token = this.$route.params.token
       if (!this.missingField) {
-        const apiURL = `${SERVER_URI}/api/users/reset`
-        axios.put(apiURL, this.user)
+        const apiURL = '/api/users/reset'
+        AXIOS.put(apiURL, this.user)
           .then((res) => {
             if (res.status === 200) {
               this.user.newPassword = ''

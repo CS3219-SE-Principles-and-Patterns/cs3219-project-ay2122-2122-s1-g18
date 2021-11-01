@@ -59,8 +59,7 @@
 </template>
 
 <script>
-import axios from 'axios'
-import { SERVER_URI } from '@/constants'
+import AXIOS from '../utils/axiosConfig'
 
 export default {
   name: 'Login',
@@ -85,8 +84,8 @@ export default {
       this.missingField = false
       this.wrongCredentials = false
       this.invalidEmail = false
-      const apiURL = `${SERVER_URI}/api/users`
-      axios.post(apiURL, this.user)
+      const apiURL = '/api/users'
+      AXIOS.post(apiURL, this.user)
         .then((data) => {
           if (data && data.data) {
             sessionStorage.setItem('username', JSON.stringify(data.data.username))
