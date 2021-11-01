@@ -87,8 +87,8 @@ export default {
             hasMatch: true,
             isInterviewer: this.isInterviewer(this.socket.id, roomInfo.interviewer),
             difficulty: this.matchBy,
-            codingQuestion1Idx: roomInfo.codingQuestion1Idx,
-            codingQuestion2Idx: roomInfo.codingQuestion2Idx
+            codingQuestion1Id: roomInfo.codingQuestion1Id,
+            codingQuestion2Id: roomInfo.codingQuestion2Id
           }
         })
       })
@@ -128,7 +128,7 @@ export default {
             isInterviewer: true,
             hasMatch: false,
             difficulty: this.matchBy,
-            codingQuestion1Idx: roomInfo.codingQuestion1Idx
+            codingQuestion1Id: roomInfo.codingQuestion1Id
           }
         })
       })

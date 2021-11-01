@@ -41,7 +41,8 @@ exports.authenticateJwt = async function (req, res, next) {
     }
 
     next()
-  } catch (_err) {
+  } catch (err) {
+    console.log(err)
     return res.status(401).json({
       message: 'Authentication Failed'
     })

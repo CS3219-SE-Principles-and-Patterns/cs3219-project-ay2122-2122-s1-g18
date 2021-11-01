@@ -178,8 +178,8 @@ export default {
       recommended_time: '',
       codingQuestion1: '',
       codingQuestion2: '',
-      codingQuestion1Idx: this.$route.params.codingQuestion1Idx,
-      codingQuestion2Idx: ''
+      codingQuestion1Id: this.$route.params.codingQuestion1Id,
+      codingQuestion2Id: ''
     }
   },
 
@@ -202,7 +202,7 @@ export default {
   },
 
   created () {
-    this.codingQuestion2Idx = this.hasMatch ? this.$route.params.codingQuestion2Idx : ''
+    this.codingQuestion2Id = this.hasMatch ? this.$route.params.codingQuestion2Id : ''
 
     const joinRoomChat = {
       room: this.room,
@@ -244,7 +244,7 @@ export default {
       }
     })
 
-    const codingQuestion1URL = `/api/coding-questions/${this.codingQuestion1Idx}`
+    const codingQuestion1URL = `/api/coding-questions/${this.codingQuestion1Id}`
     AXIOS.get(codingQuestion1URL, { headers: getAuthHeader() })
       .then((response) => {
         this.codingQuestion1 = response.data.data[0]
@@ -335,7 +335,7 @@ export default {
         this.sendAssignedRoleChat()
       }
       this.clearCode()
-      const codingQuestion2URL = `/api/coding-questions/${this.codingQuestion2Idx}`
+      const codingQuestion2URL = `/api/coding-questions/${this.codingQuestion2Id}`
       await AXIOS.get(codingQuestion2URL, { headers: getAuthHeader() })
         .then((response) => {
           this.codingQuestion2 = response.data.data[0]
