@@ -92,7 +92,7 @@ exports.createEventListeners = (socket, io) => {
   socket.on('find-match', async (userInfo) => await handleFindMatchEvent(userInfo, socket, io))
 
   socket.on('proceed-without-match', async (userInfo) => {
-    handleProceedWithoutMatchEvent(userInfo, socket)
+    await handleProceedWithoutMatchEvent(userInfo, socket)
   })
 
   socket.on('join-room', (username, roomInfo) => {
@@ -116,7 +116,7 @@ exports.createEventListeners = (socket, io) => {
   })
 
   socket.on('load-next-question', (room) => io.to(room).emit('next-question'))
-  socket.on('disconnect', () => handleDisconnectEvent(socket, io))
+  socket.on('disconnect', async () => await handleDisconnectEvent(socket, io))
 }
 
 function handleWaitingUserListenerEvent (socket) {
@@ -162,11 +162,11 @@ function handleJoinRoomEvent (username, roomInfo, socket, io) {
   io.to(roomInfo.id).emit('coding-room-ready', roomInfo)
 }
 
-function handleDisconnectEvent (socket, io) {
+async function handleDisconnectEvent (socket, io) {
   if (userMatchingPreferences.has(socket.id)) {
     handleSocketDisconnectWhenMatching(socket, io)
   } else {
-    handleSocketDisconnectWhenCoding(socket, io)
+    await handleSocketDisconnectWhenCoding(socket, io)
   }
   unsetOngoingSession(socket.id)
 }
