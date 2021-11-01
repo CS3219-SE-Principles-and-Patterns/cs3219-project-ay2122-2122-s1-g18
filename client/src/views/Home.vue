@@ -35,7 +35,7 @@
             </b-button>
           </div>
         </b-form>
-        <b-alert :show="error" variant="primary">
+        <b-alert class='alert mt-4' :show="error" variant="primary">
           {{ errorMessage }}
         </b-alert>
       </b-col>
@@ -140,6 +140,10 @@ export default {
 </script>
 
 <style>
+.alert {
+  width: 600px;
+}
+
 .table {
   width: 500px;
 }
