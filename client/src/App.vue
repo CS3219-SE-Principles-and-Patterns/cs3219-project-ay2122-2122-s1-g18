@@ -33,12 +33,3 @@ export default {
   }
 }
 </script>
-
-<style>
-/* .nav-bar {
-  background-color: #D5DE2E;
-
-  /* background-color: #C4D300; */
- /* height: 70px;
-/*} */
-</style>
