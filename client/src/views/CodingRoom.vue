@@ -12,7 +12,12 @@
         >
           Next Coding Question
         </b-button>
-        <b-tooltip class="tooltip" target="nextQuestionButton" triggers="hover" ref="tooltip">
+        <b-tooltip class="tooltip"
+                   target="nextQuestionButton"
+                   triggers="hover"
+                   ref="tooltip"
+                   v-if="hasMatch"
+                   :disabled="isSecondQuestion">
           Upon clicking this button,<br>
           1. Your role will be swapped<br>
           2. The current code will be cleared<br>
@@ -171,7 +176,7 @@ export default {
       codingQuestion1: '',
       codingQuestion2: '',
       codingQuestion1Idx: this.$route.params.codingQuestion1Idx,
-      codingQuestion2Idx: this.$route.params.hasMatch ? this.$route.params.codingQuestion2Idx : ''
+      codingQuestion2Idx: ''
     }
   },
 
@@ -194,6 +199,8 @@ export default {
   },
 
   created () {
+    this.codingQuestion2Idx = this.hasMatch ? this.$route.params.codingQuestion2Idx : ''
+
     const joinRoomChat = {
       room: this.room,
       name: 'SHReK Tech Bot',
@@ -235,15 +242,9 @@ export default {
     })
 
     const codingQuestion1URL = `/api/coding-questions/${this.codingQuestion1Idx}`
-    const codingQuestion2URL = `/api/coding-questions/${this.codingQuestion2Idx}`
-
     AXIOS.get(codingQuestion1URL, { headers: getAuthHeader() })
       .then((response) => {
-        this.codingQuestion = response.data.data[0]
-      })
-    AXIOS.get(codingQuestion2URL, { headers: getAuthHeader() })
-      .then((response) => {
-        this.codingQuestion2 = response.data.data[0]
+        this.codingQuestion1 = response.data.data[0]
       })
 
     switch (this.difficulty) {
@@ -323,7 +324,7 @@ export default {
       this.socket.emit('load-next-question', this.room)
     },
 
-    loadNextCodingQuestion () {
+    async loadNextCodingQuestion () {
       this.$refs.countUpTimer.reset()
       this.isInterviewer = !this.isInterviewer
       this.sendWarning()
@@ -331,8 +332,8 @@ export default {
         this.sendAssignedRoleChat()
       }
       this.clearCode()
-      const codingQuestion2URL = `${SERVER_URI}/api/coding-questions/${this.codingQuestion2Idx}`
-      axios.get(codingQuestion2URL, { headers: getAuthHeader() })
+      const codingQuestion2URL = `/api/coding-questions/${this.codingQuestion2Idx}`
+      await AXIOS.get(codingQuestion2URL, { headers: getAuthHeader() })
         .then((response) => {
           this.codingQuestion2 = response.data.data[0]
         })
