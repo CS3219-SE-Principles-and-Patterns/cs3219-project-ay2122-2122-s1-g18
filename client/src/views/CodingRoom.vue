@@ -12,12 +12,14 @@
         >
           Next Coding Question
         </b-button>
-        <b-tooltip class="tooltip"
-                   target="nextQuestionButton"
-                   triggers="hover"
-                   ref="tooltip"
-                   v-if="hasMatch"
-                   :disabled="isSecondQuestion">
+        <b-tooltip
+            class="tooltip"
+            target="nextQuestionButton"
+            triggers="hover"
+            ref="tooltip"
+            v-if="hasMatch"
+            :disabled="isSecondQuestion"
+        >
           Upon clicking this button,<br>
           1. Your role will be swapped<br>
           2. The current code will be cleared<br>
