@@ -137,12 +137,10 @@
 
 <script>
 import Automerge from 'automerge'
-import axios from 'axios'
 import Vue from 'vue'
 import VueChatScroll from 'vue-chat-scroll'
 import CountUpTimer from '../components/CountUpTimer'
-import { SERVER_URI } from '../constants'
-import getAuthHeader from '../utils/authHeader'
+import AXIOS, { getAuthHeader } from '../utils/axiosConfig'
 
 Vue.use(VueChatScroll)
 
@@ -188,8 +186,8 @@ export default {
   },
 
   beforeCreate () {
-    const url = `${SERVER_URI}/api/interview-questions`
-    axios.get(url, { headers: getAuthHeader() })
+    const url = '/api/interview-questions'
+    AXIOS.get(url, { headers: getAuthHeader() })
       .then((response) => {
         this.interviewQuestions = response.data.data
       })
@@ -236,10 +234,16 @@ export default {
       }
     })
 
-    const codingQuestion1URL = `${SERVER_URI}/api/coding-questions/${this.codingQuestion1Idx}`
-    axios.get(codingQuestion1URL, { headers: getAuthHeader() })
+    const codingQuestion1URL = `/api/coding-questions/${this.codingQuestion1Idx}`
+    const codingQuestion2URL = `/api/coding-questions/${this.codingQuestion2Idx}`
+
+    AXIOS.get(codingQuestion1URL, { headers: getAuthHeader() })
       .then((response) => {
-        this.codingQuestion1 = response.data.data[0]
+        this.codingQuestion = response.data.data[0]
+      })
+    AXIOS.get(codingQuestion2URL, { headers: getAuthHeader() })
+      .then((response) => {
+        this.codingQuestion2 = response.data.data[0]
       })
 
     switch (this.difficulty) {

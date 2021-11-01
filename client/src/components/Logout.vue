@@ -82,9 +82,7 @@
 </template>
 
 <script>
-import axios from 'axios'
-import getAuthHeader from '../utils/authHeader'
-import { SERVER_URI } from '../constants'
+import AXIOS, { getAuthHeader } from '../utils/axiosConfig'
 
 export default {
   data () {
@@ -110,8 +108,8 @@ export default {
       this.user.newPassword = ''
     },
     logout () {
-      const apiURL = `${SERVER_URI}/api/users/verify/checkAuth`
-      axios.post(apiURL, {}, { headers: getAuthHeader() })
+      const apiURL = '/api/users/verify/checkAuth'
+      AXIOS.post(apiURL, {}, { headers: getAuthHeader() })
         .then(() => {
           sessionStorage.clear()
           this.$router.push({
@@ -128,9 +126,9 @@ export default {
       this.internalError = false
       this.missingField = this.user.oldPassword.trim() === '' || this.user.newPassword.trim() === ''
       if (!this.missingField) {
-        const apiURL = `${SERVER_URI}/api/users`
+        const apiURL = '/api/users'
         this.user.username = JSON.parse(sessionStorage.getItem('username'))
-        axios.put(apiURL, this.user, { headers: getAuthHeader() })
+        AXIOS.put(apiURL, this.user, { headers: getAuthHeader() })
           .then(() => {
             this.user.oldPassword = ''
             this.user.newPassword = ''
@@ -150,13 +148,13 @@ export default {
       this.internalError = false
       this.missingField = this.user.oldPassword.trim() === ''
       if (!this.missingField) {
-        const apiURL = `${SERVER_URI}/api/users`
+        const apiURL = '/api/users'
         this.user.username = JSON.parse(sessionStorage.getItem('username'))
         const temp = {
           username: this.user.username,
           password: this.user.oldPassword
         }
-        axios.delete(apiURL, { data: temp }, { headers: getAuthHeader() })
+        AXIOS.delete(apiURL, { data: temp }, { headers: getAuthHeader() })
           .then(() => {
             this.user.oldPassword = ''
             this.$router.push({
