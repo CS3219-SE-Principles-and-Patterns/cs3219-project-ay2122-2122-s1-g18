@@ -33,7 +33,7 @@
         </b-col>
       </b-col>
       <b-col>
-        <b-button variant="danger" @click.prevent="leaveRoom()" type="button" class="endButton px-4 float-end mb-5">
+        <b-button @click.prevent="leaveRoom()" type="button" class="endButton px-4 float-end mb-5">
           End Session
         </b-button>
       </b-col>
@@ -42,7 +42,7 @@
       <b-col cols="4">
         <h3 class="heading">Coding Question</h3>
         <div class="scroll-box">
-          <p style="color: green; font-size:22px;">{{codingQuestion.question_title}}</p>
+          <p style="color: #a8ba61; font-size:22px; font-weight:600;">{{codingQuestion.question_title}}</p>
           <p class="pre-formatted" style="font-size:16px;">{{codingQuestion.question_text}}</p>
           <p>{{codingQuestion.url}}</p>
         </div>
@@ -69,6 +69,7 @@
                 right
                 text="Send Interview Question"
                 v-if="isInterviewer"
+                variant="dark"
               >
                 <b-dropdown-item
                   v-for="question in interviewQuestions"
@@ -126,7 +127,7 @@
                 required
             />
             <b-input-group-append>
-              <b-btn class="chat-form-element" type="submit" variant="primary">Send</b-btn>
+              <b-btn class="chat-form-element" type="submit" variant="dark">Send</b-btn>
             </b-input-group-append>
           </b-input-group>
         </b-form>
@@ -470,15 +471,26 @@ export default {
   }
 
   .nextQuestionButton {
-    background-color: #5ab4dd;
-    outline-color: #5ab4dd;
-    border-color: #5ab4dd;
+    background-color: #a8ba61;
+    outline-color: #a8ba61;
+    border-color: #a8ba61;
   }
 
   .nextQuestionButton:hover {
-    background-color: #4493b8;
-    outline-color: #4493b8;
-    border-color: #4493b8;
+    background-color: #afc265;
+    outline-color: #afc265;
+    border-color: #afc265;
+  }
+    .endButton {
+    background-color:  #800b03;
+    outline-color: #800b03;
+    border-color: #800b03;
+  }
+
+  .endButton:hover {
+    background-color: #990317;
+    outline-color: #990317;
+    border-color: #990317;
   }
 
   .tooltip-inner {

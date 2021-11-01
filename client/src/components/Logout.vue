@@ -38,7 +38,6 @@
         <div class="form-group justify-content-center d-flex">
           <b-button
               class="createButton mt-4 mb-2 px-5"
-              variant="success"
               @click="handleSubmitForm"
           >
             Change Password
@@ -70,7 +69,6 @@
         <div class="form-group justify-content-center d-flex">
           <b-button
               class="createButton mt-4 mb-2 px-5"
-              variant="success"
               @click="handleDeleteForm"
           >
             Delete Account
@@ -177,22 +175,8 @@ export default {
 </script>
 
 <style>
-.createButton {
-  color: black;
-  background-color: #ffa8a1;
-  outline-color: #ffa8a1;
-  border-color: #ffa8a1;
-}
-.createButton:hover {
-  color: black;
-  background-color: #ffe5e3;
-  outline-color: #ffe5e3;
-  border-color: #ffe5e3;
-}
-.createButton:focus {
-  color: black;
-  background-color: #ffa8a1;
-  outline-color: #ffa8a1;
-  border-color: #ffa8a1;
+.createButton .createButton:focus .createButton:hover{
+  border: #D3CCA5 !important;
+  color: black !important;
 }
 </style>

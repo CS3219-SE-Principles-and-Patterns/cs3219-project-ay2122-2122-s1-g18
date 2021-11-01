@@ -1,0 +1,35 @@
+// Define variable overrides here
+$enable-shadows: true;
+$enable-gradients: true;
+$grid-breakpoints: (
+  xs: 0,
+  sm: 456px,
+  md: 789px,
+  lg: 999px,
+  xl: 1234px
+);
+$bv-enable-table-stacked: false;
+
+$primary: #a69608;
+
+// Include Bootstrap and BootstrapVue SCSS files
+@import "../node_modules/bootstrap/scss/bootstrap";
+@import "../node_modules/bootstrap-vue/dist/bootstrap-vue";
+body {
+  margin: 0;
+}
+
+.nav-bar {
+  background-color: #DCDC83;//#D5DE2E;
+  height: 70px;
+}
+
+.card {
+  background-color: #c9d4c5;
+
+}
+
+.table {
+  --bs-table-active-bg: #c9d4c5;
+
+}
