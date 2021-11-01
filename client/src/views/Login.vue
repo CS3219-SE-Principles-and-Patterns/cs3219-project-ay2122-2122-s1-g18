@@ -1,6 +1,6 @@
 <template>
   <b-row class="justify-content-center">
-    <b-col cols="8" >
+    <b-col cols="8">
       <h3 class="text-center mb-4">Log In</h3>
       <b-alert v-if="missingField"
       variant="primary" show="30">
@@ -124,6 +124,7 @@ export default {
 .link.link {
   color: darkslategray;
 }
+
 .link.link:hover {
   color: grey;
 }
