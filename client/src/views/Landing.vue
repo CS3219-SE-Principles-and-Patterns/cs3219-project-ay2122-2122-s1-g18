@@ -65,8 +65,7 @@
 <script>
 import Login from '../views/Login'
 import Signup from '../views/Signup'
-import { SERVER_URI } from '../constants'
-import axios from 'axios'
+import AXIOS from '../utils/axiosConfig'
 // TODO: Design left panel to introduce SHReK Tech
 export default {
   name: 'Landing',
@@ -108,8 +107,8 @@ export default {
       this.success = false
       this.missingField = this.user.email.trim() === ''
       if (!this.missingField) {
-        const apiURL = `${SERVER_URI}/api/users/reset`
-        axios.post(apiURL, this.user)
+        const apiURL = '/api/users/reset'
+        AXIOS.post(apiURL, this.user)
           .then((res) => {
             if (res.status === 200) {
               this.user.email = ''

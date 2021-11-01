@@ -71,8 +71,7 @@
 </template>
 
 <script>
-import axios from 'axios'
-import { SERVER_URI } from '../constants'
+import AXIOS from '../utils/axiosConfig'
 
 export default {
   name: 'Signup',
@@ -96,8 +95,8 @@ export default {
       this.invalidEmail = false
       this.emailUsernameExists = false
       this.fail = false
-      const apiURL = `${SERVER_URI}/api/users/signup`
-      axios.post(apiURL, this.user)
+      const apiURL = '/api/users/signup'
+      AXIOS.post(apiURL, this.user)
         .then(() => {
           this.changeView(true)
         })
