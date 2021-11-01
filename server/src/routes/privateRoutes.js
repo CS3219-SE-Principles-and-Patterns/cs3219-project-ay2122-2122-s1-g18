@@ -8,12 +8,6 @@ router.route('/users')
   .put(authController.updatePassword)
   .delete(authController.deleteUser)
 
-router.route('/users/reset')
-  .post(authController.resetPasswordEmail)
-
-router.route('/users/verify/:id/:token')
-  .get(authController.getEmailVerification)
-
 router.route('/users/verify/checkAuth')
   .post(authController.addBlacklist)
 
@@ -26,8 +20,5 @@ router.route('/interview-questions')
 
 router.route('/coding-questions/:qn_idx')
   .get(codingQuestionsController.getCodingQuestion)
-
-router.route('/coding-questions')
-  .get(codingQuestionsController.getCodingQuestions)
 
 module.exports = router
