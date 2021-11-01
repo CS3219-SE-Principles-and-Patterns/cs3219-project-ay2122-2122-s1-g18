@@ -136,6 +136,25 @@ exports.createEventListeners = (socket, io) => {
     removeWaitingUser(userInfo.matchBy, waitingUserMatched, io)
   })
 
+  socket.on('proceed-without-match', async (userInfo) => {
+    let difficultyLvl = -1
+    switch (userInfo.matchBy) {
+      case 'beginner':
+        difficultyLvl = 1
+        break
+      case 'intermediate':
+        difficultyLvl = 2
+        break
+      case 'expert':
+        difficultyLvl = 3
+    }
+    const codingQuestion1Idx = await getCodingQuestionIdx(difficultyLvl)
+    const codingRoomInfo = {
+      codingQuestion1Idx: codingQuestion1Idx
+    }
+    socket.emit('room-ready', codingRoomInfo)
+  })
+
   socket.on('join-room', (username, roomInfo) => {
     socket.join(roomInfo.id)
     setCodingRoom(username, roomInfo.id)

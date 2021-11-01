@@ -47,6 +47,7 @@
 import axios from 'axios'
 import io from 'socket.io-client'
 import { SERVER_URI } from '../constants'
+import getAuthHeader from '../utils/authHeader'
 
 const UNEXPECTED_ERROR = 'We are unable to find you a match at the moment. Please try again later.'
 
@@ -124,7 +125,7 @@ export default {
 
     async doesUserHaveOngoingSession () {
       const url = `${SERVER_URI}/api/users/${this.username}/session`
-      return axios.get(url)
+      return axios.get(url, { headers: getAuthHeader() })
         .then((response) => {
           return response.data.hasOngoingSession
         })
