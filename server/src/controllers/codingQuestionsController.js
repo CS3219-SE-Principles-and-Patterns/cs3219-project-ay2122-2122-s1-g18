@@ -24,13 +24,14 @@ async function getNumOfCodingQuestions (difficultyLvl) {
 
 async function randSelectCodingQuestionId (difficultyLvl) {
   const numOfCodingQuestions = await getNumOfCodingQuestions(difficultyLvl)
-  let result2 = Math.floor(Math.random() * (numOfCodingQuestions))
-
-  const difficultyLvlUnaccounted = difficultyLvl - 1
-  for (let i = 1; i <= difficultyLvlUnaccounted; i++) {
-    result2 += await getNumOfCodingQuestions(i)
-  }
-  return result2
+  const rand = Math.floor(Math.random() * (numOfCodingQuestions))
+  const questionId = await CodingQuestion.aggregate()
+    .match({ difficulty: difficultyLvl })
+    .skip(rand)
+    .limit(1)
+    .then((result) => { return result[0]._id })
+    .catch((err) => console.log(err))
+  return questionId
 }
 
 exports.getCodingQuestionId = async function (matchBy) {
@@ -49,21 +50,26 @@ exports.getCodingQuestionIds = async function (matchBy) {
   return { codingQuestion1Id, codingQuestion2Id }
 }
 
-exports.getCodingQuestion = async function (req, res) {
-  const skipBy = req.params.qn_idx
-  CodingQuestion.find()
-    .sort({ difficulty: 1, frontend_question_id: 1 })
-    .skip(Number(skipBy))
-    .limit(1)
-    .then(questions => {
-      res.status(200).json({
-        message: 'Success: Coding question retrieved!',
-        data: questions
-      })
-    })
-    .catch(err => {
+exports.getCodingQuestion = function (req, res) {
+  const questionId = req.params.id
+  CodingQuestion.findById(questionId, (err, question) => {
+    if (err) {
       res.status(500).json({
         error: err
       })
+      return
+    }
+
+    if (!question) {
+      res.status(404).json({
+        message: 'Question not found'
+      })
+      return
+    }
+
+    res.status(200).json({
+      message: 'Success: Coding question retrieved!',
+      data: question
     })
+  })
 }
