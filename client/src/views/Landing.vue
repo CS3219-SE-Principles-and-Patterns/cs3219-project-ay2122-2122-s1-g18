@@ -62,8 +62,9 @@
 </template>
 
 <script>
-import Login from '../views/Login'
-import Signup from '../views/Signup'
+import Login from '../components/Login'
+import Signup from '../components/Signup'
+
 import AXIOS from '../utils/axiosConfig'
 // TODO: Design left panel to introduce SHReK Tech
 export default {
