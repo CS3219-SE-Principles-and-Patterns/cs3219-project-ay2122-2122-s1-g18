@@ -11,7 +11,7 @@ chai.use(chaiHttp)
 
 describe('/auth', () => {
   before('Connect to database', function (done) {
-    mongoose.connect('mongodb://localhost:27017/project3219')
+    mongoose.connect(process.env.MONGO_URI_TEST)
     const db = mongoose.connection
     db.on('error', console.error.bind(console, 'Unable to connect to MongoDB'))
     db.once('open', function () {
