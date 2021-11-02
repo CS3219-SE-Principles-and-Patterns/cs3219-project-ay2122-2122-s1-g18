@@ -18,7 +18,7 @@ router.route('/interview-questions')
   .get(interviewQuestionsController.getInterviewQuestions)
   .post(interviewQuestionsController.createInterviewQuestion)
 
-router.route('/coding-questions/:qn_idx')
+router.route('/coding-questions/:id')
   .get(codingQuestionsController.getCodingQuestion)
 
 module.exports = router

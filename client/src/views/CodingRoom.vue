@@ -35,7 +35,7 @@
         </b-col>
         <b-col>
           <div class='container d-flex justify-content-center'>
-            <p style="color:brown">{{recommended_time}}</p>
+            <p style="color:brown">{{ recommendedTime }}</p>
           </div>
         </b-col>
       </b-col>
@@ -49,9 +49,9 @@
       <b-col cols="4">
         <h3 class="heading">Coding Question</h3>
         <div class="scroll-box">
-          <p style="color: #a8ba61; font-size:22px; font-weight:600;">{{codingQuestion1.question_title}}</p>
-          <p class="pre-formatted" style="font-size:16px;">{{codingQuestion1.question_text}}</p>
-          <p>{{codingQuestion1.url}}</p>
+          <p style="color: #a8ba61; font-size:22px; font-weight:600;">{{ codingQuestion.question_title }}</p>
+          <p class="pre-formatted" style="font-size:16px;">{{ codingQuestion.question_text }}</p>
+          <p>{{ codingQuestion.url }}</p>
         </div>
       </b-col>
       <b-col cols="5">
@@ -175,11 +175,10 @@ export default {
       interviewQuestions: null,
       isSecondQuestion: false,
       difficulty: this.$route.params.difficulty,
-      recommended_time: '',
-      codingQuestion1: '',
-      codingQuestion2: '',
-      codingQuestion1Idx: this.$route.params.codingQuestion1Idx,
-      codingQuestion2Idx: ''
+      recommendedTime: '',
+      codingQuestion: '',
+      codingQuestion1Id: this.$route.params.codingQuestion1Id,
+      codingQuestion2Id: this.$route.params.codingQuestion2Id
     }
   },
 
@@ -202,8 +201,6 @@ export default {
   },
 
   created () {
-    this.codingQuestion2Idx = this.hasMatch ? this.$route.params.codingQuestion2Idx : ''
-
     const joinRoomChat = {
       room: this.room,
       name: 'SHReK Tech Bot',
@@ -244,21 +241,21 @@ export default {
       }
     })
 
-    const codingQuestion1URL = `/api/coding-questions/${this.codingQuestion1Idx}`
+    const codingQuestion1URL = `/api/coding-questions/${this.codingQuestion1Id}`
     AXIOS.get(codingQuestion1URL, { headers: getAuthHeader() })
       .then((response) => {
-        this.codingQuestion1 = response.data.data[0]
+        this.codingQuestion = response.data.data
       })
 
     switch (this.difficulty) {
       case 'beginner':
-        this.recommended_time = 'Recommended: 00:30:00'
+        this.recommendedTime = 'Recommended: 00:30:00'
         break
       case 'intermediate':
-        this.recommended_time = 'Recommended: 00:45:00'
+        this.recommendedTime = 'Recommended: 00:45:00'
         break
       case 'expert':
-        this.recommended_time = 'Recommended: 01:00:00'
+        this.recommendedTime = 'Recommended: 01:00:00'
         break
       default:
         console.log('Unaccepted difficulty level.')
@@ -335,15 +332,12 @@ export default {
         this.sendAssignedRoleChat()
       }
       this.clearCode()
-      const codingQuestion2URL = `/api/coding-questions/${this.codingQuestion2Idx}`
+      const codingQuestion2URL = `/api/coding-questions/${this.codingQuestion2Id}`
       await AXIOS.get(codingQuestion2URL, { headers: getAuthHeader() })
         .then((response) => {
-          this.codingQuestion2 = response.data.data[0]
+          this.codingQuestion = response.data.data
         })
       this.isSecondQuestion = true
-      this.codingQuestion1 = this.codingQuestion2
-      this.typing = false
-      this.message = ''
     },
 
     leaveRoom () {

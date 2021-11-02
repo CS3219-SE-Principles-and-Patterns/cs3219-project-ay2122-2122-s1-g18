@@ -1,4 +1,3 @@
-const { assert } = require('console')
 const codingQuestionsController = require('./codingQuestionsController')
 const User = require('../models/users')
 
@@ -6,6 +5,7 @@ const waitingUsers = {}
 const userMatchingPreferences = new Map()
 
 function addWaitingUser (matchBy, socket) {
+  userMatchingPreferences.set(socket.id, matchBy)
   waitingUsers[matchBy] = socket.id
   socket.to('waiting-users-listener').emit('update-waiting-users', waitingUsers)
 }
@@ -29,7 +29,14 @@ exports.hasOngoingSession = function (req, res) {
   User.findOne({ username }, function (err, user) {
     if (err) {
       res.status(500).json({
-        message: 'Cannot find user'
+        message: 'Unexpected error'
+      })
+      return
+    }
+
+    if (!user) {
+      res.status(404).json({
+        message: 'User not found'
       })
       return
     }
@@ -80,91 +87,19 @@ async function getUserBySocket (socket) {
     .catch((err) => console.log(err))
 }
 
-async function getCodingQuestionIdx (difficultyLvl) {
-  const result = await codingQuestionsController.getNumCodingQuestions(difficultyLvl)
-  let result2 = Math.floor(Math.random() * (result))
-
-  const difficultyLvlUnaccounted = difficultyLvl - 1
-  for (let i = 1; i <= difficultyLvlUnaccounted; i++) {
-    result2 += await codingQuestionsController.getNumCodingQuestions(i)
-  }
-  return result2
-}
-
 exports.createEventListeners = (socket, io) => {
-  socket.on('join-waiting-users-listener', () => {
-    socket.join('waiting-users-listener')
-    socket.emit('update-waiting-users', waitingUsers)
-  })
-
-  socket.on('find-match', async (userInfo) => {
-    setOngoingSession(userInfo.username, socket.id)
-
-    if (!waitingUsers[userInfo.matchBy]) {
-      userMatchingPreferences.set(socket.id, userInfo.matchBy)
-      addWaitingUser(userInfo.matchBy, socket)
-      return
-    }
-
-    let difficultyLvl = -1
-    switch (userInfo.matchBy) {
-      case 'beginner':
-        difficultyLvl = 1
-        break
-      case 'intermediate':
-        difficultyLvl = 2
-        break
-      case 'expert':
-        difficultyLvl = 3
-    }
-    const codingQuestion1Idx = await getCodingQuestionIdx(difficultyLvl)
-    let codingQuestion2Idx = await getCodingQuestionIdx(difficultyLvl)
-    while (codingQuestion2Idx === codingQuestion1Idx) {
-      codingQuestion2Idx = await getCodingQuestionIdx(difficultyLvl)
-    }
-
-    const waitingUserMatched = waitingUsers[userInfo.matchBy]
-    const codingRoomInfo = {
-      id: `${waitingUserMatched}-${socket.id}`,
-      interviewer: randSelectInterviewer(socket.id, waitingUserMatched),
-      codingQuestion1Idx: codingQuestion1Idx,
-      codingQuestion2Idx: codingQuestion2Idx
-    }
-    socket.join(codingRoomInfo.id)
-    setCodingRoom(userInfo.username, codingRoomInfo.id)
-    socket.to(waitingUserMatched).emit('match-found', codingRoomInfo)
-    removeWaitingUser(userInfo.matchBy, waitingUserMatched, io)
-  })
+  socket.on('join-waiting-users-listener', () => handleWaitingUserListenerEvent(socket))
+  socket.on('find-match', async (userInfo) => await handleFindMatchEvent(userInfo, socket, io))
 
   socket.on('proceed-without-match', async (userInfo) => {
-    let difficultyLvl = -1
-    switch (userInfo.matchBy) {
-      case 'beginner':
-        difficultyLvl = 1
-        break
-      case 'intermediate':
-        difficultyLvl = 2
-        break
-      case 'expert':
-        difficultyLvl = 3
-    }
-    const codingQuestion1Idx = await getCodingQuestionIdx(difficultyLvl)
-    const codingRoomInfo = {
-      codingQuestion1Idx: codingQuestion1Idx
-    }
-    socket.emit('room-ready', codingRoomInfo)
+    await handleProceedWithoutMatchEvent(userInfo, socket)
   })
 
   socket.on('join-room', (username, roomInfo) => {
-    socket.join(roomInfo.id)
-    setCodingRoom(username, roomInfo.id)
-    io.to(roomInfo.id).emit('coding-room-ready', roomInfo)
+    handleJoinRoomEvent(username, roomInfo, socket, io)
   })
 
-  socket.on('end-wait', (matchBy) => {
-    assert(waitingUsers[matchBy] === socket.id)
-    removeWaitingUser(matchBy, socket.id, io)
-  })
+  socket.on('end-wait', (matchBy) => removeWaitingUser(matchBy, socket.id, io))
 
   socket.on('typing', (message) => {
     socket.to(message.room).emit('typing', message.user)
@@ -181,15 +116,59 @@ exports.createEventListeners = (socket, io) => {
   })
 
   socket.on('load-next-question', (room) => io.to(room).emit('next-question'))
+  socket.on('disconnect', async () => await handleDisconnectEvent(socket, io))
+}
 
-  socket.on('disconnect', () => {
-    if (userMatchingPreferences.has(socket.id)) {
-      handleSocketDisconnectWhenMatching(socket, io)
-    } else {
-      handleSocketDisconnectWhenCoding(socket, io)
-    }
-    unsetOngoingSession(socket.id)
-  })
+function handleWaitingUserListenerEvent (socket) {
+  socket.join('waiting-users-listener')
+  socket.emit('update-waiting-users', waitingUsers)
+}
+
+async function handleFindMatchEvent (userInfo, socket, io) {
+  setOngoingSession(userInfo.username, socket.id)
+
+  // If there is no waiting user with the same matching preference
+  if (!waitingUsers[userInfo.matchBy]) {
+    addWaitingUser(userInfo.matchBy, socket)
+    return
+  }
+
+  const codingQuestions = await codingQuestionsController.getCodingQuestionIds(userInfo.matchBy)
+  matchUsers(codingQuestions, userInfo, socket, io)
+}
+
+function matchUsers (codingQuestions, userInfo, socket, io) {
+  const waitingUserMatched = waitingUsers[userInfo.matchBy]
+  const codingRoomInfo = {
+    id: `${waitingUserMatched}-${socket.id}`,
+    interviewer: randSelectInterviewer(socket.id, waitingUserMatched),
+    codingQuestion1Id: codingQuestions.codingQuestion1Id,
+    codingQuestion2Id: codingQuestions.codingQuestion2Id
+  }
+  socket.join(codingRoomInfo.id)
+  setCodingRoom(userInfo.username, codingRoomInfo.id)
+  socket.to(waitingUserMatched).emit('match-found', codingRoomInfo)
+  removeWaitingUser(userInfo.matchBy, waitingUserMatched, io)
+}
+
+async function handleProceedWithoutMatchEvent (userInfo, socket) {
+  const codingQuestion1Id = await codingQuestionsController.getCodingQuestionId(userInfo.matchBy)
+  socket.emit('room-ready', codingQuestion1Id)
+}
+
+function handleJoinRoomEvent (username, roomInfo, socket, io) {
+  socket.join(roomInfo.id)
+  setCodingRoom(username, roomInfo.id)
+  io.to(roomInfo.id).emit('coding-room-ready', roomInfo)
+}
+
+async function handleDisconnectEvent (socket, io) {
+  if (userMatchingPreferences.has(socket.id)) {
+    handleSocketDisconnectWhenMatching(socket, io)
+  } else {
+    await handleSocketDisconnectWhenCoding(socket, io)
+  }
+  unsetOngoingSession(socket.id)
 }
 
 function handleSocketDisconnectWhenMatching (socket, io) {
