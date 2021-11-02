@@ -40,10 +40,13 @@ jobs:
           node-version: 16.x
           cache: "npm"
           cache-dependency-path: "server/package-lock.json"
-      - name: Start MongoDB
-        uses: supercharge/mongodb-github-action@1.6.0
+      - name: Create mongo Docker containter
+        uses: DigiPie/mongo-action@v1.0.1
         with:
-          mongodb-version: 4.0
+          image-version: latest
+          port: 27017
+      - name: Test mongo connection
+        run: "sudo mongo localhost:27017"
       - name: Create .env
         run: |
           touch .env
