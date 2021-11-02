@@ -56,4 +56,7 @@ jobs:
       - name: Lint server
         run: npm run lint
       - name: Test server
-        run: npm test
+        run: |
+          touch .env
+          echo MONGO_URI_TEST=${{ secrets.MONGO_URI_TEST }} >> .env
+          npm test
