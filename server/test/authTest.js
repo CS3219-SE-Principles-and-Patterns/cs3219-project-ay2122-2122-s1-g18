@@ -10,7 +10,7 @@ const expect = chai.expect
 chai.use(chaiHttp)
 
 describe('/auth', () => {
-  before('Connect to MongoDB', function (done) {
+  before('Connect to database', function (done) {
     mongoose.connect('mongodb://localhost:27017/project3219')
     const db = mongoose.connection
     db.on('error', console.error.bind(console, 'Unable to connect to MongoDB'))
