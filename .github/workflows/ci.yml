@@ -41,6 +41,14 @@ jobs:
           node-version: 16.x
           cache: "npm"
           cache-dependency-path: "server/package-lock.json"
+      - name: Start MongoDB
+        uses: supercharge/mongodb-github-action@1.6.0
+        with:
+          mongodb-version: 4.0
+      - name: Create .env
+        run: |
+          touch .env
+          echo MONGO_URI=${{ secrets.MONGO_URI }} >> .env
       - name: Install server dependencies
         run: npm install
       - name: Lint server

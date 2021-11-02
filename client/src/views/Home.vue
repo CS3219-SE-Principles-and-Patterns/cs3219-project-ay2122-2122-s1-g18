@@ -28,13 +28,16 @@
             />
           </template>
         </b-table>
-        <b-form class='selectButtons mt-3' @submit="onSubmit">
+        <b-form class="selectButtons mt-3" @submit="onSubmit">
           <div class="form-group justify-content-center d-flex">
-            <b-button class="mt-4 mb-2 px-5" type='submit'>
+            <b-button class="mt-4 mb-2 px-5" type="submit">
               Find a Match
             </b-button>
           </div>
         </b-form>
+        <b-alert class="alert mt-4" :show="error" variant="primary">
+          {{ errorMessage }}
+        </b-alert>
       </b-col>
     </b-row>
   </div>
@@ -43,15 +46,20 @@
 <script>
 import io from 'socket.io-client'
 import { SERVER_URI } from '../constants'
+import AXIOS, { getAuthHeader } from '../utils/axiosConfig'
+
+const UNEXPECTED_ERROR = 'We are unable to find you a match at the moment. Please try again later.'
 
 export default {
   name: 'home',
   data () {
     return {
-      username: sessionStorage.getItem('username').split('"')[1],
+      username: JSON.parse(sessionStorage.getItem('username')),
       socket: null,
       waitingUsers: null,
       selected: null,
+      error: false,
+      errorMessage: null,
       fields: [
         { key: 'difficulty', thStyle: { display: 'none' } },
         { key: 'hasWaitingUser', thStyle: { display: 'none' } }
@@ -92,22 +100,50 @@ export default {
       this.selected = selected[0].key
     },
 
-    onSubmit (event) {
+    async onSubmit (event) {
       event.preventDefault()
-      if (this.selected) {
-        this.$router.push({
-          name: 'matching',
-          params: {
-            matchBy: this.selected
-          }
-        })
+      this.error = false
+      if (!this.selected) {
+        this.setError('Please select a difficulty level for the coding question(s) you wish to attempt.')
+        return
       }
+
+      const hasOngoingSession = await this.doesUserHaveOngoingSession()
+      if (hasOngoingSession) {
+        this.setError('You already have an ongoing session.')
+        return
+      }
+
+      this.$router.push({
+        name: 'matching',
+        params: {
+          matchBy: this.selected
+        }
+      })
+    },
+
+    async doesUserHaveOngoingSession () {
+      const url = `/api/users/${this.username}/session`
+      return await AXIOS.get(url, { headers: getAuthHeader() })
+        .then((response) => {
+          return response.data.hasOngoingSession
+        })
+        .catch(() => this.setError(UNEXPECTED_ERROR))
+    },
+
+    setError (message) {
+      this.error = true
+      this.errorMessage = message
     }
   }
 }
 </script>
 
 <style>
+.alert {
+  width: 600px;
+}
+
 .table {
   width: 500px;
 }

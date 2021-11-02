@@ -59,7 +59,8 @@ export default {
       TIME_LIMIT: 30,
       matchBy: this.$route.params.matchBy,
       socket: io(SERVER_URI),
-      showMatchNotFoundModal: false
+      showMatchNotFoundModal: false,
+      username: JSON.parse(sessionStorage.getItem('username'))
     }
   },
 
@@ -70,8 +71,13 @@ export default {
 
   methods: {
     findMatch () {
-      this.socket.emit('find-match', this.matchBy)
-      this.socket.on('match-found', (roomInfo) => this.socket.emit('join-room', roomInfo))
+      this.socket.emit('find-match', {
+        username: this.username,
+        matchBy: this.matchBy
+      })
+      this.socket.on('match-found', (roomInfo) => {
+        this.socket.emit('join-room', this.username, roomInfo)
+      })
       this.socket.on('coding-room-ready', (roomInfo) => {
         this.$router.push({
           name: 'codingroom',
@@ -79,7 +85,10 @@ export default {
             socket: this.socket,
             id: roomInfo.id,
             hasMatch: true,
-            isInterviewer: this.isInterviewer(this.socket.id, roomInfo.interviewer)
+            isInterviewer: this.isInterviewer(this.socket.id, roomInfo.interviewer),
+            difficulty: this.matchBy,
+            codingQuestion1Id: roomInfo.codingQuestion1Id,
+            codingQuestion2Id: roomInfo.codingQuestion2Id
           }
         })
       })
@@ -101,19 +110,27 @@ export default {
     },
 
     handleGoBackToHome () {
+      this.socket.disconnect()
       this.showMatchNotFoundModal = false
       this.$router.push({ name: 'home' })
     },
 
     handleProceedWithoutMatch () {
-      this.$router.push({
-        name: 'codingroom',
-        params: {
-          socket: this.socket,
-          id: this.socket.id,
-          isInterviewer: true,
-          hasMatch: false
-        }
+      this.socket.emit('proceed-without-match', {
+        matchBy: this.matchBy
+      })
+      this.socket.on('room-ready', (roomInfo) => {
+        this.$router.push({
+          name: 'codingroom',
+          params: {
+            socket: this.socket,
+            id: this.socket.id,
+            isInterviewer: true,
+            hasMatch: false,
+            difficulty: this.matchBy,
+            codingQuestion1Id: roomInfo.codingQuestion1Id
+          }
+        })
       })
     }
   }

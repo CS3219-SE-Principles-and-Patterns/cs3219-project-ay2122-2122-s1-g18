@@ -12,7 +12,14 @@
         >
           Next Coding Question
         </b-button>
-        <b-tooltip class="tooltip" target="nextQuestionButton" triggers="hover" ref="tooltip">
+        <b-tooltip
+            class="tooltip"
+            target="nextQuestionButton"
+            triggers="hover"
+            ref="tooltip"
+            v-if="hasMatch"
+            :disabled="isSecondQuestion"
+        >
           Upon clicking this button,<br>
           1. Your role will be swapped<br>
           2. The current code will be cleared<br>
@@ -21,18 +28,33 @@
         </b-tooltip>
       </b-col>
       <b-col>
-        <div class='container d-flex justify-content-center'>
-          <CountUpTimer ref='countUpTimer'/>
-        </div>
+        <b-col>
+          <div class='container d-flex justify-content-center'>
+            <CountUpTimer ref='countUpTimer'/>
+          </div>
+        </b-col>
+        <b-col>
+          <div class='container d-flex justify-content-center'>
+            <p style="color:brown">{{ recommendedTime }}</p>
+          </div>
+        </b-col>
       </b-col>
       <b-col>
-        <b-button variant="danger" @click.prevent="leaveRoom()" type="button" class="endButton px-4 float-end mb-5">
+        <b-button @click.prevent="leaveRoom()" type="button" class="endButton px-4 float-end mb-5">
           End Session
         </b-button>
       </b-col>
     </b-row>
     <b-row>
-      <b-col cols="6">
+      <b-col cols="4">
+        <h3 class="heading">Coding Question</h3>
+        <div class="scroll-box">
+          <p style="color: #a8ba61; font-size:22px; font-weight:600;">{{ codingQuestion.question_title }}</p>
+          <p class="pre-formatted" style="font-size:16px;">{{ codingQuestion.question_text }}</p>
+          <p>{{ codingQuestion.url }}</p>
+        </div>
+      </b-col>
+      <b-col cols="5">
         <h3 class="heading">Code Editor</h3>
         <b-form-textarea
           class="text-area panel-body-left"
@@ -54,6 +76,7 @@
                 right
                 text="Send Interview Question"
                 v-if="isInterviewer"
+                variant="secondary"
               >
                 <b-dropdown-item
                   v-for="question in interviewQuestions"
@@ -111,7 +134,7 @@
                 required
             />
             <b-input-group-append>
-              <b-btn class="chat-form-element" type="submit" variant="primary">Send</b-btn>
+              <b-btn class="chat-form-element" type="submit" variant="secondary">Send</b-btn>
             </b-input-group-append>
           </b-input-group>
         </b-form>
@@ -122,12 +145,10 @@
 
 <script>
 import Automerge from 'automerge'
-import axios from 'axios'
-import io from 'socket.io-client'
 import Vue from 'vue'
 import VueChatScroll from 'vue-chat-scroll'
 import CountUpTimer from '../components/CountUpTimer'
-import { SERVER_URI } from '../constants'
+import AXIOS, { getAuthHeader } from '../utils/axiosConfig'
 
 Vue.use(VueChatScroll)
 
@@ -145,14 +166,19 @@ export default {
       hasMatch: this.$route.params.hasMatch,
       socket: this.$route.params.socket,
       isInterviewer: this.$route.params.isInterviewer,
-      username: sessionStorage.getItem('username').split('"')[1],
+      username: JSON.parse(sessionStorage.getItem('username')),
       matchedUser: '',
       typing: false,
       message: '',
       code: '',
       automergeCode: null,
       interviewQuestions: null,
-      isSecondQuestion: false
+      isSecondQuestion: false,
+      difficulty: this.$route.params.difficulty,
+      recommendedTime: '',
+      codingQuestion: '',
+      codingQuestion1Id: this.$route.params.codingQuestion1Id,
+      codingQuestion2Id: this.$route.params.codingQuestion2Id
     }
   },
 
@@ -167,8 +193,8 @@ export default {
   },
 
   beforeCreate () {
-    const url = `${SERVER_URI}/api/interview-questions`
-    axios.get(url)
+    const url = '/api/interview-questions'
+    AXIOS.get(url, { headers: getAuthHeader() })
       .then((response) => {
         this.interviewQuestions = response.data.data
       })
@@ -215,30 +241,27 @@ export default {
       }
     })
 
-    this.socket.on('next-question', () => this.loadNextCodingQuestion())
-
-    // deals with back button
-    this.socket.on('disconnect', () => {
-      this.socket = io(SERVER_URI)
-      const leaveRoomChat = {
-        room: this.room,
-        name: 'SHReK Tech Bot',
-        message: this.username + ' left this room',
-        timestamp: this.getTimeNow()
-      }
-      this.sendChat(leaveRoomChat)
-      this.$router.push({
-        name: 'home'
+    const codingQuestion1URL = `/api/coding-questions/${this.codingQuestion1Id}`
+    AXIOS.get(codingQuestion1URL, { headers: getAuthHeader() })
+      .then((response) => {
+        this.codingQuestion = response.data.data
       })
-    })
-  },
 
-  mounted () {
-    this.addListener()
-  },
+    switch (this.difficulty) {
+      case 'beginner':
+        this.recommendedTime = 'Recommended: 00:30:00'
+        break
+      case 'intermediate':
+        this.recommendedTime = 'Recommended: 00:45:00'
+        break
+      case 'expert':
+        this.recommendedTime = 'Recommended: 01:00:00'
+        break
+      default:
+        console.log('Unaccepted difficulty level.')
+    }
 
-  destroyed () {
-    this.removeListener()
+    this.socket.on('next-question', () => this.loadNextCodingQuestion())
   },
 
   methods: {
@@ -253,29 +276,6 @@ export default {
       this.socket.emit('update-code', {
         room: this.room,
         codeChanges: changes
-      })
-    },
-
-    addListener () {
-      window.addEventListener('beforeunload', this.beforeUnloadListener)
-    },
-
-    removeListener () {
-      window.removeEventListener('beforeunload', this.beforeUnloadListener)
-    },
-
-    // deals with refresh button
-    beforeUnloadListener () {
-      this.socket = io(SERVER_URI)
-      const leaveRoomChat = {
-        room: this.room,
-        name: 'SHReK Tech Bot',
-        message: this.username + ' left this room',
-        timestamp: this.getTimeNow()
-      }
-      this.sendChat(leaveRoomChat)
-      this.$router.push({
-        name: 'home'
       })
     },
 
@@ -324,7 +324,7 @@ export default {
       this.socket.emit('load-next-question', this.room)
     },
 
-    loadNextCodingQuestion () {
+    async loadNextCodingQuestion () {
       this.$refs.countUpTimer.reset()
       this.isInterviewer = !this.isInterviewer
       this.sendWarning()
@@ -332,13 +332,17 @@ export default {
         this.sendAssignedRoleChat()
       }
       this.clearCode()
+      const codingQuestion2URL = `/api/coding-questions/${this.codingQuestion2Id}`
+      await AXIOS.get(codingQuestion2URL, { headers: getAuthHeader() })
+        .then((response) => {
+          this.codingQuestion = response.data.data
+        })
       this.isSecondQuestion = true
-      this.typing = false
-      this.message = ''
     },
 
     leaveRoom () {
       if (window.confirm('Do you really want to end the session?')) {
+        this.socket.disconnect()
         const leaveRoomChat = {
           room: this.room,
           name: 'SHReK Tech Bot',
@@ -422,15 +426,26 @@ export default {
   }
 
   .nextQuestionButton {
-    background-color: #5ab4dd;
-    outline-color: #5ab4dd;
-    border-color: #5ab4dd;
+    background-color: #a8ba61;
+    outline-color: #a8ba61;
+    border-color: #a8ba61;
   }
 
   .nextQuestionButton:hover {
-    background-color: #4493b8;
-    outline-color: #4493b8;
-    border-color: #4493b8;
+    background-color: #afc265;
+    outline-color: #afc265;
+    border-color: #afc265;
+  }
+    .endButton {
+    background-color:  #800b03;
+    outline-color: #800b03;
+    border-color: #800b03;
+  }
+
+  .endButton:hover {
+    background-color: #990317;
+    outline-color: #990317;
+    border-color: #990317;
   }
 
   .tooltip-inner {
@@ -442,4 +457,16 @@ export default {
     background-color: #5ab4dd;
     margin: 5px;
   }
+
+  .pre-formatted {
+    white-space: pre-wrap
+  }
+
+  .scroll-box {
+    background: #f4f4f4;
+    border: 2px solid rgba(0, 0, 0, 0.1);
+    height: 500px;
+    padding: 15px;
+    overflow-y: scroll;
+}
 </style>

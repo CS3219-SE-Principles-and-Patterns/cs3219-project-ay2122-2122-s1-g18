@@ -1,8 +1,6 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
-import { SERVER_URI } from '@/constants'
-import axios from 'axios'
-import authHeader from '@/utils/authHeader'
+import AXIOS, { getAuthHeader } from '../utils/axiosConfig'
 
 Vue.use(VueRouter)
 
@@ -56,8 +54,8 @@ router.beforeEach((to, from, next) => {
   if (to.name === 'landing' || to.name === 'reset') {
     next()
   } else {
-    const apiURL = `${SERVER_URI}/api/users/verify/checkAuth`
-    axios.get(apiURL, { headers: authHeader() })
+    const apiURL = '/api/users/verify/checkAuth'
+    AXIOS.get(apiURL, { headers: getAuthHeader() })
       .then(() => {
         next()
       })
