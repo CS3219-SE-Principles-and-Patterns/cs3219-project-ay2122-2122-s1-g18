@@ -1,3 +1,5 @@
+process.env.NODE_ENV = 'test'
+
 const chai = require('chai')
 const chaiHttp = require('chai-http')
 const mongoose = require('mongoose')
@@ -8,9 +10,11 @@ const expect = chai.expect
 chai.use(chaiHttp)
 
 describe('/auth', () => {
-  before('Connect to database', function (done) {
-    mongoose.connect(process.env.MONGO_URI, { useNewUrlParser: true }, function () {
-      console.log('Connected to database')
+  before('Connect to Database', function (done) {
+    mongoose.connect(process.env.MONGO_URI_TEST, function () {
+      // mongoose.connection.db.collection.remove(function (){
+      //     done();
+      // })
       done()
     })
   })

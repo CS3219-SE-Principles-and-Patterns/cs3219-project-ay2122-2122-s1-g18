@@ -70,6 +70,10 @@ io.on('connection', (socket) => {
   socketController.createEventListeners(socket, io)
 })
 
-mongoose.connect(process.env.MONGO_URI, { useNewUrlParser: true })
+if (process.env.NODE_ENV === 'test') {
+  mongoose.connect(process.env.MONGO_URI_TEST, { useNewUrlParser: true })
+} else {
+  mongoose.connect(process.env.MONGO_URI, { useNewUrlParser: true })
+}
 
 module.exports = app
