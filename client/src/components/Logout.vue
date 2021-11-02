@@ -10,13 +10,13 @@
         Missing field. Please fill up all fields.
       </h6>
       <h6 v-if="wrongCredentials">
-        Wrong credentials. Unable to update password.
+        Wrong credentials. Unable to change password.
       </h6>
       <h6 v-if="internalError">
-        Unable to update password. Please reload and try again.
+        Unable to change password. Please reload and try again.
       </h6>
       <h6 v-if="updateSuccess">Your password have been changed.</h6>
-      <form v-else @submit.prevent="handleSubmitForm">
+      <form v-else @submit.prevent="handleUpdateForm">
         <div class="form-group mb-4">
           <input
               type="password"
@@ -38,7 +38,7 @@
         <div class="form-group justify-content-center d-flex">
           <b-button
               class="createButton mt-4 mb-2 px-5"
-              @click="handleSubmitForm"
+              @click="handleUpdateForm"
           >
             Change Password
           </b-button>
@@ -50,10 +50,10 @@
         Missing field. Please fill up all fields.
       </h6>
       <h6 v-if="wrongCredentials">
-        Wrong credentials. Unable to update password.
+        Wrong credentials. Unable to delete account.
       </h6>
       <h6 v-if="internalError">
-        Unable to update password. Please reload and try again.
+        Unable to delete account. Please reload and try again.
       </h6>
       <h6>Are you sure you want to delete your account?</h6>
       <form @submit.prevent="handleDeleteForm">
@@ -118,7 +118,7 @@ export default {
           console.log('Unable to logout')
         })
     },
-    handleSubmitForm () {
+    handleUpdateForm () {
       this.updateSuccess = false
       this.wrongCredentials = false
       this.internalError = false
