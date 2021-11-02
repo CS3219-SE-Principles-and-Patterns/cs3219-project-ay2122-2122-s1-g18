@@ -46,7 +46,9 @@ jobs:
           image-version: latest
           port: 27017
       - name: Test mongo connection
-        run: "sudo mongo localhost:27017"
+        run: |
+          sudo mongo localhost:27017
+          mongoimport --uri mongodb://localhost:27017 --db project3219 --collection users --file server/MOCK_DATA.json --jsonArray
       - name: Create .env
         run: |
           touch .env
@@ -56,7 +58,4 @@ jobs:
       - name: Lint server
         run: npm run lint
       - name: Test server
-        run: |
-          touch .env
-          echo MONGO_URI_TEST=${{ secrets.MONGO_URI_TEST }} >> .env
-          npm test
+        run: npm test
