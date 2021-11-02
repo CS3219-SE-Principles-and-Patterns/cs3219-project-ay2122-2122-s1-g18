@@ -142,7 +142,7 @@ describe('/auth', () => {
         .send(userToLogin)
         // eslint-disable-next-line node/handle-callback-err
         .end((err, res) => {
-          expect(res).to.have.status(200)
+          expect(res).to.have.status(401)
           expect(res.body).to.be.a('object')
           expect(res.body.message).to.equal('Authentication Failed: Wrong Username or Password!')
           done()
@@ -159,7 +159,7 @@ describe('/auth', () => {
         .send(userToLogin)
         // eslint-disable-next-line node/handle-callback-err
         .end((err, res) => {
-          expect(res).to.have.status(200)
+          expect(res).to.have.status(401)
           expect(res.body).to.be.a('object')
           expect(res.body.message).to.equal('Authentication Failed: Please verify account before continuing.')
           done()
