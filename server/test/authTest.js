@@ -4,7 +4,7 @@ const chai = require('chai')
 const chaiHttp = require('chai-http')
 const mongoose = require('mongoose')
 const app = require('../index')
-const token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InBlZXJQcmVwQGdtYWlsLmNvbSIsInVzZXJJZCI6IjYxODBmZTNjOGZlZTJjNjRmZjU0ZDY3MiIsInVzZXJuYW1lIjoic2hyZWtUZWNoVGVzdCIsImlhdCI6MTYzNTg0NjkwNX0.HaQTR8t5s_TJbRqwtbBmtRu-p8a7cynxcpmdxqnKvA4'
+let token = ''
 const expect = chai.expect
 
 chai.use(chaiHttp)
@@ -124,9 +124,44 @@ describe('/auth', () => {
         .send(userToLogin)
         // eslint-disable-next-line node/handle-callback-err
         .end((err, res) => {
+          token = res.body.token
           expect(res).to.have.status(200)
           expect(res.body).to.be.a('object')
           expect(res.body.message).to.equal('Authentication successful')
+          done()
+        })
+    })
+
+    it('Should not login if credentials are wrong', (done) => {
+      const userToLogin = {
+        username: 'shrekTech',
+        password: 'shrekTech2'
+      }
+      chai.request(app)
+        .post('/api/users')
+        .send(userToLogin)
+        // eslint-disable-next-line node/handle-callback-err
+        .end((err, res) => {
+          expect(res).to.have.status(200)
+          expect(res.body).to.be.a('object')
+          expect(res.body.message).to.equal('Authentication Failed: Wrong Username or Password!')
+          done()
+        })
+    })
+
+    it('Should not login if not verified', (done) => {
+      const userToLogin = {
+        username: 'shrekTechTest',
+        password: 'shrekTech'
+      }
+      chai.request(app)
+        .post('/api/users')
+        .send(userToLogin)
+        // eslint-disable-next-line node/handle-callback-err
+        .end((err, res) => {
+          expect(res).to.have.status(200)
+          expect(res.body).to.be.a('object')
+          expect(res.body.message).to.equal('Authentication Failed: Please verify account before continuing.')
           done()
         })
     })
