@@ -27,9 +27,7 @@ jobs:
 
   lint-test-server:
     runs-on: ubuntu-latest
-    env: 
-      JWT_SECRET_KEY: ${{ secrets.JWT_SECRET_KEY }}
-
+    
     defaults:
       run:
         working-directory: server
@@ -55,7 +53,7 @@ jobs:
         run: |
           touch .env
           echo MONGO_URI_TEST="mongodb://localhost:27017/project3219" >> .env
-          echo $JWT_SECRET_KEY >> .env
+          echo JWT_SECRET_KEY="testSecretKey" >> .env
           cat .env
       - name: Install server dependencies
         run: npm install
