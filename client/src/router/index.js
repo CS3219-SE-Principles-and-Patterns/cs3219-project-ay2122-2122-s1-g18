@@ -27,7 +27,7 @@ const routes = [
   }, {
     path: '/reset/:id/:token',
     name: 'reset',
-    component: () => import('../components/Reset')
+    component: () => import('../views/Reset')
   }, {
     path: '/coding-room',
     name: 'codingroom',
