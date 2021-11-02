@@ -38,7 +38,6 @@
         <div class="form-group justify-content-center d-flex">
           <b-button
               class="createButton mt-4 mb-2 px-5"
-              variant="success"
               @click="handleSubmitForm"
           >
             Change Password
@@ -70,7 +69,6 @@
         <div class="form-group justify-content-center d-flex">
           <b-button
               class="createButton mt-4 mb-2 px-5"
-              variant="success"
               @click="handleDeleteForm"
           >
             Delete Account
@@ -82,9 +80,7 @@
 </template>
 
 <script>
-import axios from 'axios'
-import authHeader from '../utils/authHeader'
-import { SERVER_URI } from '../constants'
+import AXIOS, { getAuthHeader } from '../utils/axiosConfig'
 
 export default {
   data () {
@@ -110,8 +106,8 @@ export default {
       this.user.newPassword = ''
     },
     logout () {
-      const apiURL = `${SERVER_URI}/api/users/verify/checkAuth`
-      axios.post(apiURL, {}, { headers: authHeader() })
+      const apiURL = '/api/users/verify/checkAuth'
+      AXIOS.post(apiURL, {}, { headers: getAuthHeader() })
         .then(() => {
           sessionStorage.clear()
           this.$router.push({
@@ -128,9 +124,9 @@ export default {
       this.internalError = false
       this.missingField = this.user.oldPassword.trim() === '' || this.user.newPassword.trim() === ''
       if (!this.missingField) {
-        const apiURL = `${SERVER_URI}/api/users`
+        const apiURL = '/api/users'
         this.user.username = JSON.parse(sessionStorage.getItem('username'))
-        axios.put(apiURL, this.user)
+        AXIOS.put(apiURL, this.user, { headers: getAuthHeader() })
           .then(() => {
             this.user.oldPassword = ''
             this.user.newPassword = ''
@@ -150,13 +146,13 @@ export default {
       this.internalError = false
       this.missingField = this.user.oldPassword.trim() === ''
       if (!this.missingField) {
-        const apiURL = `${SERVER_URI}/api/users`
+        const apiURL = '/api/users'
         this.user.username = JSON.parse(sessionStorage.getItem('username'))
         const temp = {
           username: this.user.username,
           password: this.user.oldPassword
         }
-        axios.delete(apiURL, { data: temp })
+        AXIOS.delete(apiURL, { headers: getAuthHeader(), data: temp })
           .then(() => {
             this.user.oldPassword = ''
             this.$router.push({
@@ -177,22 +173,8 @@ export default {
 </script>
 
 <style>
-.createButton {
-  color: black;
-  background-color: #ffa8a1;
-  outline-color: #ffa8a1;
-  border-color: #ffa8a1;
-}
-.createButton:hover {
-  color: black;
-  background-color: #ffe5e3;
-  outline-color: #ffe5e3;
-  border-color: #ffe5e3;
-}
-.createButton:focus {
-  color: black;
-  background-color: #ffa8a1;
-  outline-color: #ffa8a1;
-  border-color: #ffa8a1;
+.createButton .createButton:focus .createButton:hover{
+  border: #D3CCA5 !important;
+  color: black !important;
 }
 </style>

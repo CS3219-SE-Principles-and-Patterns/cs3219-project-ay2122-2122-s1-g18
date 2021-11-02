@@ -11,7 +11,7 @@
       <b-col cols="6">
         <b-card class="right-panel">
           <div v-if="isLoginView">
-            <b-alert v-if="isNewUser" show="5">
+            <b-alert v-if="isNewUser" variant="primary" show="5">
               An email has been sent to your account. Verify before proceeding.
             </b-alert>
             <login @change-view="changeView" @reset-password="showModal"></login>
@@ -22,22 +22,22 @@
         </b-card>
       </b-col>
     </b-row>
-    <b-modal id="modal-1" title="Reset Password" hide-footer>
-      <h6 v-if="missingField">
+    <b-modal id="modal-1" title="Reset Password" hide-backdrop content-class="shadow" hide-footer>
+      <b-alert v-if="missingField" variant="primary" show="30">
         Please enter your email address.
-      </h6>
-      <h6 v-if="internalError">
+      </b-alert>
+      <b-alert v-if="internalError" variant="primary" show="30">
         Unable to update password. Please reload and try again.
-      </h6>
-      <h6 v-if="invalidEmail">
+      </b-alert>
+      <b-alert v-if="invalidEmail" variant="primary" show="30">
         Invalid email format.
-      </h6>
-      <h6 v-if="userNotFound">
+      </b-alert>
+      <b-alert v-if="userNotFound" variant="primary" show="30">
         Unable to find user. Please create an account instead.
-      </h6>
-      <h6 v-if="success">
+      </b-alert>
+      <b-alert v-if="success" variant="primary" show="30">
         Please check your email for further instructions.
-      </h6>
+      </b-alert>
       <form v-else @submit.prevent="handleSubmitForm">
         <div class="form-group mb-4">
           <input
@@ -51,7 +51,6 @@
         <div class="form-group justify-content-center d-flex">
           <b-button
               class="createButton mb-2 px-5"
-              variant="success"
               @click="handleSubmitForm"
           >
             Reset Password
@@ -65,8 +64,7 @@
 <script>
 import Login from '../views/Login'
 import Signup from '../views/Signup'
-import { SERVER_URI } from '../constants'
-import axios from 'axios'
+import AXIOS from '../utils/axiosConfig'
 // TODO: Design left panel to introduce SHReK Tech
 export default {
   name: 'Landing',
@@ -108,8 +106,8 @@ export default {
       this.success = false
       this.missingField = this.user.email.trim() === ''
       if (!this.missingField) {
-        const apiURL = `${SERVER_URI}/api/users/reset`
-        axios.post(apiURL, this.user)
+        const apiURL = '/api/users/reset'
+        AXIOS.post(apiURL, this.user)
           .then((res) => {
             if (res.status === 200) {
               this.user.email = ''

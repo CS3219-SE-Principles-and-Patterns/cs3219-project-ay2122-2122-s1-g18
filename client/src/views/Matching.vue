@@ -87,8 +87,8 @@ export default {
             hasMatch: true,
             isInterviewer: this.isInterviewer(this.socket.id, roomInfo.interviewer),
             difficulty: this.matchBy,
-            codingQuestion1Idx: roomInfo.codingQuestion1Idx,
-            codingQuestion2Idx: roomInfo.codingQuestion2Idx
+            codingQuestion1Id: roomInfo.codingQuestion1Id,
+            codingQuestion2Id: roomInfo.codingQuestion2Id
           }
         })
       })
@@ -116,14 +116,21 @@ export default {
     },
 
     handleProceedWithoutMatch () {
-      this.$router.push({
-        name: 'codingroom',
-        params: {
-          socket: this.socket,
-          id: this.socket.id,
-          isInterviewer: true,
-          hasMatch: false
-        }
+      this.socket.emit('proceed-without-match', {
+        matchBy: this.matchBy
+      })
+      this.socket.on('room-ready', (roomInfo) => {
+        this.$router.push({
+          name: 'codingroom',
+          params: {
+            socket: this.socket,
+            id: this.socket.id,
+            isInterviewer: true,
+            hasMatch: false,
+            difficulty: this.matchBy,
+            codingQuestion1Id: roomInfo.codingQuestion1Id
+          }
+        })
       })
     }
   }

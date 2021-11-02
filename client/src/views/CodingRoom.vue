@@ -12,7 +12,14 @@
         >
           Next Coding Question
         </b-button>
-        <b-tooltip class="tooltip" target="nextQuestionButton" triggers="hover" ref="tooltip">
+        <b-tooltip
+            class="tooltip"
+            target="nextQuestionButton"
+            triggers="hover"
+            ref="tooltip"
+            v-if="hasMatch"
+            :disabled="isSecondQuestion"
+        >
           Upon clicking this button,<br>
           1. Your role will be swapped<br>
           2. The current code will be cleared<br>
@@ -28,12 +35,12 @@
         </b-col>
         <b-col>
           <div class='container d-flex justify-content-center'>
-            <p style="color:brown">{{recommended_time}}</p>
+            <p style="color:brown">{{ recommendedTime }}</p>
           </div>
         </b-col>
       </b-col>
       <b-col>
-        <b-button variant="danger" @click.prevent="leaveRoom()" type="button" class="endButton px-4 float-end mb-5">
+        <b-button @click.prevent="leaveRoom()" type="button" class="endButton px-4 float-end mb-5">
           End Session
         </b-button>
       </b-col>
@@ -42,9 +49,9 @@
       <b-col cols="4">
         <h3 class="heading">Coding Question</h3>
         <div class="scroll-box">
-          <p style="color: green; font-size:22px;">{{codingQuestion.question_title}}</p>
-          <p class="pre-formatted" style="font-size:16px;">{{codingQuestion.question_text}}</p>
-          <p>{{codingQuestion.url}}</p>
+          <p style="color: #a8ba61; font-size:22px; font-weight:600;">{{ codingQuestion.question_title }}</p>
+          <p class="pre-formatted" style="font-size:16px;">{{ codingQuestion.question_text }}</p>
+          <p>{{ codingQuestion.url }}</p>
         </div>
       </b-col>
       <b-col cols="5">
@@ -69,6 +76,7 @@
                 right
                 text="Send Interview Question"
                 v-if="isInterviewer"
+                variant="secondary"
               >
                 <b-dropdown-item
                   v-for="question in interviewQuestions"
@@ -126,7 +134,7 @@
                 required
             />
             <b-input-group-append>
-              <b-btn class="chat-form-element" type="submit" variant="primary">Send</b-btn>
+              <b-btn class="chat-form-element" type="submit" variant="secondary">Send</b-btn>
             </b-input-group-append>
           </b-input-group>
         </b-form>
@@ -137,11 +145,10 @@
 
 <script>
 import Automerge from 'automerge'
-import axios from 'axios'
 import Vue from 'vue'
 import VueChatScroll from 'vue-chat-scroll'
 import CountUpTimer from '../components/CountUpTimer'
-import { SERVER_URI } from '../constants'
+import AXIOS, { getAuthHeader } from '../utils/axiosConfig'
 
 Vue.use(VueChatScroll)
 
@@ -168,11 +175,10 @@ export default {
       interviewQuestions: null,
       isSecondQuestion: false,
       difficulty: this.$route.params.difficulty,
-      recommended_time: '',
+      recommendedTime: '',
       codingQuestion: '',
-      codingQuestion2: '',
-      codingQuestion1Idx: this.$route.params.codingQuestion1Idx,
-      codingQuestion2Idx: this.$route.params.codingQuestion2Idx
+      codingQuestion1Id: this.$route.params.codingQuestion1Id,
+      codingQuestion2Id: this.$route.params.codingQuestion2Id
     }
   },
 
@@ -187,8 +193,8 @@ export default {
   },
 
   beforeCreate () {
-    const url = `${SERVER_URI}/api/interview-questions`
-    axios.get(url)
+    const url = '/api/interview-questions'
+    AXIOS.get(url, { headers: getAuthHeader() })
       .then((response) => {
         this.interviewQuestions = response.data.data
       })
@@ -235,27 +241,21 @@ export default {
       }
     })
 
-    const codingQuestion1URL = `${SERVER_URI}/api/coding-questions/${this.codingQuestion1Idx}`
-    const codingQuestion2URL = `${SERVER_URI}/api/coding-questions/${this.codingQuestion2Idx}`
-
-    axios.get(codingQuestion1URL)
+    const codingQuestion1URL = `/api/coding-questions/${this.codingQuestion1Id}`
+    AXIOS.get(codingQuestion1URL, { headers: getAuthHeader() })
       .then((response) => {
-        this.codingQuestion = response.data.data[0]
-      })
-    axios.get(codingQuestion2URL)
-      .then((response) => {
-        this.codingQuestion2 = response.data.data[0]
+        this.codingQuestion = response.data.data
       })
 
     switch (this.difficulty) {
       case 'beginner':
-        this.recommended_time = 'Recommended: 00:30:00'
+        this.recommendedTime = 'Recommended: 00:30:00'
         break
       case 'intermediate':
-        this.recommended_time = 'Recommended: 00:45:00'
+        this.recommendedTime = 'Recommended: 00:45:00'
         break
       case 'expert':
-        this.recommended_time = 'Recommended: 01:00:00'
+        this.recommendedTime = 'Recommended: 01:00:00'
         break
       default:
         console.log('Unaccepted difficulty level.')
@@ -324,7 +324,7 @@ export default {
       this.socket.emit('load-next-question', this.room)
     },
 
-    loadNextCodingQuestion () {
+    async loadNextCodingQuestion () {
       this.$refs.countUpTimer.reset()
       this.isInterviewer = !this.isInterviewer
       this.sendWarning()
@@ -332,10 +332,12 @@ export default {
         this.sendAssignedRoleChat()
       }
       this.clearCode()
+      const codingQuestion2URL = `/api/coding-questions/${this.codingQuestion2Id}`
+      await AXIOS.get(codingQuestion2URL, { headers: getAuthHeader() })
+        .then((response) => {
+          this.codingQuestion = response.data.data
+        })
       this.isSecondQuestion = true
-      this.codingQuestion = this.codingQuestion2
-      this.typing = false
-      this.message = ''
     },
 
     leaveRoom () {
@@ -424,15 +426,26 @@ export default {
   }
 
   .nextQuestionButton {
-    background-color: #5ab4dd;
-    outline-color: #5ab4dd;
-    border-color: #5ab4dd;
+    background-color: #a8ba61;
+    outline-color: #a8ba61;
+    border-color: #a8ba61;
   }
 
   .nextQuestionButton:hover {
-    background-color: #4493b8;
-    outline-color: #4493b8;
-    border-color: #4493b8;
+    background-color: #afc265;
+    outline-color: #afc265;
+    border-color: #afc265;
+  }
+    .endButton {
+    background-color:  #800b03;
+    outline-color: #800b03;
+    border-color: #800b03;
+  }
+
+  .endButton:hover {
+    background-color: #990317;
+    outline-color: #990317;
+    border-color: #990317;
   }
 
   .tooltip-inner {

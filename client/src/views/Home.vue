@@ -28,14 +28,14 @@
             />
           </template>
         </b-table>
-        <b-form class='selectButtons mt-3' @submit="onSubmit">
+        <b-form class="selectButtons mt-3" @submit="onSubmit">
           <div class="form-group justify-content-center d-flex">
-            <b-button class="mt-4 mb-2 px-5" type='submit'>
+            <b-button class="mt-4 mb-2 px-5" type="submit">
               Find a Match
             </b-button>
           </div>
         </b-form>
-        <b-alert :show="error" variant="danger">
+        <b-alert class="alert mt-4" :show="error" variant="primary">
           {{ errorMessage }}
         </b-alert>
       </b-col>
@@ -44,9 +44,9 @@
 </template>
 
 <script>
-import axios from 'axios'
 import io from 'socket.io-client'
 import { SERVER_URI } from '../constants'
+import AXIOS, { getAuthHeader } from '../utils/axiosConfig'
 
 const UNEXPECTED_ERROR = 'We are unable to find you a match at the moment. Please try again later.'
 
@@ -123,8 +123,8 @@ export default {
     },
 
     async doesUserHaveOngoingSession () {
-      const url = `${SERVER_URI}/api/users/${this.username}/session`
-      return axios.get(url)
+      const url = `/api/users/${this.username}/session`
+      return await AXIOS.get(url, { headers: getAuthHeader() })
         .then((response) => {
           return response.data.hasOngoingSession
         })
@@ -140,6 +140,10 @@ export default {
 </script>
 
 <style>
+.alert {
+  width: 600px;
+}
+
 .table {
   width: 500px;
 }
