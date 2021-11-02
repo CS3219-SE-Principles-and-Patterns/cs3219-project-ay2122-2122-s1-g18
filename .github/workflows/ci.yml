@@ -48,7 +48,7 @@ jobs:
       - name: Test mongo connection
         run: |
           sudo mongo localhost:27017
-          mongoimport --uri mongodb://localhost:27017 --db project3219 --collection users --file ./MOCK_DATA.json --jsonArray
+          mongoimport --uri mongodb://localhost:27017 --db project3219 --collection users --file ./test/mockUserData.json --jsonArray
       - name: Create .env
         run: |
           touch .env
