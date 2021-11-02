@@ -54,11 +54,10 @@ jobs:
         run: |
           touch .env
           echo MONGO_URI_TEST=${{ secrets.MONGO_URI_TEST }} >> .env
+          echo JWT_SECRET_KEY=${{ secrets.JWT_SECRET_KEY }} >> .env
       - name: Install server dependencies
         run: npm install
       - name: Lint server
         run: npm run lint
       - name: Test server
         run: npm test
-        env: 
-          JWT_SECRET_KEY: ${{ secrets.JWT_SECRET_KEY }}
