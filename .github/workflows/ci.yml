@@ -53,7 +53,7 @@ jobs:
       - name: Create .env
         run: |
           touch .env
-          echo MONGO_URI_TEST=${{ secrets.MONGO_URI_TEST }} >> .env
+          echo MONGO_URI_TEST="mongodb://localhost:27017/project3219" >> .env
           echo JWT_SECRET_KEY=${{ secrets.JWT_SECRET_KEY }} >> .env
       - name: Install server dependencies
         run: npm install
