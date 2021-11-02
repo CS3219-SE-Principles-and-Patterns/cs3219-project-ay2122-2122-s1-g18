@@ -5,7 +5,7 @@
         <b-card class="left-panel" title="About SHReK Tech">
           <b-card-text>
             SHReK Tech is a project that aims to help students with their technical interview. In SHReK Tech, users
-            are able to engaged in real-time, collaborative programming to enhance their familiarity with such technical
+            are able to engage in real-time, collaborative programming to enhance their familiarity with such technical
             interviews.
           </b-card-text>
         </b-card>
