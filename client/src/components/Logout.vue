@@ -10,10 +10,10 @@
         Missing field. Please fill up all fields.
       </h6>
       <h6 v-if="wrongCredentials">
-        Wrong credentials. Unable to update password.
+        Wrong credentials. Unable to change password.
       </h6>
       <h6 v-if="internalError">
-        Unable to update password. Please reload and try again.
+        Unable to change password. Please reload and try again.
       </h6>
       <h6 v-if="updateSuccess">Your password have been changed.</h6>
       <form v-else @submit.prevent="handleUpdateForm">

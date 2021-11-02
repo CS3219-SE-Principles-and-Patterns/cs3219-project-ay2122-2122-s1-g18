@@ -4,7 +4,9 @@
       <b-col cols="6">
         <b-card class="left-panel" title="About SHReK Tech">
           <b-card-text>
-            SHReK Tech is a project that aims to help students with their technical interview.
+            SHReK Tech is a project that aims to help students with their technical interview. In SHReK Tech, users
+            are able to engaged in real-time, collaborative programming to enhance their familiarity with such technical
+            interviews.
           </b-card-text>
         </b-card>
       </b-col>
@@ -66,7 +68,7 @@ import Login from '../components/Login'
 import Signup from '../components/Signup'
 
 import AXIOS from '../utils/axiosConfig'
-// TODO: Design left panel to introduce SHReK Tech
+
 export default {
   name: 'Landing',
   components: { Signup, Login },
