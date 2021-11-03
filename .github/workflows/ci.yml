@@ -40,20 +40,22 @@ jobs:
           node-version: 16.x
           cache: "npm"
           cache-dependency-path: "server/package-lock.json"
-      - name: Create mongo Docker containter
+      - name: Create Mongo Docker containter
         uses: DigiPie/mongo-action@v1.0.1
         with:
           image-version: latest
           port: 27017
-      - name: Test mongo connection
+      - name: Test Mongo connection
         run: |
           sudo mongo localhost:27017
           mongoimport --uri mongodb://localhost:27017 --db project3219 --collection users --file ./test/mockUserData.json --jsonArray
+          mongoimport --uri mongodb://localhost:27017 --db project3219 --collection users --file ./test/mockCodingQuestionData.json --jsonArray
       - name: Create .env
         run: |
           touch .env
           echo MONGO_URI_TEST="mongodb://localhost:27017/project3219" >> .env
           echo JWT_SECRET_KEY="testSecretKey" >> .env
+          echo JWT_TEST=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImthaWVuLmZvb0BnbWFpbC5jb20iLCJ1c2VySWQiOiI2MTgyMTA3NzhjZjY2ZDcxYzJkZWZmYmYiLCJ1c2VybmFtZSI6Indha3UiLCJpYXQiOjE2MzU5MTM5NTIsImV4cCI6MTYzNTkyNDc1Mn0.Z0FfNBj9ZTQlI_KDFVFDR_EO8-eFSRjEpcFP2CpShmc >> .env
           cat .env
       - name: Install server dependencies
         run: npm install
