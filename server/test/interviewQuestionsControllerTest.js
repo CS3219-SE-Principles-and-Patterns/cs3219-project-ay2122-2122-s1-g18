@@ -44,7 +44,7 @@ describe('Interview questions', () => {
           expect(res).to.have.status(200)
           expect(res.body).to.be.a('object')
           expect(res.body.message).to.eq('Success: All interview questions retrieved!')
-          expect(res.body.data).to.have.deep.members(INTERVIEW_QUESTIONS)
+          expect(res.body.data).to.deep.include(INTERVIEW_QUESTIONS)
           done()
         })
     })
