@@ -3,4 +3,32 @@
   "email": "peerPrep2@gmail.com",
   "password": "$2b$10$.2BQFHd5dmXeNmvHhYvzLOfJnn8FkYExhHWbeVfztlehTXuB7PjfK",
   "verify": true
+}, {
+  "email": "dummyWithSocket@gmail.com",
+  "username": "userWithSocket",
+  "password": "hash",
+  "socket": "socket",
+  "codingRoom": "",
+  "verify": true
+}, {
+  "email": "dummyWithoutSocket@gmail.com",
+  "password": "hash",
+  "username": "userWithoutSocket",
+  "socket": "",
+  "codingRoom": "",
+  "verify": true
+}, {
+  "email": "client1@gmail.com",
+  "password": "hash",
+  "username": "client1",
+  "socket": "",
+  "codingRoom": "",
+  "verify": true
+}, {
+  "email": "client2@gmail.com",
+  "password": "hash",
+  "username": "client2",
+  "socket": "",
+  "codingRoom": "",
+  "verify": true
 }]

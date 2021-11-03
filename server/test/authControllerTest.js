@@ -9,7 +9,7 @@ const expect = chai.expect
 
 chai.use(chaiHttp)
 
-describe('/auth', () => {
+describe('Auth', () => {
   before('Connect to MongoDB', function (done) {
     mongoose.connect(process.env.MONGO_URI_TEST)
     const db = mongoose.connection
