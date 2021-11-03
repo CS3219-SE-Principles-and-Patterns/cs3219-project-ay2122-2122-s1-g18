@@ -16,7 +16,6 @@ router.route('/users/:username/session')
 
 router.route('/interview-questions')
   .get(interviewQuestionsController.getInterviewQuestions)
-  .post(interviewQuestionsController.createInterviewQuestion)
 
 router.route('/coding-questions/:id')
   .get(codingQuestionsController.getCodingQuestion)
