@@ -48,15 +48,15 @@ jobs:
       - name: Test Mongo connection
         run: |
           sudo mongo localhost:27017
-          mongoimport --uri mongodb://localhost:27017 --db project3219 --collection users --file ./test/mockUserData.json --jsonArray
-          mongoimport --uri mongodb://localhost:27017 --db project3219 --collection codingquestions --file ./test/mockCodingQuestionData.json --jsonArray
+          mongoimport --uri mongodb://localhost:27017 --db project3219 --collection users --file ./test/data/mockUserData.json --jsonArray
+          mongoimport --uri mongodb://localhost:27017 --db project3219 --collection codingquestions --file ./test/data/mockCodingQuestionData.json --jsonArray
+          mongoimport --uri mongodb://localhost:27017 --db project3219 --collection interviewquestions --file ./test/data/mockInterviewQuestionData.json --jsonArray
       - name: Create .env
         run: |
           touch .env
           echo MONGO_URI_TEST="mongodb://localhost:27017/project3219" >> .env
           echo JWT_SECRET_KEY="testSecretKey" >> .env
           echo JWT_TEST=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImthaWVuLmZvb0BnbWFpbC5jb20iLCJ1c2VySWQiOiI2MTgxM2RiOTAzMzZmNjVmYzcwM2FjNzkiLCJ1c2VybmFtZSI6Indha3UiLCJpYXQiOjE2MzU5MTczNTh9.xntZCvnqqPxRvrRuhXDX04kgJnirLeSbAUMb2Ly77wo >> .env
-          cat .env
       - name: Install server dependencies
         run: npm install
       - name: Lint server
