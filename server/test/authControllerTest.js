@@ -292,4 +292,13 @@ describe('Auth', () => {
         })
     })
   })
+
+  after('Disconnect from MongoDB', (done) => {
+    const db = mongoose.connection
+    db.close()
+    db.once('close', () => {
+      console.log('Disconnected from MongoDB')
+      done()
+    })
+  })
 })
