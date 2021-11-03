@@ -9,7 +9,7 @@ const expect = chai.expect
 
 chai.use(chaiHttp)
 
-describe('/auth', () => {
+describe('Auth', () => {
   before('Connect to MongoDB', function (done) {
     mongoose.connect(process.env.MONGO_URI_TEST)
     const db = mongoose.connection
@@ -290,6 +290,15 @@ describe('/auth', () => {
           expect(res.body.message).to.equal('Success: Account Deleted')
           done()
         })
+    })
+  })
+
+  after('Disconnect from MongoDB', (done) => {
+    const db = mongoose.connection
+    db.close()
+    db.once('close', () => {
+      console.log('Disconnected from MongoDB')
+      done()
     })
   })
 })
