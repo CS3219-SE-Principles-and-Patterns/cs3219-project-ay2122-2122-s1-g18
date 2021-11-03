@@ -9,6 +9,20 @@ const expect = chai.expect
 
 chai.use(chaiHttp)
 
+const INTERVIEW_QUESTIONS = [{
+  text: 'What is the time complexity of your algorithm?'
+}, {
+  text: 'What is the space complexity of your algorithm?'
+}, {
+  text: 'What is a naïve solution?'
+}, {
+  text: 'What are some corner cases that you need to handle?'
+}, {
+  text: 'Can you improve the time complexity of your algorithm?'
+}, {
+  text: 'Why did you choose to use this data structure?'
+}]
+
 describe('Interview questions', () => {
   before('Connect to MongoDB', function (done) {
     mongoose.connect(process.env.MONGO_URI_TEST)
@@ -30,8 +44,7 @@ describe('Interview questions', () => {
           expect(res).to.have.status(200)
           expect(res.body).to.be.a('object')
           expect(res.body.message).to.eq('Success: All interview questions retrieved!')
-          expect(res.body.data).to.be.a('array').of('object')
-          expect(res.body.data[0].text).to.be.a('string').and.not.be.empty
+          expect(res.body.data).to.have.deep.members(INTERVIEW_QUESTIONS)
           done()
         })
     })
