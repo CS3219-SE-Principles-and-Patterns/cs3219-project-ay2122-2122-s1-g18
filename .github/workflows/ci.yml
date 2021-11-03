@@ -55,7 +55,7 @@ jobs:
           touch .env
           echo MONGO_URI_TEST="mongodb://localhost:27017/project3219" >> .env
           echo JWT_SECRET_KEY="testSecretKey" >> .env
-          echo JWT_TEST=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImthaWVuLmZvb0BnbWFpbC5jb20iLCJ1c2VySWQiOiI2MTgyMTA3NzhjZjY2ZDcxYzJkZWZmYmYiLCJ1c2VybmFtZSI6Indha3UiLCJpYXQiOjE2MzU5MTM5NTIsImV4cCI6MTYzNTkyNDc1Mn0.Z0FfNBj9ZTQlI_KDFVFDR_EO8-eFSRjEpcFP2CpShmc >> .env
+          echo JWT_TEST=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImthaWVuLmZvb0BnbWFpbC5jb20iLCJ1c2VySWQiOiI2MTgxM2RiOTAzMzZmNjVmYzcwM2FjNzkiLCJ1c2VybmFtZSI6Indha3UiLCJpYXQiOjE2MzU5MTczNTh9.xntZCvnqqPxRvrRuhXDX04kgJnirLeSbAUMb2Ly77wo >> .env
           cat .env
       - name: Install server dependencies
         run: npm install
