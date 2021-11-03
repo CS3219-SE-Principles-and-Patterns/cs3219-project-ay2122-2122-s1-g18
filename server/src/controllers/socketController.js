@@ -153,7 +153,7 @@ function matchUsers (codingQuestions, userInfo, socket, io) {
 
 async function handleProceedWithoutMatchEvent (userInfo, socket) {
   const codingQuestion1Id = await codingQuestionsController.getCodingQuestionId(userInfo.matchBy)
-  socket.emit('room-ready', codingQuestion1Id)
+  socket.emit('coding-room-ready-solo', codingQuestion1Id)
 }
 
 function handleJoinRoomEvent (username, roomInfo, socket, io) {

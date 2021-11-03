@@ -119,7 +119,7 @@ export default {
       this.socket.emit('proceed-without-match', {
         matchBy: this.matchBy
       })
-      this.socket.on('room-ready', (roomInfo) => {
+      this.socket.on('coding-room-ready-solo', (roomInfo) => {
         this.$router.push({
           name: 'codingroom',
           params: {
