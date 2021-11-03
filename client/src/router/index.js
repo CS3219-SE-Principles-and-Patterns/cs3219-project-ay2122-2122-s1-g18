@@ -51,10 +51,22 @@ const router = new VueRouter({
 })
 
 router.beforeEach((to, from, next) => {
-  if (to.name === 'landing' || to.name === 'reset') {
+  const apiURL = '/api/users/verify/checkAuth'
+  if (to.name === 'reset') {
     next()
+  } else if (to.name === 'landing') {
+    AXIOS.get(apiURL, { headers: getAuthHeader() })
+      .then(() => {
+        if (JSON.parse(sessionStorage.getItem('username'))) {
+          next({ name: 'home' })
+        } else {
+          next()
+        }
+      })
+      .catch(() => {
+        next()
+      })
   } else {
-    const apiURL = '/api/users/verify/checkAuth'
     AXIOS.get(apiURL, { headers: getAuthHeader() })
       .then(() => {
         next()

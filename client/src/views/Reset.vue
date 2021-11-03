@@ -16,7 +16,7 @@
         Password successfully reset.
         Click to login
       </b-button>
-      <form v-else @submit.prevent="handleSubmitForm">
+      <form v-else @submit.prevent="handleResetForm">
         <div class="form-group">
           <input
               type="password"
@@ -30,7 +30,7 @@
         <div class="form-group justify-content-center d-flex">
           <b-button
               class="createButton mt-4 mb-2 px-5"
-              @click="handleSubmitForm"
+              @click="handleResetForm"
           >
             Reset
           </b-button>
@@ -58,7 +58,7 @@ export default {
     }
   },
   methods: {
-    handleSubmitForm () {
+    handleResetForm () {
       this.success = false
       this.internalError = false
       this.missingField = this.user.newPassword.trim() === ''

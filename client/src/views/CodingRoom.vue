@@ -280,7 +280,7 @@ export default {
     },
 
     getTimeNow () {
-      return new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+      return new Date().toLocaleTimeString([], { timeZone: 'Asia/Singapore', hour: '2-digit', minute: '2-digit' })
     },
 
     getChat (message) {
