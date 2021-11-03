@@ -1,0 +1,13 @@
+[{
+  "text": "What is the time complexity of your algorithm?"
+},{
+  "text": "What is the space complexity of your algorithm?"
+},{
+  "text": "What is a naïve solution?"
+},{
+  "text": "What are some corner cases that you need to handle?"
+},{
+  "text": "Can you improve the time complexity of your algorithm?"
+},{
+  "text": "Why did you choose to use this data structure?"
+}]
