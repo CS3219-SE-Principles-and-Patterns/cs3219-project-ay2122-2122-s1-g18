@@ -20,6 +20,16 @@ describe('Sockets', () => {
   let client1, client2, client3
   let client1Id, client2Id
 
+  before('Connect to MongoDB', function (done) {
+    mongoose.connect(process.env.MONGO_URI_TEST)
+    const db = mongoose.connection
+    db.on('error', console.error.bind(console, 'Unable to connect to MongoDB'))
+    db.once('open', function () {
+      console.log('Connected to MongoDB')
+      done()
+    })
+  })
+
   describe('Event update-waiting-users', () => {
     it('Should send an empty object if there are no waiting users', (done) => {
       client1 = io.connect(DEV_SERVER_URI, SOCKET_OPTIONS)
@@ -526,6 +536,15 @@ describe('Sockets', () => {
       })
 
       client1.on('next-question', () => testEventReceived(client1, done))
+    })
+  })
+
+  after('Disconnect from MongoDB', (done) => {
+    const db = mongoose.connection
+    db.close()
+    db.once('close', () => {
+      console.log('Disconnected from MongoDB')
+      done()
     })
   })
 })
