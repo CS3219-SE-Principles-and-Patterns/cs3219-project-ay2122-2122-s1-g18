@@ -8,10 +8,13 @@ const AXIOS = axios.create({
 export default AXIOS
 
 export function getAuthHeader () {
-  const accessToken = JSON.parse(sessionStorage.getItem('token'))
-  if (accessToken) {
-    return { Authorization: 'Bearer ' + accessToken }
-  } else {
+  try {
+    const accessToken = JSON.parse(sessionStorage.getItem('token'))
+    if (accessToken) {
+      return { Authorization: 'Bearer ' + accessToken }
+    }
+    return {}
+  } catch (_err) {
     return {}
   }
 }

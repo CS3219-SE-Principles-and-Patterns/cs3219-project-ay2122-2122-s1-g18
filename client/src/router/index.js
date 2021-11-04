@@ -42,7 +42,8 @@ const routes = [
   }, {
     path: '*',
     redirect: '/'
-  }]
+  }
+]
 
 const router = new VueRouter({
   mode: 'history',
@@ -57,7 +58,7 @@ router.beforeEach((to, from, next) => {
   } else if (to.name === 'landing') {
     AXIOS.get(apiURL, { headers: getAuthHeader() })
       .then(() => {
-        if (JSON.parse(sessionStorage.getItem('username'))) {
+        if (JSON.parse(sessionStorage.getItem('token'))) {
           next({ name: 'home' })
         } else {
           next()
