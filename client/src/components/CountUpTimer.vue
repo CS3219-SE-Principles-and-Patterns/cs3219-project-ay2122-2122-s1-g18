@@ -1,7 +1,7 @@
 Adapted from https://thewebdev.info/2020/03/01/create-a-vue-js-stopwatch/
 
 <template>
-  <h2>{{ formattedElapsedTime }}</h2>
+  <h3>{{ formattedElapsedTime }}</h3>
 </template>
 
 <script>

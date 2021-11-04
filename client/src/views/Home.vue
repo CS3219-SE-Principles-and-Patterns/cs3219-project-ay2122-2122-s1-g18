@@ -1,6 +1,6 @@
 <template>
   <div>
-    <h2 class="mb-3">Welcome back, {{ username }}!</h2>
+    <h2 class="mb-3">Welcome back, SHReKie {{ username }}!</h2>
     <b-row>
       <b-col class="mt-3" align="center">
         <h3 class="heading mb-4">Difficulty Levels</h3>
@@ -13,6 +13,7 @@
             ref="selectableTable"
             selectable
             outlined
+            selected-variant="light"
             @row-selected="onDifficultySelected"
         >
           <template #cell(hasWaitingUser)="data">
@@ -30,12 +31,12 @@
         </b-table>
         <b-form class="selectButtons mt-3" @submit="onSubmit">
           <div class="form-group justify-content-center d-flex">
-            <b-button class="mt-4 mb-2 px-5" type="submit">
+            <b-button class="button px-5" variant="dark" type="submit">
               Find a Match
             </b-button>
           </div>
         </b-form>
-        <b-alert class="alert mt-4" :show="error" variant="primary">
+        <b-alert class="alert mt-4" :show="error" variant="warning">
           {{ errorMessage }}
         </b-alert>
       </b-col>

@@ -2,38 +2,38 @@
   <b-row class="justify-content-center">
     <b-col cols="8">
       <h3 class="text-center mb-4">Log In</h3>
-      <b-alert v-if="missingField"
-      variant="primary" show="30">
+      <b-alert v-if="missingField" variant="warning" show="30">
         Missing field. Please fill up all fields.
       </b-alert>
-      <b-alert v-if="wrongCredentials" variant="primary" show="30">
+      <b-alert v-if="wrongCredentials" variant="warning" show="30">
         Wrong username/password.
       </b-alert>
-      <b-alert v-if="invalidEmail" variant="primary" show="30">
+      <b-alert v-if="invalidEmail" variant="warning" show="30">
         Email not verified. Please verify your email before continuing.
       </b-alert>
       <form @submit.prevent="handleSubmitForm">
-        <div class="form-group mb-4">
+        <div class="form-group mb-3">
           <input
-              type="text"
-              placeholder="Username"
-              class="form-control"
-              v-model="user.username"
-              required
+            type="text"
+            placeholder="Username"
+            class="form-control"
+            v-model="user.username"
+            required
           >
         </div>
         <div class="form-group">
           <input
-              type="password"
-              class="form-control"
-              placeholder="Password"
-              v-model="user.password"
-              required
+            type="password"
+            class="form-control"
+            placeholder="Password"
+            v-model="user.password"
+            required
           >
         </div>
         <div class="form-group justify-content-center d-flex">
           <b-button
-            class="createButton mt-4 mb-2 px-5"
+            class="button px-5"
+            variant="dark"
             @click="handleSubmitForm"
           >
             Log In
@@ -42,16 +42,16 @@
       </form>
     </b-col>
     <b-button
-        variant="link"
-        @click="changeView"
-        class="link justify-content-center d-flex"
+      variant="link"
+      @click="changeView"
+      class="link justify-content-center d-flex"
     >
       Do not have an account? Sign up here!
     </b-button>
     <b-button
-        variant="link"
-        @click="resetPassword"
-        class="link justify-content-center d-flex"
+      variant="link"
+      @click="resetPassword"
+      class="link justify-content-center d-flex"
     >
       Forgot your password? Click here to reset!
     </b-button>
@@ -119,18 +119,3 @@ export default {
   }
 }
 </script>
-
-<style>
-.link.link {
-  color: darkslategray;
-}
-
-.link.link:hover {
-  color: grey;
-}
-
-.createButton .createButton:focus .createButton:hover{
-  border: #D3CCA5 !important;
-  color: black;
-}
-</style>

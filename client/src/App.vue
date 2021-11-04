@@ -8,7 +8,7 @@
             <h3 class="fw-bold mt-3 mb-3 ms-5">SHReK Tech</h3>
           </b-col>
           <b-col cols="2" v-if="enableLogout">
-            <logout class="mt-3 mb-3"></logout>
+            <logout class="mt-3 mb-3" />
           </b-col>
         </b-row>
       </b-container>

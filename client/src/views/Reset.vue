@@ -1,17 +1,18 @@
 <template>
   <b-row class="justify-content-center">
-    <b-col cols="4" >
+    <b-col cols="4">
       <h3 class="text-center mb-4">Reset Password</h3>
-      <b-alert v-if="missingField" variant="primary" show="30">
+      <b-alert v-if="missingField" variant="warning" show="30">
         Please enter a new password.
       </b-alert>
-      <b-alert v-if="internalError" variant="primary" show="30">
-        Token is invalid/expired. Please try again.
+      <b-alert v-if="internalError" variant="warning" show="30">
+        Link to reset password is invalid/expired. Please try again.
       </b-alert>
       <b-button
-          v-if="success"
-          @click="landingPage"
-          class="createButton mt-4 mb-2 px-5"
+        v-if="success"
+        @click="landingPage"
+        class="mt-4 mb-2 px-5"
+        variant="dark"
       >
         Password successfully reset.
         Click to login
@@ -29,7 +30,7 @@
         </div>
         <div class="form-group justify-content-center d-flex">
           <b-button
-              class="createButton mt-4 mb-2 px-5"
+              class="button px-5"
               @click="handleResetForm"
           >
             Reset
@@ -88,10 +89,3 @@ export default {
   }
 }
 </script>
-
-<style>
-.createButton .createButton:focus .createButton:hover{
-  border: #D3CCA5 !important;
-  color: black;
-}
-</style>

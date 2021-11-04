@@ -117,7 +117,7 @@ export default {
 
   &__path-elapsed {
     stroke-width: 7px;
-    stroke: #b3c3ce;
+    stroke: #c2ae93;
   }
 
   &__path-remaining {
@@ -128,7 +128,7 @@ export default {
     transition: 1s linear all;
     fill-rule: nonzero;
     stroke: currentColor;
-    color: #5f8195;
+    color: #967d5e;
   }
 
   &__label {
