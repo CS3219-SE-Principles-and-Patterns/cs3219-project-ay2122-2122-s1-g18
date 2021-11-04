@@ -2,16 +2,16 @@
   <b-row class="row justify-content-center">
     <b-col cols="8">
       <h3 class="text-center mb-4">Create an account</h3>
-      <b-alert v-if="missingField" variant="primary" show="10">
+      <b-alert v-if="missingField" variant="warning" show="10">
         Missing field. Please fill up all fields.
       </b-alert>
-      <b-alert v-if="invalidEmail" variant="primary" show="10">
+      <b-alert v-if="invalidEmail" variant="warning" show="10">
         Invalid email format. Please provide a valid email
       </b-alert>
-      <b-alert v-if="emailUsernameExists" variant="primary" show="10">
+      <b-alert v-if="emailUsernameExists" variant="warning" show="10">
         Email/Username already exists.
       </b-alert>
-      <b-alert v-if="fail" variant="primary" show="10">
+      <b-alert v-if="fail" variant="warning" show="10">
         Failed to create account. Please try again later.
       </b-alert>
       <form @submit.prevent="handleSubmitForm">
@@ -33,7 +33,7 @@
               required
           >
         </div>
-        <div class="form-group mb-4">
+        <div class="form-group">
           <input
               type="password"
               class="form-control"
@@ -44,7 +44,8 @@
         </div>
         <div class="form-group justify-content-center d-flex">
           <b-button
-            class="createButton mb-2 px-5"
+            variant="dark"
+            class="button px-5"
             @click="handleSubmitForm"
           >
             Create
@@ -121,17 +122,3 @@ export default {
   }
 }
 </script>
-
-<style>
-.link.link {
-  color: darkslategray;
-}
-.link.link:hover {
-  color: grey;
-}
-
-.createButton .createButton:focus .createButton:hover{
-  border: #D3CCA5 !important;
-  color: black;
-}
-</style>

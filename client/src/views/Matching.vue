@@ -16,7 +16,7 @@
       <p>Unfortunately, we could not find you a match.</p>
       <div class='d-grid gap-2'>
         <b-button
-          variant='outline-primary'
+          variant='outline-dark'
           block
           @click='handleWait'
         >
@@ -24,7 +24,7 @@
         </b-button>
 
         <b-button
-          variant='outline-primary'
+          variant='outline-dark'
           block
           @click='handleGoBackToHome'
         >
@@ -32,7 +32,7 @@
         </b-button>
 
         <b-button
-          variant='outline-primary'
+          variant='outline-dark'
           block
           @click='handleProceedWithoutMatch'
         >

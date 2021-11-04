@@ -1,146 +1,159 @@
 <template>
-  <div>
-    <b-row>
-      <b-col>
-        <b-button
-          id="nextQuestionButton"
-          @click.prevent="handleNextQuestionButtonClick()"
-          type="button"
-          class="nextQuestionButton px-4 mb-5"
-          v-if="hasMatch"
-          :disabled="isSecondQuestion"
-        >
-          Next Coding Question
-        </b-button>
-        <b-tooltip
-            class="tooltip"
-            target="nextQuestionButton"
-            triggers="hover"
-            ref="tooltip"
-            v-if="hasMatch"
-            :disabled="isSecondQuestion"
-        >
-          Upon clicking this button,<br>
-          1. Your role will be swapped<br>
-          2. The current code will be cleared<br>
-          3. You will receive a new coding question<br>
-          4. The timer will be reset<br>
-        </b-tooltip>
-      </b-col>
-      <b-col>
-        <b-col>
-          <div class='container d-flex justify-content-center'>
-            <CountUpTimer ref='countUpTimer'/>
-          </div>
+  <b-row>
+    <b-col sm="12" lg="4" class="mb-5 px-3">
+      <b-row>
+        <b-col sm="12" lg="7">
+          <h4 class="heading">Coding Question</h4>
         </b-col>
-        <b-col>
-          <div class='container d-flex justify-content-center'>
-            <p style="color:brown">{{ recommendedTime }}</p>
-          </div>
-        </b-col>
-      </b-col>
-      <b-col>
-        <b-button @click.prevent="leaveRoom()" type="button" class="endButton px-4 float-end mb-5">
-          End Session
-        </b-button>
-      </b-col>
-    </b-row>
-    <b-row>
-      <b-col cols="4">
-        <h3 class="heading">Coding Question</h3>
-        <div class="scroll-box">
-          <p style="color: #a8ba61; font-size:22px; font-weight:600;">{{ codingQuestion.question_title }}</p>
-          <p class="pre-formatted" style="font-size:16px;">{{ codingQuestion.question_text }}</p>
-          <p>{{ codingQuestion.url }}</p>
-        </div>
-      </b-col>
-      <b-col cols="5">
-        <h3 class="heading">Code Editor</h3>
-        <b-form-textarea
-          class="text-area panel-body-left"
-          @input="updateCode"
-          v-model="code"
-          placeholder="Type your code here..."
-          v-chat-scroll
-        />
-      </b-col>
-      <b-col>
-        <b-col class="panel panel-primary">
-          <b-row class="panel-heading" align-v="start" align-h="between">
-            <b-col>
-              <h3 class="heading">Chat</h3>
-            </b-col>
-            <b-col>
-              <b-dropdown
-                class="float-end"
-                right
-                text="Send Interview Question"
-                v-if="isInterviewer"
-                variant="secondary"
-              >
-                <b-dropdown-item
-                  v-for="question in interviewQuestions"
-                  :key="question._id"
-                  @click.prevent="sendChat(getChat(question.text))"
-                >
-                  {{ question.text }}
-                </b-dropdown-item>
-              </b-dropdown>
-            </b-col>
+        <b-col sm="12" lg="5">
+          <b-row>
+            <b-button
+              id="nextQuestionButton"
+              @click.prevent="handleNextQuestionButtonClick()"
+              type="button"
+              float-end
+              class="px-2"
+              variant="dark"
+              v-if="hasMatch"
+              :disabled="isSecondQuestion"
+            >
+              Next Question
+            </b-button>
+            <b-tooltip
+              class="tooltip"
+              target="nextQuestionButton"
+              triggers="hover"
+              ref="tooltip"
+              v-if="hasMatch"
+              :disabled="isSecondQuestion"
+            >
+              Upon clicking this button,<br>
+              1. Your role will be swapped<br>
+              2. The current code will be cleared<br>
+              3. You will receive a new coding question<br>
+              4. The timer will be reset<br>
+            </b-tooltip>
           </b-row>
-          <div class="panel-body-right" v-chat-scroll>
-            <b-list-group-item v-for="item in chats" class="chat" :key="item.id">
-              <div class="right clearfix" v-if="item.name === username">
-                <div class="chat-body clearfix">
-                  <div class="header">
-                    <strong class="primary-font">{{ item.name }}</strong>
-                    <b-badge class="badge" v-if="hasMatch">
-                      {{ isInterviewer ? 'Interviewer' : 'Interviewee' }}
-                    </b-badge>
-                    <small class="pull-right text-muted">
-                      <span class="glyphicon glyphicon-time" />
-                      {{ item.timestamp }}
-                    </small>
-                  </div>
-                  <p>{{ item.message }}</p>
-                </div>
-              </div>
-              <div class="left clearfix" v-else>
-                <div class="chat-body clearfix">
-                  <div class="header">
-                    <strong class="primary-font">{{ item.name }}</strong>
-                    <b-badge class="badge" v-if="hasMatch && item.name !== 'SHReK Tech Bot'">
-                      {{ isInterviewer ? 'Interviewee' : 'Interviewer' }}
-                    </b-badge>
-                    <small class="pull-right text-muted">
-                      <span class="glyphicon glyphicon-time" />
-                      {{ item.timestamp }}
-                    </small>
-                  </div>
-                  <p>{{ item.message }}</p>
-                </div>
-              </div>
-            </b-list-group-item>
-            <small class="text-muted" v-if="typing">{{ matchedUser }} is typing...</small>
-          </div>
         </b-col>
-        <b-form @submit="onSendMessage" class="chat-form">
-          <b-input-group>
-            <b-form-input
-                id="message"
-                class="chat-form-element"
-                v-model.trim="message"
-                placeholder="Chat here..."
-                required
-            />
-            <b-input-group-append>
-              <b-btn class="chat-form-element" type="submit" variant="secondary">Send</b-btn>
-            </b-input-group-append>
-          </b-input-group>
-        </b-form>
-      </b-col>
-    </b-row>
-  </div>
+      </b-row>
+      <b-row class="scroll-box">
+        <p style="color: #967d5e; font-size:22px; font-weight:600;">
+          {{ codingQuestion.question_title }}
+        </p>
+        <p class="pre-formatted" style="font-size:15px;">{{ codingQuestion.question_text }}</p>
+        <b-link :href="codingQuestion.url" style="font-size:15px;">
+          {{ codingQuestion.url }}
+        </b-link>
+      </b-row>
+    </b-col>
+    <b-col sm="12" lg="4" class="mb-5 px-3">
+      <h4 class="heading">Code Editor</h4>
+      <b-form-textarea
+        class="text-area panel-body-left"
+        @input="updateCode"
+        v-model="code"
+        placeholder="Type your code here..."
+        v-chat-scroll
+      />
+    </b-col>
+    <b-col sm="12" lg="4" class="panel panel-primary mb-5 px-2">
+      <b-row>
+        <b-col sm="12" lg="7">
+          <b-row class="mb-2">
+            <div class="container d-flex justify-content-center">
+              <CountUpTimer ref="countUpTimer"/>
+            </div>
+            <div class="container d-flex justify-content-center">
+              <p style="color:brown; font-size:13px;">{{ recommendedTime }}</p>
+            </div>
+          </b-row>
+        </b-col>
+        <b-col sm="12" lg="5">
+          <b-row>
+            <b-button
+              @click.prevent="leaveRoom()"
+              type="button"
+              class="mb-4"
+              variant="warning"
+            >
+              End Session
+            </b-button>
+          </b-row>
+        </b-col>
+      </b-row>
+      <b-row class="panel-heading" align-v="start" align-h="between">
+        <b-col>
+          <h4 class="heading">Chat</h4>
+        </b-col>
+        <b-col>
+          <b-dropdown
+            class="float-end"
+            right
+            text="Send Interview Question"
+            v-if="isInterviewer"
+            variant="dark"
+          >
+            <b-dropdown-item
+              v-for="question in interviewQuestions"
+              :key="question._id"
+              @click.prevent="sendChat(getChat(question.text))"
+            >
+              {{ question.text }}
+            </b-dropdown-item>
+          </b-dropdown>
+        </b-col>
+      </b-row>
+      <div class="panel-body-right" v-chat-scroll>
+        <b-list-group-item v-for="item in chats" class="chat" :key="item.id">
+          <div class="right clearfix" v-if="item.name === username">
+            <div class="chat-body clearfix">
+              <div class="header">
+                <strong class="primary-font">{{ item.name }}</strong>
+                <b-badge class="badge" v-if="hasMatch">
+                  {{ isInterviewer ? "Interviewer" : "Interviewee" }}
+                </b-badge>
+                <small class="pull-right text-muted">
+                  <span class="glyphicon glyphicon-time" />
+                  {{ item.timestamp }}
+                </small>
+              </div>
+              <p>{{ item.message }}</p>
+            </div>
+          </div>
+          <div class="left clearfix" v-else>
+            <div class="chat-body clearfix">
+              <div class="header">
+                <strong class="primary-font">{{ item.name }}</strong>
+                <b-badge class="badge" v-if="hasMatch && item.name !== 'SHReK Tech Bot'">
+                  {{ isInterviewer ? "Interviewee" : "Interviewer" }}
+                </b-badge>
+                <small class="pull-right text-muted">
+                  <span class="glyphicon glyphicon-time" />
+                  {{ item.timestamp }}
+                </small>
+              </div>
+              <p>{{ item.message }}</p>
+            </div>
+          </div>
+        </b-list-group-item>
+        <small class="text-muted" v-if="typing">{{ matchedUser }} is typing...</small>
+      </div>
+      <b-form @submit="onSendMessage" class="chat-form">
+        <b-input-group>
+          <b-form-input
+              id="message"
+              class="chat-form-element"
+              v-model.trim="message"
+              placeholder="Chat here..."
+              required
+          />
+          <b-input-group-append>
+            <b-btn class="chat-form-element" type="submit" variant="dark">Send</b-btn>
+          </b-input-group-append>
+        </b-input-group>
+      </b-form>
+    </b-col>
+  </b-row>
 </template>
 
 <script>
@@ -394,17 +407,17 @@ export default {
 
   .chat .chat-body p {
     margin: 0;
-    font-size: 16px;
+    font-size: 15px;
   }
 
   .panel-body-left {
     overflow-y: scroll;
-    height: 500px;
+    height: 700px;
   }
 
   .panel-body-right {
     overflow-y: scroll;
-    height: 460px;
+    height: 575px;
   }
 
   .chat-form {
@@ -421,31 +434,8 @@ export default {
   }
 
   .text-area {
-    font-size: 16px;
+    font-size: 15px;
     font-family: 'Courier New', Courier, monospace;
-  }
-
-  .nextQuestionButton {
-    background-color: #a8ba61;
-    outline-color: #a8ba61;
-    border-color: #a8ba61;
-  }
-
-  .nextQuestionButton:hover {
-    background-color: #afc265;
-    outline-color: #afc265;
-    border-color: #afc265;
-  }
-    .endButton {
-    background-color:  #800b03;
-    outline-color: #800b03;
-    border-color: #800b03;
-  }
-
-  .endButton:hover {
-    background-color: #990317;
-    outline-color: #990317;
-    border-color: #990317;
   }
 
   .tooltip-inner {
@@ -454,7 +444,7 @@ export default {
   }
 
   .badge {
-    background-color: #5ab4dd;
+    background-color: #967d5e;
     margin: 5px;
   }
 
@@ -465,7 +455,7 @@ export default {
   .scroll-box {
     background: #f4f4f4;
     border: 2px solid rgba(0, 0, 0, 0.1);
-    height: 500px;
+    height: 700px;
     padding: 15px;
     overflow-y: scroll;
 }

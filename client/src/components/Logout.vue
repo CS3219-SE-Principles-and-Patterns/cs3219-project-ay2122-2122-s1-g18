@@ -1,6 +1,12 @@
 <template>
   <div>
-    <b-dropdown id="dropdown-1" right text="Profile Settings" class="md-2">
+    <b-dropdown
+      id="dropdown-1"
+      right
+      text="Profile Settings"
+      class="md-2"
+      variant="dark"
+    >
       <b-dropdown-item v-b-modal.modal-1 @click="resetState">Change Password</b-dropdown-item>
       <b-dropdown-item v-b-modal.modal-2 @click="resetState">Delete Account</b-dropdown-item>
       <b-dropdown-item @click="logout">Log Out</b-dropdown-item>
@@ -37,8 +43,9 @@
         </div>
         <div class="form-group justify-content-center d-flex">
           <b-button
-              class="createButton mt-4 mb-2 px-5"
-              @click="handleUpdateForm"
+            class="button px-5"
+            variant="dark"
+            @click="handleUpdateForm"
           >
             Change Password
           </b-button>
@@ -68,7 +75,8 @@
         </div>
         <div class="form-group justify-content-center d-flex">
           <b-button
-              class="createButton mt-4 mb-2 px-5"
+              class="button px-5"
+              variant="dark"
               @click="handleDeleteForm"
           >
             Delete Account
@@ -171,10 +179,3 @@ export default {
   }
 }
 </script>
-
-<style>
-.createButton .createButton:focus .createButton:hover{
-  border: #D3CCA5 !important;
-  color: black !important;
-}
-</style>

@@ -1,19 +1,20 @@
 <template>
   <div>
     <b-row>
-      <b-col cols="6">
-        <b-card class="left-panel" title="About SHReK Tech">
+      <b-col sm="12" md="6">
+        <b-card>
+          <h3 class="text-center mb-4">About SHReK Tech</h3>
           <b-card-text>
-            SHReK Tech is a project that aims to help students with their technical interview. In SHReK Tech, users
-            are able to engage in real-time, collaborative programming to enhance their familiarity with such technical
-            interviews.
+            SHReK Tech aims to help students and jobseekers boost their technical interview skills
+            to land their dream job. In SHReK Tech, SHReKies can engage in real-time, collaborative
+            programming to enhance their familiarity with technical interviews.
           </b-card-text>
         </b-card>
       </b-col>
-      <b-col cols="6">
-        <b-card class="right-panel">
+      <b-col sm="12" md="6">
+        <b-card>
           <div v-if="isLoginView">
-            <b-alert v-if="isNewUser" variant="primary" show="5">
+            <b-alert v-if="isNewUser" variant="success" show="5">
               An email has been sent to your account. Verify before proceeding.
             </b-alert>
             <login @change-view="changeView" @reset-password="showModal"></login>
@@ -25,19 +26,19 @@
       </b-col>
     </b-row>
     <b-modal id="modal-1" title="Reset Password" hide-backdrop content-class="shadow" hide-footer>
-      <b-alert v-if="missingField" variant="primary" show="30">
+      <b-alert v-if="missingField" variant="warning" show="30">
         Please enter your email address.
       </b-alert>
-      <b-alert v-if="internalError" variant="primary" show="30">
+      <b-alert v-if="internalError" variant="warning" show="30">
         Unable to update password. Please reload and try again.
       </b-alert>
-      <b-alert v-if="invalidEmail" variant="primary" show="30">
+      <b-alert v-if="invalidEmail" variant="warning" show="30">
         Invalid email format.
       </b-alert>
-      <b-alert v-if="userNotFound" variant="primary" show="30">
+      <b-alert v-if="userNotFound" variant="warning" show="30">
         Unable to find user. Please create an account instead.
       </b-alert>
-      <b-alert v-if="success" variant="primary" show="30">
+      <b-alert v-if="success" variant="success" show="30">
         Please check your email for further instructions.
       </b-alert>
       <form v-else @submit.prevent="handleSubmitForm">
@@ -52,8 +53,9 @@
         </div>
         <div class="form-group justify-content-center d-flex">
           <b-button
-              class="createButton mb-2 px-5"
-              @click="handleSubmitForm"
+            variant="dark"
+            class="button px-5"
+            @click="handleSubmitForm"
           >
             Reset Password
           </b-button>
@@ -141,9 +143,3 @@ export default {
   }
 }
 </script>
-
-<style>
-.right-panel {
-  height: 460px;
-}
-</style>

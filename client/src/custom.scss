@@ -10,24 +10,45 @@ $grid-breakpoints: (
 );
 $bv-enable-table-stacked: false;
 
-$primary: #a69608;
+$primary: #967d5e;
+$light: #967d5e;
+$warning: #72190a;
+$dark: #3e443c;
+$success: #adb664;
 
 // Include Bootstrap and BootstrapVue SCSS files
 @import "../node_modules/bootstrap/scss/bootstrap";
 @import "../node_modules/bootstrap-vue/dist/bootstrap-vue";
+
 body {
   margin: 0;
+  background-color: #fffef0;
 }
 
 .nav-bar {
-  background-color: #DCDC83;
+  background-color: #dcdc83;
   height: 70px;
 }
 
 .card {
-  background-color: #c9d4c5;
+  background-color: #c2ae93;
+  padding: 20px;
+  margin: 10px;
 }
 
 .table {
   --bs-table-active-bg: #c9d4c5;
+}
+
+.button {
+  margin-top: 20px;
+  margin-bottom: 20px;
+}
+
+.link.link {
+  color: darkslategray;
+}
+
+.link.link:hover {
+  color: #fffef0;
 }
