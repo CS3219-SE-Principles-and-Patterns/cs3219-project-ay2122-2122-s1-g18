@@ -51,7 +51,6 @@ describe('Coding questions', () => {
       arr[0] = await CodingQuestionsController.getCodingQuestionId('beginner')
       console.log(arr[0])
       expect(['5d505646cf6d4fe581014ab1', '5d505646cf6d4fe581014ab6', '5d505646cf6d4fe581014ab9']).to.include(arr)
-      done()
     })
 
     after('Disconnect from MongoDB', (done) => {
