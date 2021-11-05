@@ -48,8 +48,8 @@ describe('Coding questions', () => {
 
     it('Should GET a coding questions of the easy difficulty', (done) => {
       const qid = CodingQuestionsController.getCodingQuestionId('beginner')
-      const lst = ['5d505646cf6d4fe581014ab1', '5d505646cf6d4fe581014ab6', '5d505646cf6d4fe581014ab9']
-      expect(lst).to.include(qid)
+      console.log(qid)
+      expect(['5d505646cf6d4fe581014ab1', '5d505646cf6d4fe581014ab6', '5d505646cf6d4fe581014ab9']).to.include(qid)
       done()
     })
 
