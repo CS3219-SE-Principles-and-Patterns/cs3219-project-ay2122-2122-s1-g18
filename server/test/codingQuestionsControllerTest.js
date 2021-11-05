@@ -34,7 +34,7 @@ describe('Coding questions', () => {
         })
     })
 
-    it('Should not GET interview questions if JWT is not provided', (done) => {
+    it('Should not GET coding questions if JWT is not provided', (done) => {
       chai.request(app)
         .get('/api/coding-questions/5d505646cf6d4fe581014ab1')
         .end((err, res) => {
