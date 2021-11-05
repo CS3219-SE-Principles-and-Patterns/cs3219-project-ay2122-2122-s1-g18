@@ -98,6 +98,38 @@ describe('Coding questions', () => {
       const resultIds = []
       CodingQuestionsController.getCodingQuestionIds('beginner').then(
         (result) => {
+          expect(result.codingQuestion1Id).to.not.deep.equal(result.codingQuestion2Id)
+          resultIds.push(result.codingQuestion1Id)
+          resultIds.push(result.codingQuestion2Id)
+          expect(expectedIds).to.deep.include.members(resultIds)
+        }).then(done, done)
+    })
+
+    it('Should GET 2 coding questions of the intermediate difficulty', (done) => {
+      const expectedIds = []
+      const ObjectId = mongoose.Types.ObjectId
+      expectedIds.push(new ObjectId('5d505646cf6d4fe581014ab2'))
+      expectedIds.push(new ObjectId('5d505646cf6d4fe581014ab3'))
+      expectedIds.push(new ObjectId('5d505646cf6d4fe581014ab5'))
+      const resultIds = []
+      CodingQuestionsController.getCodingQuestionIds('intermediate').then(
+        (result) => {
+          expect(result.codingQuestion1Id).to.not.deep.equal(result.codingQuestion2Id)
+          resultIds.push(result.codingQuestion1Id)
+          resultIds.push(result.codingQuestion2Id)
+          expect(expectedIds).to.deep.include.members(resultIds)
+        }).then(done, done)
+    })
+
+    it('Should GET 2 coding questions of the expert difficulty', (done) => {
+      const expectedIds = []
+      const ObjectId = mongoose.Types.ObjectId
+      expectedIds.push(new ObjectId('5d505646cf6d4fe581014ab4'))
+      expectedIds.push(new ObjectId('5d505646cf6d4fe581014ab7'))
+      const resultIds = []
+      CodingQuestionsController.getCodingQuestionIds('expert').then(
+        (result) => {
+          expect(result.codingQuestion1Id).to.not.deep.equal(result.codingQuestion2Id)
           resultIds.push(result.codingQuestion1Id)
           resultIds.push(result.codingQuestion2Id)
           expect(expectedIds).to.deep.include.members(resultIds)
