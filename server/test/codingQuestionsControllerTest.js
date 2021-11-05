@@ -46,7 +46,7 @@ describe('Coding questions', () => {
         })
     })
 
-    it('Should GET a coding questions of the easy difficulty', (done) => {
+    it('Should GET a coding questions of easy difficulty', (done) => {
       const expectedIds = []
       const ObjectId = mongoose.Types.ObjectId
       expectedIds.push(new ObjectId('5d505646cf6d4fe581014ab1'))
@@ -61,7 +61,7 @@ describe('Coding questions', () => {
         }).then(done, done)
     })
 
-    it('Should GET a coding questions of the intermediate difficulty', (done) => {
+    it('Should GET a coding questions of intermediate difficulty', (done) => {
       const expectedIds = []
       const ObjectId = mongoose.Types.ObjectId
       expectedIds.push(new ObjectId('5d505646cf6d4fe581014ab2'))
@@ -75,7 +75,7 @@ describe('Coding questions', () => {
         }).then(done, done)
     })
 
-    it('Should GET a coding questions of the expert difficulty', (done) => {
+    it('Should GET a coding questions of expert difficulty', (done) => {
       const expectedIds = []
       const ObjectId = mongoose.Types.ObjectId
       expectedIds.push(new ObjectId('5d505646cf6d4fe581014ab4'))
@@ -88,7 +88,7 @@ describe('Coding questions', () => {
         }).then(done, done)
     })
 
-    it('Should GET 2 coding questions of the easy difficulty', (done) => {
+    it('Should GET 2 different coding questions of easy difficulty', (done) => {
       const expectedIds = []
       const ObjectId = mongoose.Types.ObjectId
       expectedIds.push(new ObjectId('5d505646cf6d4fe581014ab1'))
@@ -98,8 +98,6 @@ describe('Coding questions', () => {
       const resultIds = []
       CodingQuestionsController.getCodingQuestionIds('beginner').then(
         (result) => {
-          console.log(result.codingQuestion1Id)
-          console.log(result.codingQuestion2Id)
           expect(result.codingQuestion1Id).to.not.equal(result.codingQuestion2Id)
           resultIds.push(result.codingQuestion1Id)
           resultIds.push(result.codingQuestion2Id)
@@ -107,7 +105,7 @@ describe('Coding questions', () => {
         }).then(done, done)
     })
 
-    it('Should GET 2 coding questions of the intermediate difficulty', (done) => {
+    it('Should GET 2 different coding questions of intermediate difficulty', (done) => {
       const expectedIds = []
       const ObjectId = mongoose.Types.ObjectId
       expectedIds.push(new ObjectId('5d505646cf6d4fe581014ab2'))
@@ -123,7 +121,7 @@ describe('Coding questions', () => {
         }).then(done, done)
     })
 
-    it('Should GET 2 coding questions of the expert difficulty', (done) => {
+    it('Should GET 2 different coding questions of expert difficulty', (done) => {
       const expectedIds = []
       const ObjectId = mongoose.Types.ObjectId
       expectedIds.push(new ObjectId('5d505646cf6d4fe581014ab4'))
