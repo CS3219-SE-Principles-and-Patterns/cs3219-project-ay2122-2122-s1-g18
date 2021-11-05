@@ -3,45 +3,53 @@
   "question_title": "Two Sum",
   "question_text": "Given an array of integers nums and an integer target, return indices of the two numbers such that they add up to target.\nYou may assume that each input would have exactly one solution, and you may not use the same element twice.\nYou can return the answer in any order.\n \nExample 1:\nInput: nums = [2,7,11,15], target = 9\nOutput: [0,1]\nOutput: Because nums[0] + nums[1] == 9, we return [0, 1].\n\nExample 2:\nInput: nums = [3,2,4], target = 6\nOutput: [1,2]\n\nExample 3:\nInput: nums = [3,3], target = 6\nOutput: [0,1]\n\n \nConstraints:\n\n2 <= nums.length <= 104\n-109 <= nums[i] <= 109\n-109 <= target <= 109\nOnly one valid answer exists.\n\n \nFollow-up: Can you come up with an algorithm that is less than O(n2) time complexity?",
   "url": "https://leetcode.com/problems/two-sum",
-  "_id": {"$oid": "5d505646cf6d4fe581014ab2"}
+  "_id": {"$oid": "5d505646cf6d4fe581014ab1"}
 }, {
   "difficulty": 2,
   "question_title": "Add Two Numbers",
   "question_text": "You are given two non-empty linked lists representing two non-negative integers. The digits are stored in reverse order, and each of their nodes contains a single digit. Add the two numbers and return the sum as a linked list.\nYou may assume the two numbers do not contain any leading zero, except the number 0 itself.\n \nExample 1:\n\nInput: l1 = [2,4,3], l2 = [5,6,4]\nOutput: [7,0,8]\nExplanation: 342 + 465 = 807.\n\nExample 2:\nInput: l1 = [0], l2 = [0]\nOutput: [0]\n\nExample 3:\nInput: l1 = [9,9,9,9,9,9,9], l2 = [9,9,9,9]\nOutput: [8,9,9,9,0,0,0,1]\n\n \nConstraints:\n\nThe number of nodes in each linked list is in the range [1, 100].\n0 <= Node.val <= 9\nIt is guaranteed that the list represents a number that does not have leading zeros.\n\n",
-  "url": "https://leetcode.com/problems/add-two-numbers"
+  "url": "https://leetcode.com/problems/add-two-numbers",
+  "_id": {"$oid": "5d505646cf6d4fe581014ab2"}
 }, {
   "difficulty": 2,
   "question_title": "Longest Substring Without Repeating Characters",
   "question_text": "Given a string s, find the length of the longest substring without repeating characters.\n \nExample 1:\nInput: s = \"abcabcbb\"\nOutput: 3\nExplanation: The answer is \"abc\", with the length of 3.\n\nExample 2:\nInput: s = \"bbbbb\"\nOutput: 1\nExplanation: The answer is \"b\", with the length of 1.\n\nExample 3:\nInput: s = \"pwwkew\"\nOutput: 3\nExplanation: The answer is \"wke\", with the length of 3.\nNotice that the answer must be a substring, \"pwke\" is a subsequence and not a substring.\n\nExample 4:\nInput: s = \"\"\nOutput: 0\n\n \nConstraints:\n\n0 <= s.length <= 5 * 104\ns consists of English letters, digits, symbols and spaces.\n\n",
-  "url": "https://leetcode.com/problems/longest-substring-without-repeating-characters"
+  "url": "https://leetcode.com/problems/longest-substring-without-repeating-characters",
+  "_id": {"$oid": "5d505646cf6d4fe581014ab3"}
 }, {
   "difficulty": 3,
   "question_title": "Median of Two Sorted Arrays",
   "question_text": "Given two sorted arrays nums1 and nums2 of size m and n respectively, return the median of the two sorted arrays.\nThe overall run time complexity should be O(log (m+n)).\n \nExample 1:\nInput: nums1 = [1,3], nums2 = [2]\nOutput: 2.00000\nExplanation: merged array = [1,2,3] and median is 2.\n\nExample 2:\nInput: nums1 = [1,2], nums2 = [3,4]\nOutput: 2.50000\nExplanation: merged array = [1,2,3,4] and median is (2 + 3) / 2 = 2.5.\n\nExample 3:\nInput: nums1 = [0,0], nums2 = [0,0]\nOutput: 0.00000\n\nExample 4:\nInput: nums1 = [], nums2 = [1]\nOutput: 1.00000\n\nExample 5:\nInput: nums1 = [2], nums2 = []\nOutput: 2.00000\n\n \nConstraints:\n\nnums1.length == m\nnums2.length == n\n0 <= m <= 1000\n0 <= n <= 1000\n1 <= m + n <= 2000\n-106 <= nums1[i], nums2[i] <= 106\n\n",
-  "url": "https://leetcode.com/problems/median-of-two-sorted-arrays"
+  "url": "https://leetcode.com/problems/median-of-two-sorted-arrays",
+  "_id": {"$oid": "5d505646cf6d4fe581014ab4"}
 }, {
   "difficulty": 2,
   "question_title": "Longest Palindromic Substring",
   "question_text": "Given a string s, return the longest palindromic substring in s.\n \nExample 1:\nInput: s = \"babad\"\nOutput: \"bab\"\nNote: \"aba\" is also a valid answer.\n\nExample 2:\nInput: s = \"cbbd\"\nOutput: \"bb\"\n\nExample 3:\nInput: s = \"a\"\nOutput: \"a\"\n\nExample 4:\nInput: s = \"ac\"\nOutput: \"a\"\n\n \nConstraints:\n\n1 <= s.length <= 1000\ns consist of only digits and English letters.\n\n",
-  "url": "https://leetcode.com/problems/longest-palindromic-substring"
+  "url": "https://leetcode.com/problems/longest-palindromic-substring",
+  "_id": {"$oid": "5d505646cf6d4fe581014ab5"}
 }, {
   "difficulty": 1,
   "question_title": "Palindrome Number",
   "question_text": "Given an integer x, return true if x is palindrome integer.\nAn integer is a palindrome when it reads the same backward as forward. For example, 121 is palindrome while 123 is not.\n \nExample 1:\nInput: x = 121\nOutput: true\n\nExample 2:\nInput: x = -121\nOutput: false\nExplanation: From left to right, it reads -121. From right to left, it becomes 121-. Therefore it is not a palindrome.\n\nExample 3:\nInput: x = 10\nOutput: false\nExplanation: Reads 01 from right to left. Therefore it is not a palindrome.\n\nExample 4:\nInput: x = -101\nOutput: false\n\n \nConstraints:\n\n-231 <= x <= 231 - 1\n\n \nFollow up: Could you solve it without converting the integer to a string?",
-  "url": "https://leetcode.com/problems/palindrome-number"
+  "url": "https://leetcode.com/problems/palindrome-number",
+  "_id": {"$oid": "5d505646cf6d4fe581014ab6"}
 }, {
   "difficulty": 3,
   "question_title": "Regular Expression Matching",
   "question_text": "Given an input string s and a pattern p, implement regular expression matching with support for '.' and '*' where:\n\n'.' Matches any single character.​​​​\n'*' Matches zero or more of the preceding element.\n\nThe matching should cover the entire input string (not partial).\n \nExample 1:\nInput: s = \"aa\", p = \"a\"\nOutput: false\nExplanation: \"a\" does not match the entire string \"aa\".\n\nExample 2:\nInput: s = \"aa\", p = \"a*\"\nOutput: true\nExplanation: '*' means zero or more of the preceding element, 'a'. Therefore, by repeating 'a' once, it becomes \"aa\".\n\nExample 3:\nInput: s = \"ab\", p = \".*\"\nOutput: true\nExplanation: \".*\" means \"zero or more (*) of any character (.)\".\n\nExample 4:\nInput: s = \"aab\", p = \"c*a*b\"\nOutput: true\nExplanation: c can be repeated 0 times, a can be repeated 1 time. Therefore, it matches \"aab\".\n\nExample 5:\nInput: s = \"mississippi\", p = \"mis*is*p*.\"\nOutput: false\n\n \nConstraints:\n\n1 <= s.length <= 20\n1 <= p.length <= 30\ns contains only lowercase English letters.\np contains only lowercase English letters, '.', and '*'.\nIt is guaranteed for each appearance of the character '*', there will be a previous valid character to match.\n\n",
-  "url": "https://leetcode.com/problems/regular-expression-matching"
+  "url": "https://leetcode.com/problems/regular-expression-matching",
+  "_id": {"$oid": "5d505646cf6d4fe581014ab7"}
 }, {
   "difficulty": 1,
   "question_title": "Roman to Integer",
   "question_text": "Roman numerals are represented by seven different symbols: I, V, X, L, C, D and M.\nSymbol       Value\nI             1\nV             5\nX             10\nL             50\nC             100\nD             500\nM             1000\nFor example, 2 is written as II in Roman numeral, just two one's added together. 12 is written as XII, which is simply X + II. The number 27 is written as XXVII, which is XX + V + II.\nRoman numerals are usually written largest to smallest from left to right. However, the numeral for four is not IIII. Instead, the number four is written as IV. Because the one is before the five we subtract it making four. The same principle applies to the number nine, which is written as IX. There are six instances where subtraction is used:\n\nI can be placed before V (5) and X (10) to make 4 and 9. \nX can be placed before L (50) and C (100) to make 40 and 90. \nC can be placed before D (500) and M (1000) to make 400 and 900.\n\nGiven a roman numeral, convert it to an integer.\n \nExample 1:\nInput: s = \"III\"\nOutput: 3\n\nExample 2:\nInput: s = \"IV\"\nOutput: 4\n\nExample 3:\nInput: s = \"IX\"\nOutput: 9\n\nExample 4:\nInput: s = \"LVIII\"\nOutput: 58\nExplanation: L = 50, V= 5, III = 3.\n\nExample 5:\nInput: s = \"MCMXCIV\"\nOutput: 1994\nExplanation: M = 1000, CM = 900, XC = 90 and IV = 4.\n\n \nConstraints:\n\n1 <= s.length <= 15\ns contains only the characters ('I', 'V', 'X', 'L', 'C', 'D', 'M').\nIt is guaranteed that s is a valid roman numeral in the range [1, 3999].\n\n",
-  "url": "https://leetcode.com/problems/roman-to-integer"
+  "url": "https://leetcode.com/problems/roman-to-integer",
+  "_id": {"$oid": "5d505646cf6d4fe581014ab8"}
 }, {
   "difficulty": 1,
   "question_title": "Longest Common Prefix",
   "question_text": "Write a function to find the longest common prefix string amongst an array of strings.\nIf there is no common prefix, return an empty string \"\".\n \nExample 1:\nInput: strs = [\"flower\",\"flow\",\"flight\"]\nOutput: \"fl\"\n\nExample 2:\nInput: strs = [\"dog\",\"racecar\",\"car\"]\nOutput: \"\"\nExplanation: There is no common prefix among the input strings.\n\n \nConstraints:\n\n1 <= strs.length <= 200\n0 <= strs[i].length <= 200\nstrs[i] consists of only lower-case English letters.\n\n",
-  "url": "https://leetcode.com/problems/longest-common-prefix"
+  "url": "https://leetcode.com/problems/longest-common-prefix",
+  "_id": {"$oid": "5d505646cf6d4fe581014ab9"}
 }]
