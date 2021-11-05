@@ -52,6 +52,7 @@ jobs:
           echo MONGO_URI_TEST=${{secrets.MONGO_URI_TEST}} >> .env
           echo JWT_SECRET_KEY=${{secrets.JWT_SECRET_KEY}} >> .env
           echo JWT_TEST=${{secrets.JWT_TEST}} >> .env
+          echo JWT_BLACKLIST_TEST=${{secrets.JWT_BLACKLIST_TEST}} >> .env
         working-directory: server
       - name: Install server dependencies
         run: npm install
