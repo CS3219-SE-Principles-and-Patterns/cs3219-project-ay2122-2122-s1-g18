@@ -100,7 +100,7 @@ describe('Coding questions', () => {
         (result) => {
           console.log(result.codingQuestion1Id)
           console.log(result.codingQuestion2Id)
-          expect(result.codingQuestion1Id).to.not.deep.equal(result.codingQuestion2Id)
+          expect(result.codingQuestion1Id).to.not.equal(result.codingQuestion2Id)
           resultIds.push(result.codingQuestion1Id)
           resultIds.push(result.codingQuestion2Id)
           expect(expectedIds).to.deep.include.members(resultIds)
@@ -116,7 +116,7 @@ describe('Coding questions', () => {
       const resultIds = []
       CodingQuestionsController.getCodingQuestionIds('intermediate').then(
         (result) => {
-          expect(result.codingQuestion1Id).to.not.deep.equal(result.codingQuestion2Id)
+          expect(result.codingQuestion1Id).to.not.equal(result.codingQuestion2Id)
           resultIds.push(result.codingQuestion1Id)
           resultIds.push(result.codingQuestion2Id)
           expect(expectedIds).to.deep.include.members(resultIds)
@@ -131,7 +131,7 @@ describe('Coding questions', () => {
       const resultIds = []
       CodingQuestionsController.getCodingQuestionIds('expert').then(
         (result) => {
-          expect(result.codingQuestion1Id).to.not.deep.equal(result.codingQuestion2Id)
+          expect(result.codingQuestion1Id).to.not.equal(result.codingQuestion2Id)
           resultIds.push(result.codingQuestion1Id)
           resultIds.push(result.codingQuestion2Id)
           expect(expectedIds).to.deep.include.members(resultIds)
