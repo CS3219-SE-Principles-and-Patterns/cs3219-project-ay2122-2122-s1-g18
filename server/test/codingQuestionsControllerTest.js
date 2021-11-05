@@ -47,8 +47,13 @@ describe('Coding questions', () => {
     })
 
     it('Should GET a coding questions of the easy difficulty', (done) => {
+      const expectedIds = []
+      const ObjectId = mongoose.Types.ObjectId
+      expectedIds.push(new ObjectId('5d505646cf6d4fe581014ab1'))
+      expectedIds.push(new ObjectId('5d505646cf6d4fe581014ab6'))
+      expectedIds.push(new ObjectId('5d505646cf6d4fe581014ab9'))
       CodingQuestionsController.getCodingQuestionId('beginner').then((result) => {
-        expect(['5d505646cf6d4fe581014ab1', '5d505646cf6d4fe581014ab6', '5d505646cf6d4fe581014ab9']).to.include(result)
+        expect(expectedIds).to.include([].push(result))
       }).then(done, done)
     })
 
