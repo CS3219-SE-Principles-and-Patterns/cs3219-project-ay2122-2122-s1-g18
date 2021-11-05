@@ -54,9 +54,10 @@ jobs:
       - name: Create .env
         run: |
           touch .env
-          echo MONGO_URI_TEST="mongodb://localhost:27017/project3219" >> .env
-          echo JWT_SECRET_KEY="testSecretKey" >> .env
+          echo MONGO_URI_TEST=mongodb://localhost:27017/project3219 >> .env
+          echo JWT_SECRET_KEY=testSecretKey >> .env
           echo JWT_TEST=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImthaWVuLmZvb0BnbWFpbC5jb20iLCJ1c2VySWQiOiI2MTgxM2RiOTAzMzZmNjVmYzcwM2FjNzkiLCJ1c2VybmFtZSI6Indha3UiLCJpYXQiOjE2MzU5MTczNTh9.xntZCvnqqPxRvrRuhXDX04kgJnirLeSbAUMb2Ly77wo >> .env
+          echo JWT_BLACKLIST_TEST=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InBlZXJQcmVwMkBnbWFpbC5jb20iLCJ1c2VySWQiOiI2MTg1MjcxOWFhYjExNDI3ZWY3YzM0ZWEiLCJ1c2VybmFtZSI6InNocmVrVGVjaCIsImlhdCI6MTYzNjExNjI2OX0.aOK50ZzUrd2GVJ-trP4gjnQcAbVQH-IOWhLXFq6e4DM >> .env
       - name: Install server dependencies
         run: npm install
       - name: Lint server
