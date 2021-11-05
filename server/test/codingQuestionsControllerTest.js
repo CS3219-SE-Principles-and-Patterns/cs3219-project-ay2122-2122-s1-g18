@@ -52,9 +52,11 @@ describe('Coding questions', () => {
       expectedIds.push(new ObjectId('5d505646cf6d4fe581014ab1'))
       expectedIds.push(new ObjectId('5d505646cf6d4fe581014ab6'))
       expectedIds.push(new ObjectId('5d505646cf6d4fe581014ab9'))
-      CodingQuestionsController.getCodingQuestionId('beginner').then((result) => {
-        expect(expectedIds).to.deep.include([].push(result))
-      }).then(done, done)
+      CodingQuestionsController.getCodingQuestionId('beginner').then(
+        (result) => {
+          console.log(result)
+          expect(expectedIds).to.deep.include([].push(result))
+        }).then(done, done)
     })
 
     after('Disconnect from MongoDB', (done) => {
