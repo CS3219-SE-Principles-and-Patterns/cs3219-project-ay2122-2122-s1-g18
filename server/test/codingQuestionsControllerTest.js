@@ -46,11 +46,10 @@ describe('Coding questions', () => {
         })
     })
 
-    it('Should GET a coding questions of the easy difficulty', async (done) => {
-      const arr = []
-      arr[0] = await CodingQuestionsController.getCodingQuestionId('beginner')
-      console.log(arr[0])
-      expect(['5d505646cf6d4fe581014ab1', '5d505646cf6d4fe581014ab6', '5d505646cf6d4fe581014ab9']).to.include(arr)
+    it('Should GET a coding questions of the easy difficulty', (done) => {
+      CodingQuestionsController.getCodingQuestionId('beginner').then((result) => {
+        expect(['5d505646cf6d4fe581014ab1', '5d505646cf6d4fe581014ab6', '5d505646cf6d4fe581014ab9']).to.include(result)
+      }).then(done, done)
     })
 
     after('Disconnect from MongoDB', (done) => {
