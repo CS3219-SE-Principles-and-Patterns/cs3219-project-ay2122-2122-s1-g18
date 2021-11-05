@@ -24,7 +24,7 @@ describe('Coding questions', () => {
   describe('Route GET /api/coding-questions', () => {
     it('Should GET the coding questions if JWT is valid', (done) => {
       chai.request(app)
-        .get('/api/coding-questions/ddd')
+        .get('/api/coding-questions/5d505646cf6d4fe581014ab2')
         .auth(process.env.JWT_TEST, { type: 'bearer' })
         .end((err, res) => {
           expect(err).to.be.null
