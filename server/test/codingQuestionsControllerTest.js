@@ -46,11 +46,11 @@ describe('Coding questions', () => {
         })
     })
 
-    it('Should GET a coding questions of the easy difficulty', (done) => {
-      var arr = []
-      arr[0] = CodingQuestionsController.getCodingQuestionId('beginner')
+    it('Should GET a coding questions of the easy difficulty', async (done) => {
+      const arr = []
+      arr[0] = await CodingQuestionsController.getCodingQuestionId('beginner')
       console.log(arr[0])
-      expect(['5d505646cf6d4fe581014ab1', '5d505646cf6d4fe581014ab6', '5d505646cf6d4fe581014ab9']).to.have.members(arr)
+      expect(['5d505646cf6d4fe581014ab1', '5d505646cf6d4fe581014ab6', '5d505646cf6d4fe581014ab9']).to.include(arr)
       done()
     })
 
