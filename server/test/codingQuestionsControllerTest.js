@@ -53,7 +53,7 @@ describe('Coding questions', () => {
       expectedIds.push(new ObjectId('5d505646cf6d4fe581014ab6'))
       expectedIds.push(new ObjectId('5d505646cf6d4fe581014ab9'))
       CodingQuestionsController.getCodingQuestionId('beginner').then((result) => {
-        expect(expectedIds).to.include([].push(result))
+        expect(expectedIds).to.deep.include([].push(result))
       }).then(done, done)
     })
 
