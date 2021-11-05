@@ -294,8 +294,9 @@ describe('Auth', () => {
   describe('Route /users/verify/checkAuth', () => {
     it('Should authenticate user if session token is valid', (done) => {
       chai.request(app)
-        .get('/users/verify/checkAuth')
-        .auth(process.env.JWT_BLACKLIST_TEST, { type: 'bearer' })
+        .get('/api/users/verify/checkAuth')
+        .send()
+        .auth(process.env.JWT_TEST, { type: 'bearer' })
         // eslint-disable-next-line node/handle-callback-err
         .end((err, res) => {
           expect(res).to.have.status(200)
@@ -307,7 +308,7 @@ describe('Auth', () => {
 
     it('Should blacklist the token if user logs out', (done) => {
       chai.request(app)
-        .post('/api/users')
+        .post('//api/users/verify/checkAuth')
         .auth(process.env.JWT_BLACKLIST_TEST, { type: 'bearer' })
         // eslint-disable-next-line node/handle-callback-err
         .end((err, res) => {
@@ -320,7 +321,7 @@ describe('Auth', () => {
 
     it('Should not authenticate user if session token is blacklisted', (done) => {
       chai.request(app)
-        .get('/users/verify/checkAuth')
+        .get('/api/users/verify/checkAuth')
         .auth(process.env.JWT_BLACKLIST_TEST, { type: 'bearer' })
         // eslint-disable-next-line node/handle-callback-err
         .end((err, res) => {
@@ -333,7 +334,7 @@ describe('Auth', () => {
 
     it('Should not authenticate user if session token is invalid', (done) => {
       chai.request(app)
-        .get('/users/verify/checkAuth')
+        .get('/api/users/verify/checkAuth')
         .auth('wrongsessiontoken', { type: 'bearer' })
         // eslint-disable-next-line node/handle-callback-err
         .end((err, res) => {
