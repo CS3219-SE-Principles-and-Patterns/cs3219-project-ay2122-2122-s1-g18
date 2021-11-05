@@ -4,7 +4,6 @@ const chai = require('chai')
 const chaiHttp = require('chai-http')
 const mongoose = require('mongoose')
 const app = require('../index')
-let token = ''
 const expect = chai.expect
 
 chai.use(chaiHttp)
@@ -124,7 +123,6 @@ describe('Auth', () => {
         .send(userToLogin)
         // eslint-disable-next-line node/handle-callback-err
         .end((err, res) => {
-          token = res.body.token
           expect(res).to.have.status(200)
           expect(res.body).to.be.a('object')
           expect(res.body.message).to.equal('Authentication successful')
@@ -227,7 +225,7 @@ describe('Auth', () => {
       chai.request(app)
         .put('/api/users')
         .send(userToUpdate)
-        .auth(token, { type: 'bearer' })
+        .auth(process.env.JWT_TEST, { type: 'bearer' })
         // eslint-disable-next-line node/handle-callback-err
         .end((err, res) => {
           expect(res).to.have.status(200)
@@ -246,7 +244,7 @@ describe('Auth', () => {
       chai.request(app)
         .put('/api/users')
         .send(userToUpdate)
-        .auth(token, { type: 'bearer' })
+        .auth(process.env.JWT_TEST, { type: 'bearer' })
         // eslint-disable-next-line node/handle-callback-err
         .end((err, res) => {
           expect(res).to.have.status(401)
@@ -264,7 +262,7 @@ describe('Auth', () => {
       chai.request(app)
         .delete('/api/users')
         .send(userToDelete)
-        .auth(token, { type: 'bearer' })
+        .auth(process.env.JWT_TEST, { type: 'bearer' })
         // eslint-disable-next-line node/handle-callback-err
         .end((err, res) => {
           expect(res).to.have.status(401)
@@ -282,12 +280,66 @@ describe('Auth', () => {
       chai.request(app)
         .delete('/api/users')
         .send(userToDelete)
-        .auth(token, { type: 'bearer' })
+        .auth(process.env.JWT_TEST, { type: 'bearer' })
         // eslint-disable-next-line node/handle-callback-err
         .end((err, res) => {
           expect(res).to.have.status(200)
           expect(res.body).to.be.a('object')
           expect(res.body.message).to.equal('Success: Account Deleted')
+          done()
+        })
+    })
+  })
+
+  describe('Route /users/verify/checkAuth', () => {
+    it('Should authenticate user if session token is valid', (done) => {
+      chai.request(app)
+        .get('/users/verify/checkAuth')
+        .auth(process.env.JWT_BLACKLIST_TEST, { type: 'bearer' })
+        // eslint-disable-next-line node/handle-callback-err
+        .end((err, res) => {
+          expect(res).to.have.status(200)
+          expect(res.body).to.be.a('object')
+          expect(res.body.message).to.equal('Authentication Success')
+          done()
+        })
+    })
+
+    it('Should blacklist the token if user logs out', (done) => {
+      chai.request(app)
+        .post('/api/users')
+        .auth(process.env.JWT_BLACKLIST_TEST, { type: 'bearer' })
+        // eslint-disable-next-line node/handle-callback-err
+        .end((err, res) => {
+          expect(res).to.have.status(401)
+          expect(res.body).to.be.a('object')
+          expect(res.body.message).to.equal('Success')
+          done()
+        })
+    })
+
+    it('Should not authenticate user if session token is blacklisted', (done) => {
+      chai.request(app)
+        .get('/users/verify/checkAuth')
+        .auth(process.env.JWT_BLACKLIST_TEST, { type: 'bearer' })
+        // eslint-disable-next-line node/handle-callback-err
+        .end((err, res) => {
+          expect(res).to.have.status(200)
+          expect(res.body).to.be.a('object')
+          expect(res.body.message).to.equal('Authentication Failed')
+          done()
+        })
+    })
+
+    it('Should not authenticate user if session token is invalid', (done) => {
+      chai.request(app)
+        .get('/users/verify/checkAuth')
+        .auth('wrongsessiontoken', { type: 'bearer' })
+        // eslint-disable-next-line node/handle-callback-err
+        .end((err, res) => {
+          expect(res).to.have.status(200)
+          expect(res.body).to.be.a('object')
+          expect(res.body.message).to.equal('Authentication Failed')
           done()
         })
     })
