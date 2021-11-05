@@ -55,7 +55,7 @@ describe('Coding questions', () => {
       CodingQuestionsController.getCodingQuestionId('beginner').then(
         (result) => {
           console.log(result)
-          expect(expectedIds).to.deep.include([].push(result))
+          expect(expectedIds).to.deep.include.members(result.codingQuestion1Id)
         }).then(done, done)
     })
 
