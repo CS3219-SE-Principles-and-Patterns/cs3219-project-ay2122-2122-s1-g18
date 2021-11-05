@@ -52,10 +52,12 @@ describe('Coding questions', () => {
       expectedIds.push(new ObjectId('5d505646cf6d4fe581014ab1'))
       expectedIds.push(new ObjectId('5d505646cf6d4fe581014ab6'))
       expectedIds.push(new ObjectId('5d505646cf6d4fe581014ab9'))
+      const resultId = []
       CodingQuestionsController.getCodingQuestionId('beginner').then(
         (result) => {
           console.log(result)
-          expect(expectedIds).to.deep.include.members(result.codingQuestion1Id)
+          resultId.push(result.codingQuestion1Id)
+          expect(expectedIds).to.deep.include.members(resultId)
         }).then(done, done)
     })
 
