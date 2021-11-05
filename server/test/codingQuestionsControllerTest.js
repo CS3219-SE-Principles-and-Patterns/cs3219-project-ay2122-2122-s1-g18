@@ -27,9 +27,9 @@ describe('Coding questions', () => {
         .auth(process.env.JWT_TEST, { type: 'bearer' })
         .end((err, res) => {
           expect(err).to.be.null
+          console.log(res)
           expect(res).to.have.status(200)
           expect(res.body.data.question_title).equal('Two Sum')
-          // console.log(res.body)
           done()
         })
     })
