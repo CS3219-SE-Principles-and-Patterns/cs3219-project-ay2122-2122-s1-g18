@@ -296,7 +296,7 @@ describe('Auth', () => {
       chai.request(app)
         .get('/api/users/verify/checkAuth')
         .send()
-        .auth(process.env.JWT_TEST, { type: 'bearer' })
+        .auth(process.env.JWT_BLACKLIST_TEST, { type: 'bearer' })
         // eslint-disable-next-line node/handle-callback-err
         .end((err, res) => {
           expect(res).to.have.status(200)
@@ -308,7 +308,7 @@ describe('Auth', () => {
 
     it('Should blacklist the token if user logs out', (done) => {
       chai.request(app)
-        .post('//api/users/verify/checkAuth')
+        .post('/api/users/verify/checkAuth')
         .auth(process.env.JWT_BLACKLIST_TEST, { type: 'bearer' })
         // eslint-disable-next-line node/handle-callback-err
         .end((err, res) => {
@@ -325,7 +325,7 @@ describe('Auth', () => {
         .auth(process.env.JWT_BLACKLIST_TEST, { type: 'bearer' })
         // eslint-disable-next-line node/handle-callback-err
         .end((err, res) => {
-          expect(res).to.have.status(200)
+          expect(res).to.have.status(401)
           expect(res.body).to.be.a('object')
           expect(res.body.message).to.equal('Authentication Failed')
           done()
@@ -338,7 +338,7 @@ describe('Auth', () => {
         .auth('wrongsessiontoken', { type: 'bearer' })
         // eslint-disable-next-line node/handle-callback-err
         .end((err, res) => {
-          expect(res).to.have.status(200)
+          expect(res).to.have.status(401)
           expect(res.body).to.be.a('object')
           expect(res.body.message).to.equal('Authentication Failed')
           done()
