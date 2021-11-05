@@ -47,9 +47,10 @@ describe('Coding questions', () => {
     })
 
     it('Should GET a coding questions of the easy difficulty', (done) => {
-      const qid = [CodingQuestionsController.getCodingQuestionId('beginner')]
-      console.log(qid)
-      expect(['5d505646cf6d4fe581014ab1', '5d505646cf6d4fe581014ab6', '5d505646cf6d4fe581014ab9']).to.have.members(qid)
+      var arr = []
+      arr[0] = CodingQuestionsController.getCodingQuestionId('beginner')
+      console.log(arr[0])
+      expect(['5d505646cf6d4fe581014ab1', '5d505646cf6d4fe581014ab6', '5d505646cf6d4fe581014ab9']).to.have.members(arr)
       done()
     })
 
