@@ -312,7 +312,7 @@ describe('Auth', () => {
         .auth(process.env.JWT_BLACKLIST_TEST, { type: 'bearer' })
         // eslint-disable-next-line node/handle-callback-err
         .end((err, res) => {
-          expect(res).to.have.status(401)
+          expect(res).to.have.status(200)
           expect(res.body).to.be.a('object')
           expect(res.body.message).to.equal('Success')
           done()
