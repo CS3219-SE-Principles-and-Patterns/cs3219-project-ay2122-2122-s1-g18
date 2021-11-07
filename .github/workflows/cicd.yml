@@ -21,9 +21,6 @@ jobs:
       - name: Install client dependencies
         run: npm install
         working-directory: client
-      - name: Lint client
-        run: npm run lint
-        working-directory: client
       - name: Build static files
         run: npm run build
         working-directory: client
@@ -36,32 +33,6 @@ jobs:
           cache-dependency-path: "server/package-lock.json"
       - name: Install server dependencies
         run: npm install
-        working-directory: server
-      - name: Lint server
-        run: npm run lint
-        working-directory: server
-      - name: Create Mongo Docker container
-        uses: DigiPie/mongo-action@v1.0.1
-        with:
-          image-version: latest
-          port: 27017
-      - name: Import test data to Mongo
-        run: |
-          sudo mongo localhost:27017
-          mongoimport --uri mongodb://localhost:27017 --db project3219 --collection users --file ./test/data/mockUserData.json --jsonArray
-          mongoimport --uri mongodb://localhost:27017 --db project3219 --collection codingquestions --file ./test/data/mockCodingQuestionData.json --jsonArray
-          mongoimport --uri mongodb://localhost:27017 --db project3219 --collection interviewquestions --file ./test/data/mockInterviewQuestionData.json --jsonArray
-        working-directory: server
-      - name: Create .env
-        run: |
-          touch .env
-          echo MONGO_URI_TEST=${{secrets.MONGO_URI_TEST}} >> .env
-          echo JWT_SECRET_KEY=${{secrets.JWT_SECRET_KEY}} >> .env
-          echo JWT_TEST=${{secrets.JWT_TEST}} >> .env
-          echo JWT_BLACKLIST_TEST=${{secrets.JWT_BLACKLIST_TEST}} >> .env
-        working-directory: server
-      - name: Test server
-        run: npm test
         working-directory: server
 
       - name: Copy client static files to server
