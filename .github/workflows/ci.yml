@@ -49,7 +49,7 @@ jobs:
         with:
           image-version: latest
           port: 27017
-      - name: Test Mongo connection
+      - name: Import test data to Mongo
         run: |
           sudo mongo localhost:27017
           mongoimport --uri mongodb://localhost:27017 --db project3219 --collection users --file ./test/data/mockUserData.json --jsonArray
