@@ -40,7 +40,11 @@ jobs:
           node-version: 16.x
           cache: "npm"
           cache-dependency-path: "server/package-lock.json"
-      - name: Create Mongo Docker containter
+      - name: Install server dependencies
+        run: npm install
+      - name: Lint server
+        run: npm run lint
+      - name: Create Mongo Docker container
         uses: DigiPie/mongo-action@v1.0.1
         with:
           image-version: latest
@@ -58,9 +62,5 @@ jobs:
           echo JWT_SECRET_KEY=testSecretKey >> .env
           echo JWT_TEST=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImthaWVuLmZvb0BnbWFpbC5jb20iLCJ1c2VySWQiOiI2MTgxM2RiOTAzMzZmNjVmYzcwM2FjNzkiLCJ1c2VybmFtZSI6Indha3UiLCJpYXQiOjE2MzU5MTczNTh9.xntZCvnqqPxRvrRuhXDX04kgJnirLeSbAUMb2Ly77wo >> .env
           echo JWT_BLACKLIST_TEST=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InBlZXJQcmVwMkBnbWFpbC5jb20iLCJ1c2VySWQiOiI2MTg1MjcxOWFhYjExNDI3ZWY3YzM0ZWEiLCJ1c2VybmFtZSI6InNocmVrVGVjaCIsImlhdCI6MTYzNjExNjI2OX0.aOK50ZzUrd2GVJ-trP4gjnQcAbVQH-IOWhLXFq6e4DM >> .env
-      - name: Install server dependencies
-        run: npm install
-      - name: Lint server
-        run: npm run lint
       - name: Test server
         run: npm test
