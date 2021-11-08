@@ -12,7 +12,7 @@ router.route('/users/signup')
   .post(authController.createUser)
 
 router.route('/users/verify/:id/:token')
-  .get(authController.getEmailVerification)
+  .get(authController.verifyAccountEmail)
 
 router.route('/users/verify/checkAuth')
   .get(authController.authenticateJwt)
