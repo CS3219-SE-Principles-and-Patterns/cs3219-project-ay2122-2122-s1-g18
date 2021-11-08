@@ -22,9 +22,6 @@ try:
 except Exception as e:
     print("Unable to connect to database.")
 
-# questions_db.delete_many({})
-
-
 # Setup Selenium Webdriver
 CHROMEDRIVER_PATH = r"./driver/chromedriver.exe"
 options = Options()
