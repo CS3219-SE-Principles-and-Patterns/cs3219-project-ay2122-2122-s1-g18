@@ -12,27 +12,25 @@ from selenium.webdriver.support.ui import WebDriverWait
 from pymongo import MongoClient
 from decouple import config
 
-conn_str = config('MONGO_URI') + "&ssl=true&ssl_cert_reqs=CERT_NONE"  
+conn_str = config('MONGO_URI') + "&ssl=true&ssl_cert_reqs=CERT_NONE"
 # set a 5-second connection timeout
 client = MongoClient(conn_str, serverSelectionTimeoutMS=5000)
 try:
     client.server_info()
-    questions_db = client.cs3219Project.coding_questions
+    questions_db = client.cs3219Project.codingquestions
     print("Connected to database")
 except Exception as e:
     print("Unable to connect to database.")
 
-# questions_db.delete_many({})
-
 # Setup Selenium Webdriver
-CHROMEDRIVER_PATH = r"./driver/chromedriver.exe" 
+CHROMEDRIVER_PATH = r"./driver/chromedriver.exe"
 options = Options()
 options.headless = True
 # Disable Warning, Error and Info logs
 # Show only fatal errors
 options.add_argument("--log-level=3")
 driver = webdriver.Chrome(executable_path=CHROMEDRIVER_PATH, options=options)
-    
+
 def update_tracker(problem_num):
      with open('tracker.txt', "w") as f:
          f.write(str(problem_num))
@@ -58,12 +56,12 @@ def main():
                 question__title = child["stat"]["question__title"]
                 frontend_question_id = child["stat"]["frontend_question_id"]
                 difficulty = child["difficulty"]["level"]
-                
-                results.append((frontend_question_id, difficulty, question__title, question__title_slug)) 
+
+                results.append((frontend_question_id, difficulty, question__title, question__title_slug))
 
 
     results = sorted(results, key=lambda x: (x[0]))
-    
+
     last_index_scraped = read_tracker()
 
     # Problem URL is of format ALGORITHMS_BASE_URL + question__title_slug
@@ -81,18 +79,16 @@ def main():
         soup = BeautifulSoup(html, "html.parser")
         print(url)
         question_html = soup.find("div", {"class": "content__u3I1 question-content__JfgR"}).get_text()
-        
-        question_text = question_html.split('Example')[0]
-        result = result + (question_text,)
-        
-        print(result, '\n')
+
+        result = result + (question_html,)
+
         questions_db.insert_one({
-            'frontend_question_id': result[0],
-            "difficulty": result[1],
-            "question_title": result[2],
-            "question_text": result[4],
-            "url": url})
-        
+        'frontend_question_id': result[0],
+        "difficulty": result[1],
+        "question_title": result[2],
+        "question_text": result[4],
+        "url": url})
+
         update_tracker(i)
 
 
