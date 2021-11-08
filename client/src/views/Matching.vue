@@ -6,6 +6,7 @@
     <div class='row justify-content-center mt-4'>Please wait while we find you a match.</div>
 
     <b-modal
+      id='matchNotFoundModal'
       :visible='showMatchNotFoundModal'
       centered
       hide-header-close

@@ -87,6 +87,7 @@
         </b-col>
         <b-col>
           <b-dropdown
+            id="interviewQuestionsDropdown"
             class="float-end"
             right
             text="Send Interview Question"

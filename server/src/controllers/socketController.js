@@ -110,12 +110,8 @@ exports.createEventListeners = (socket, io) => {
   })
 
   socket.on('send-chat', (chat) => sendChat(chat, socket, io))
-
-  socket.on('update-code', (codeUpdate) => {
-    socket.to(codeUpdate.room).emit('new-code', codeUpdate.codeChanges)
-  })
-
-  socket.on('load-next-question', (room) => io.to(room).emit('next-question'))
+  socket.on('update-code', (codeUpdate) => handleUpdateCodeEvent(codeUpdate, socket))
+  socket.on('load-next-question', (room) => handleLoadNextQuestionEvent(room, io))
   socket.on('disconnect', async () => await handleDisconnectEvent(socket, io))
 }
 
@@ -160,6 +156,14 @@ function handleJoinRoomEvent (username, roomInfo, socket, io) {
   socket.join(roomInfo.id)
   setCodingRoom(username, roomInfo.id)
   io.to(roomInfo.id).emit('coding-room-ready', roomInfo)
+}
+
+function handleUpdateCodeEvent (codeUpdate, socket) {
+  socket.to(codeUpdate.room).emit('new-code', codeUpdate.codeChanges)
+}
+
+function handleLoadNextQuestionEvent (room, io) {
+  io.to(room).emit('next-question')
 }
 
 async function handleDisconnectEvent (socket, io) {
