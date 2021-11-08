@@ -3,7 +3,7 @@ const jwt = require('jsonwebtoken')
 const randomBytes = require('randombytes')
 
 const User = require('../models/users')
-const Token = require('../models/userToken')
+const Token = require('../models/emailVerificationToken')
 const BlacklistToken = require('../models/blacklistToken')
 const sendEmail = require('../utils/email')
 
