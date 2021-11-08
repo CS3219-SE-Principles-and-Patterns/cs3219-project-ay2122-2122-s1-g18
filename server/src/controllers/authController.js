@@ -3,7 +3,7 @@ const jwt = require('jsonwebtoken')
 const randomBytes = require('randombytes')
 
 const User = require('../models/users')
-const Token = require('../models/userToken')
+const Token = require('../models/emailVerificationToken')
 const BlacklistToken = require('../models/blacklistToken')
 const sendEmail = require('../utils/email')
 
@@ -222,7 +222,7 @@ exports.createUser = function (req, res) {
 }
 
 // GET email verification
-exports.getEmailVerification = async function (req, res) {
+exports.verifyAccountEmail = async function (req, res) {
   const id = req.params.id
   const tokenId = req.params.token
   // find user by the unique ._id field
@@ -284,6 +284,7 @@ exports.getEmailVerification = async function (req, res) {
   }
 }
 
+// POST user login
 exports.userLogin = function (req, res) {
   const username = req.body.username.trim()
   const password = req.body.password.trim()
@@ -341,8 +342,8 @@ exports.userLogin = function (req, res) {
     })
 }
 
-// POST blacklist token
-exports.addBlacklist = function (req, res) {
+// POST user logout
+exports.userLogout = function (req, res) {
   const temp = req.headers.authorization.split(' ')[1]
   // checks if token is present
   if (!temp) {

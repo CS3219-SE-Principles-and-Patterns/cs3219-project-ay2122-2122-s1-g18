@@ -13,6 +13,6 @@ const tokenSchema = new Schema({
   }
 })
 
-const Token = mongoose.model('Token', tokenSchema)
+const Token = mongoose.model('EmailVerificationToken', tokenSchema)
 
 module.exports = Token

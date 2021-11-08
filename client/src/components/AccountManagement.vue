@@ -163,9 +163,7 @@ export default {
         AXIOS.delete(apiURL, { headers: getAuthHeader(), data: temp })
           .then(() => {
             this.user.oldPassword = ''
-            this.$router.push({
-              name: 'landing'
-            })
+            this.logout()
           })
           .catch((err) => {
             if (err.response.status === 401) {

@@ -9,7 +9,7 @@ router.route('/users')
   .delete(authController.deleteUser)
 
 router.route('/users/verify/checkAuth')
-  .post(authController.addBlacklist)
+  .post(authController.userLogout)
 
 router.route('/users/:username/session')
   .get(socketController.hasOngoingSession)
