@@ -72,7 +72,7 @@ import Signup from '../components/Signup'
 import AXIOS from '../utils/axiosConfig'
 
 export default {
-  name: 'Landing',
+  name: 'landing',
   components: { Signup, Login },
   data () {
     return {
