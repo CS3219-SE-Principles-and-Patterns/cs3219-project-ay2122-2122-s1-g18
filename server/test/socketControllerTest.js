@@ -34,7 +34,7 @@ describe('Sockets', () => {
     it('Should send an empty object if there are no waiting users', (done) => {
       client1 = io.connect(DEV_SERVER_URI, SOCKET_OPTIONS)
       client1.on('connect', () => {
-        client1.emit('join-waiting-users-listener')
+        client1.emit('join-waiting-users')
       })
 
       client1.on('update-waiting-users', (waitingUsers) => {
@@ -56,7 +56,7 @@ describe('Sockets', () => {
             matchBy: 'beginner'
           })
 
-          client1.emit('join-waiting-users-listener')
+          client1.emit('join-waiting-users')
         })
       })
 
@@ -125,7 +125,7 @@ describe('Sockets', () => {
         client2.on('match-found', () => {
           client3 = io.connect(DEV_SERVER_URI, SOCKET_OPTIONS)
           client3.on('connect', () => {
-            client3.emit('join-waiting-users-listener')
+            client3.emit('join-waiting-users')
           })
 
           client3.on('update-waiting-users', (waitingUsers) => {

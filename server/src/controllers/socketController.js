@@ -7,12 +7,12 @@ const userMatchingPreferences = new Map()
 function addWaitingUser (matchBy, socket) {
   userMatchingPreferences.set(socket.id, matchBy)
   waitingUsers[matchBy] = socket.id
-  socket.to('waiting-users-listener').emit('update-waiting-users', waitingUsers)
+  socket.to('waiting-users').emit('update-waiting-users', waitingUsers)
 }
 
 function removeWaitingUser (matchBy, waitingUserId, io) {
   waitingUsers[matchBy] = null
-  io.to('waiting-users-listener').emit('update-waiting-users', waitingUsers)
+  io.to('waiting-users').emit('update-waiting-users', waitingUsers)
   userMatchingPreferences.delete(waitingUserId)
 }
 
@@ -88,7 +88,7 @@ async function getUserBySocket (socket) {
 }
 
 exports.createEventListeners = (socket, io) => {
-  socket.on('join-waiting-users-listener', () => handleWaitingUserListenerEvent(socket))
+  socket.on('join-waiting-users', () => handleJoinWaitingUsersEvent(socket))
   socket.on('find-match', async (userInfo) => await handleFindMatchEvent(userInfo, socket, io))
 
   socket.on('proceed-without-match', async (userInfo) => {
@@ -115,8 +115,8 @@ exports.createEventListeners = (socket, io) => {
   socket.on('disconnect', async () => await handleDisconnectEvent(socket, io))
 }
 
-function handleWaitingUserListenerEvent (socket) {
-  socket.join('waiting-users-listener')
+function handleJoinWaitingUsersEvent (socket) {
+  socket.join('waiting-users')
   socket.emit('update-waiting-users', waitingUsers)
 }
 
