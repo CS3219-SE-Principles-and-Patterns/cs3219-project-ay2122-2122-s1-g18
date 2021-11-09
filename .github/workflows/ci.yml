@@ -62,5 +62,6 @@ jobs:
           echo JWT_SECRET_KEY=testSecretKey >> .env
           echo JWT_TEST=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImthaWVuLmZvb0BnbWFpbC5jb20iLCJ1c2VySWQiOiI2MTgxM2RiOTAzMzZmNjVmYzcwM2FjNzkiLCJ1c2VybmFtZSI6Indha3UiLCJpYXQiOjE2MzU5MTczNTh9.xntZCvnqqPxRvrRuhXDX04kgJnirLeSbAUMb2Ly77wo >> .env
           echo JWT_BLACKLIST_TEST=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InBlZXJQcmVwMkBnbWFpbC5jb20iLCJ1c2VySWQiOiI2MTg1MjcxOWFhYjExNDI3ZWY3YzM0ZWEiLCJ1c2VybmFtZSI6InNocmVrVGVjaCIsImlhdCI6MTYzNjExNjI2OX0.aOK50ZzUrd2GVJ-trP4gjnQcAbVQH-IOWhLXFq6e4DM >> .env
+          echo JWT_EXPIRED_TEST=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InNhbWxzbTI4MDNAZ21haWwuY29tIiwidXNlcklkIjoiNjE4MTUxNGJmNzkyY2FmOWQ5MGVkZDBmIiwidXNlcm5hbWUiOiJzYW1sc20iLCJpYXQiOjE2MzY0MjE5NzMsImV4cCI6MTYzNjQyMjA3M30.DSEb2-vV1RA1rNICugDQ6KXnvoUep-OK5WOWjceK2NQ >> .env
       - name: Test server
         run: npm test
