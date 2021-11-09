@@ -87,7 +87,7 @@ export default {
   },
   created () {
     this.socket = io(SERVER_URI)
-    this.socket.emit('join-waiting-users-listener')
+    this.socket.emit('join-waiting-users')
     this.socket.on('update-waiting-users', (waitingUsers) => {
       this.waitingUsers = waitingUsers
     })
