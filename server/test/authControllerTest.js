@@ -344,6 +344,19 @@ describe('Auth', () => {
           done()
         })
     })
+
+    it('Should not authenticate user if session token have expired', (done) => {
+      chai.request(app)
+        .get('/api/users/verify/checkAuth')
+        .auth(process.env.JWT_EXPIRED_TEST, { type: 'bearer' })
+        // eslint-disable-next-line node/handle-callback-err
+        .end((err, res) => {
+          expect(res).to.have.status(401)
+          expect(res.body).to.be.a('object')
+          expect(res.body.message).to.equal('Authentication Failed')
+          done()
+        })
+    })
   })
 
   after('Disconnect from MongoDB', (done) => {

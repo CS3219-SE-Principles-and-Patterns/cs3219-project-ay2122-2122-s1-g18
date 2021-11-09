@@ -73,6 +73,7 @@ router.beforeEach((to, from, next) => {
         next()
       })
       .catch(() => {
+        sessionStorage.clear()
         next({ name: 'landing' })
       })
   }

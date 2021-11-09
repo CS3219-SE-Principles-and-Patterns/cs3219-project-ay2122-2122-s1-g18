@@ -123,7 +123,10 @@ export default {
           })
         })
         .catch(() => {
-          console.log('Unable to logout')
+          sessionStorage.clear()
+          this.$router.push({
+            name: 'landing'
+          })
         })
     },
     handleUpdateForm () {
