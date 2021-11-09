@@ -1,3 +1,0 @@
-python -m pip install pymongo
-pip install python-decouple
-C:\Python39\python.exe -m pip install "pymongo[srv]"
