@@ -5,7 +5,7 @@
         <b-card>
           <h3 class="text-center mb-4">About SHReK Tech</h3>
           <b-card-text>
-            SHReK Tech aims to help students and jobseekers boost their technical interview skills
+            SHReK Tech aims to help students and job seekers boost their technical interview skills
             to land their dream job. In SHReK Tech, SHReKies can engage in real-time, collaborative
             programming to enhance their familiarity with technical interviews.
           </b-card-text>
