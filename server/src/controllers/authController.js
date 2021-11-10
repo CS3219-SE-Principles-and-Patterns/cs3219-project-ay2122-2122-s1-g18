@@ -391,11 +391,11 @@ exports.resetPasswordEmail = function (req, res) {
         })
         token.save()
           .then(() => {
-            let message = 'Hello from SHReK Tech!\n\nIf you have requested for a password reset, please click on the link below to reset your password:\n'
+            let message = 'Dear beloved SHReKie,\n\nIf you have requested for a password reset, please click on the link below to reset your password:\n'
             message += process.env.NODE_ENV === 'production'
               ? `${constants.PRODUCTION_RESET_PASSWORD_URI}/${user._id}/${token.token}`
               : `${constants.DEV_RESET_PASSWORD_URI}/${user._id}/${token.token}`
-            message += '\n\nThank you for using your SHReK Tech!\n\nRegards,\nSHReK Tech Team'
+            message += '\n\nThank you for using SHReK Tech!\n\nRegards,\nSHReK Tech Team'
             sendEmail(user.email, 'Request your password for SHReK Tech', message)
             return res.status(200).json({
               message: 'A reset email has been sent to your account.'
