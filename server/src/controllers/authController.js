@@ -396,7 +396,7 @@ exports.resetPasswordEmail = function (req, res) {
               ? `${constants.PRODUCTION_RESET_PASSWORD_URI}/${user._id}/${token.token}`
               : `${constants.DEV_RESET_PASSWORD_URI}/${user._id}/${token.token}`
             message += '\n\nThank you for using SHReK Tech!\n\nRegards,\nSHReK Tech Team'
-            sendEmail(user.email, 'Request your password for SHReK Tech', message)
+            sendEmail(user.email, 'Reset your password for SHReK Tech', message)
             return res.status(200).json({
               message: 'A reset email has been sent to your account.'
             })
