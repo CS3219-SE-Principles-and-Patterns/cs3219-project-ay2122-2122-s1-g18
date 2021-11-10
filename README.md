@@ -2,7 +2,7 @@
 [![cd](https://github.com/CS3219-SE-Principles-and-Patterns/cs3219-project-ay2122-2122-s1-g18/actions/workflows/cd.yml/badge.svg)](https://github.com/CS3219-SE-Principles-and-Patterns/cs3219-project-ay2122-2122-s1-g18/actions/workflows/cd.yml)
 [![codecov](https://codecov.io/gh/CS3219-SE-Principles-and-Patterns/cs3219-project-ay2122-2122-s1-g18/branch/main/graph/badge.svg?token=MNRL3PMASU)](https://codecov.io/gh/CS3219-SE-Principles-and-Patterns/cs3219-project-ay2122-2122-s1-g18)
 
-SHReK Tech aims to help students and jobseekers boost their technical interview skills to land their dream job. In 
+SHReK Tech aims to help students and job seekers boost their technical interview skills to land their dream job. In 
 SHReK Tech, SHReKies can engage in real-time, collaborative programming to enhance their familiarity with technical 
 interviews.
 
