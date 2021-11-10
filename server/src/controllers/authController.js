@@ -200,11 +200,11 @@ exports.createUser = function (req, res) {
             })
             token.save()
               .then(() => {
-                let message = 'Hello from SHReK Tech!\n\nPlease click on the link below to verify your account:\n'
+                let message = 'Dear beloved SHReKie,\n\nWelcome to the SHReK family! Please click on the link below to verify your account:\n'
                 message += process.env.NODE_ENV === 'production'
                   ? `${constants.PRODUCTION_VERIFY_EMAIL_URI}/${user.id}/${token.token}`
                   : `${constants.DEV_VERIFY_EMAIL_URI}/${user.id}/${token.token}`
-                message += '\n\nThank you for using your SHReK Tech!\n\nRegards,\nSHReK Tech Team'
+                message += '\n\nThank you for using SHReK Tech!\n\nRegards,\nSHReK Tech Team'
                 sendEmail(user.email, 'Verify your email for SHReK Tech', message)
                 return res.status(200).json({
                   message: 'A verification email has been sent to your account. Please verify your email before proceeding.'
