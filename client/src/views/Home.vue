@@ -141,10 +141,6 @@ export default {
 </script>
 
 <style>
-.alert {
-  width: 600px;
-}
-
 .table {
   width: 500px;
 }

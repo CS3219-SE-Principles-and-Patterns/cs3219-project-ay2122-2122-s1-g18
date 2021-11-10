@@ -17,12 +17,10 @@ const sendEmail = (email, subject, text) => {
       to: email,
       subject: subject,
       text: text
-    }).then(() => {
-      console.info('Success: Email Sent')
-    }
-    ).catch(() => {
-      console.error('Failure: Email Failed To Send')
-    })
+    }).then()
+      .catch(() => {
+        console.error('Failure: Email Failed To Send')
+      })
   } catch (err) {
     console.error('Failure: Email Failed To Send')
     console.error(err)
