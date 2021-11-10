@@ -21,9 +21,14 @@ If you would like to deploy our application manually, you can do so by following
 
 ### Create a `.env` file for the backend:
 1. Change directory to the server folder using `cd server`
-2. As our application requires values from a `.env` file, you are required to create your own MongoDB URI, a Gmail 
-account and your own secret key 
-- Create a `.env` in the same directory with the content below:
+2. As our application requires values from a `.env` file, you are required to create your own
+- MongoDB URI
+- Gmail account
+  - Do note that for the purpose of using this account for sending verification emails and reset password emails, you
+would need to enable less secure apps for this Gmail account. A tutorial can be found here
+[https://hotter.io/docs/email-accounts/secure-app-gmail/](https://hotter.io/docs/email-accounts/secure-app-gmail/).
+- Secret key
+3. Create a `.env` in the same directory with the content below:
 ```
 MONGO_URI=<INSERT_YOUR_MONGO_URI_HERE>
 JWT_SECRET_KEY=<INSERT_YOUR_SECRET_KEY_HERE>
