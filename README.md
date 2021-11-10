@@ -9,11 +9,16 @@ interviews.
 ## Final Report
 You can view our project's final report [here](18-FinalReport-2.pdf).
 
-## Deployed Product
+## Deployment
 SHReK Tech is deployed on [https://shrektech.herokuapp.com/](https://shrektech.herokuapp.com/). You can give it a try!
 
-## Manual Deployment
-If you would like to deploy our application manually, you can do so by following these steps:
+## Local Build
+If you would like to build our application locally, you can do so by following these steps:
+
+### Prerequisites:
+This application requires the following to be installed on your local computer:
+- Node
+- Python
 
 ### Clone our repository into your local computer:
 1. Clone our repository using `git clone https://github.com/CS3219-SE-Principles-and-Patterns/cs3219-project-ay2122-2122-s1-g18.git`
@@ -21,13 +26,13 @@ If you would like to deploy our application manually, you can do so by following
 
 ### Create a `.env` file for the backend:
 1. Change directory to the server folder using `cd server`
-2. As our application requires values from a `.env` file, you are required to create your own
-- MongoDB URI
+2. As our application requires a `.env` file, create your own:
+- MongoDB database
 - Gmail account
-  - Do note that for the purpose of using this account for sending verification emails and reset password emails, you
-would need to enable less secure apps for this Gmail account. A tutorial can be found here
-[https://hotter.io/docs/email-accounts/secure-app-gmail/](https://hotter.io/docs/email-accounts/secure-app-gmail/).
-- Secret key
+  - **Note:** For the purpose of using this account to send verification emails and reset password emails, you
+  would need to enable 'less secure apps' settings for this Gmail account. A tutorial can be found here:
+  [https://hotter.io/docs/email-accounts/secure-app-gmail/](https://hotter.io/docs/email-accounts/secure-app-gmail/).
+- JWT secret key
 3. Create a `.env` in the same directory with the content below:
 ```
 MONGO_URI=<INSERT_YOUR_MONGO_URI_HERE>
@@ -54,15 +59,14 @@ GMAIL_PASSWORD=<INSERT_YOUR_GMAIL_ACCOUNT_PASSWORD_HERE>
 Scraping progress is saved to the `tracker.txt` file, and scraping will resume from where it failed.
 
 ### Start the backend:
-1. After creating the `.env` file and scraping the coding questions from Leetcode, you are able to start the backend
-2. Change directory to the server folder using `cd server`
-3. Install the necessary node modules using `npm install`
-4. Run the backend using `npm start`
+1. Change directory to the server folder using `cd server`
+2. Install the necessary node modules using `npm install`
+3. Run the backend using `npm start`
 
 ### Start the frontend:
 1. Start a new terminal and change directory to the client folder using `cd client` from the root of the project
 2. Install the necessary node modules using `npm install`
 3. Run the frontend using `npm start`
 
-### Check if it is deployed:
+### View the local build:
 After following the previous steps, you may go to [http://localhost:8080/](http://localhost:8080/) and test out SHReK Tech!
